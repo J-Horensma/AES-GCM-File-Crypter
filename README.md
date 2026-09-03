@@ -13,24 +13,32 @@ AES-GCM, is the most secure and modern approach for encryption/decryption and ha
 ## Windows Version (In the "dist/windows" folder):  
 </br>
 
-### 1.) Pick encryption/decryption options
+### 1.) Pick encryption/decryption options  
+
 ![Preview](assets/previews/windows_preview_1.png)
 ![Preview](assets/previews/windows_preview_2.png)
-![Preview](assets/previews/windows_preview_3.png)
-### 2.) Enter the password
+![Preview](assets/previews/windows_preview_3.png)  
+
+### 2.) Enter the password  
+
 ![Preview](assets/previews/windows_preview_4.png)  
+
 ### 3.) Encrypt/decrypt a file or an entire folder  
 <br></br>
 
 ## Linux Version (In the "dist/linux" folder):  
 </br>
 
-### 1.) Pick encryption/decryption options
+### 1.) Pick encryption/decryption options  
+
 ![Preview](assets/previews/linux_preview_1.png)
 ![Preview](assets/previews/linux_preview_2.png)
-![Preview](assets/previews/linux_preview_3.png)
-### 2.) Enter the password
-![Preview](assets/previews/linux_preview_4.png)
+![Preview](assets/previews/linux_preview_3.png)  
+
+### 2.) Enter the password  
+
+![Preview](assets/previews/linux_preview_4.png)  
+
 ### 3.) Encrypt/decrypt a file or an entire folder  
 <br></br>
 
