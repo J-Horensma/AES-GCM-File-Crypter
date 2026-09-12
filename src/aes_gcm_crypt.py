@@ -4,10 +4,10 @@ Commercial-Use License, With Redistribution Restrictions
 
 "aes_gcm_crypt" Copyright © 2026 Joel Horensma
 
-For clarity, "software" means this entire Python library, "personal" means not for profit, and "commercial"
-means for profit.
+For clarity, "software", means "aes_gcm_crypt.py", 
+"personal", means not for profit, and "commercial", means for profit.
 
-This software may be used, modified, and incorporated into personal and commercial products.
+This software may be used, modified, and incorporated into personal and/or commercial products.
 Any modified version/s and/or products incorporating the software, may be distributed
 commercially (Without written notice), provided that it/they contain substantial original additions or
 modifications.
