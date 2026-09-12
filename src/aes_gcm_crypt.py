@@ -7,9 +7,9 @@ Commercial-Use License, With Redistribution Restrictions
 For clarity, "software", means "aes_gcm_crypt.py", 
 "personal", means not for profit, and "commercial", means for profit.
 
-This software may be used, modified, and incorporated into personal and/or commercial products.
+This software may be used, modified, and/or incorporated into personal and/or commercial products.
 Any modified version/s and/or products incorporating the software, may be distributed
-commercially (Without written notice), provided that it/they contain substantial original additions or
+commercially (Without written notice), provided that it/they (The source code, being sold) contains substantial original additions or
 modifications.
 
 Sale of the unmodified software, or a substantially
