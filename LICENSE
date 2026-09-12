@@ -3,7 +3,7 @@ Commercial-Use License, With Redistribution Restrictions
 
 "AES-GCM File-Crypter" Copyright © 2026 Joel Horensma
 
-For clarity, "software" means this file and all files included, as part of this program, "personal" means not for profit, and "commercial"
+For clarity, "software" means this entire Python library, "personal" means not for profit, and "commercial"
 means for profit.
 
 This software may be used, modified, and incorporated into personal and commercial products.
@@ -12,6 +12,6 @@ commercially (Without written notice), provided that it/they contain substantial
 modifications.
 
 Sale of the unmodified software, or a substantially
-unchanged copy of it, is prohibited without prior written permission.
+unchanged copy of it, is prohibited, without prior written permission.
 
-The copyright notice and this license must be retained in all copies.
+The copyright notice and this license must be retained, in all copies, of the software.
