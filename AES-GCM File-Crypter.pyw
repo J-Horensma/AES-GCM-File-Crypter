@@ -22,7 +22,7 @@ __version__ = '1.0.0.0'
 __author__ = 'Joel Horensma'
 __email__ = 'N/A'
 __license__ = 'Commercial-Use License, With Redistribution Restrictions'
-__description__ = 'A GUI program, for securely encrypting and decrypting, files and folders (Cross-platform).'
+__description__ = 'A GUI program, for securely encrypting/decrypting files and/or entire folders.'
 
 from threading import Thread
 from os.path import abspath, normpath, dirname, join
