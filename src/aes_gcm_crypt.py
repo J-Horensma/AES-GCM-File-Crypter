@@ -22,7 +22,7 @@ __version__ = '1.0.0.0'
 __author__ = 'Joel Horensma'
 __email__ = 'N/A'
 __license__ = 'Commercial-Use License, With Redistribution Restrictions'
-__description__ = 'An AES-GCM cryptography library, for cryptography of variables, files, and folders (Cross-platform).'
+__description__ = 'An AES-GCM cryptography library, for cryptography of variables, files, and/or folders.'
 
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
