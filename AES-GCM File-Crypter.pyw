@@ -302,3 +302,6 @@ try:
 except KeyboardInterrupt:
     print('\n"Ctrl + c", was pressed, closing AES-GCM File-Crypter...\n')
     ROOT_WINDOW.quit()
+except BaseException as ERROR:
+    print(ERROR, 'closing AES-GCM File-Crypter...\n')
+    ROOT_WINDOW.quit()
