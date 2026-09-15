@@ -1,5 +1,4 @@
-![Preview](assets/icon/ico/256x256.ico)  
-</br>
+![Preview](assets/icon/ico/256x256.ico)
 
 # AES-GCM File-Crypter
 <br></br>
