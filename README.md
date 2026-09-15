@@ -36,6 +36,7 @@ AES-GCM, is the most secure and modern approach for encryption/decryption and ha
 ![Preview](assets/previews/windows_preview_4.png)  
 
 ### 3.) Encrypt/decrypt a file or an entire folder  
+</br></br>
 
 ## Usage (Linux):
 
