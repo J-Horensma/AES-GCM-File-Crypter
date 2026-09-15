@@ -4,7 +4,7 @@
 # AES-GCM File-Crypter (Graphical User Interface)  
 </br>
 
-## What Does This Application Do?
+## About This Application:
 This application, makes AES-GCM cryptography of files and/or entire folders, quick, secure, and easy.
 </br></br>
 
