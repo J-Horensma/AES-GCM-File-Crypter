@@ -4,16 +4,20 @@ Custom License, With Redistribution Restrictions
 
 "aes_gcm_crypt" Copyright © 2026 Joel Horensma
 
-For clarity, "software", means this file, "personal", means not for profit, and "commercial", means for profit.
+For clarity:
+"software" means the source code of this file.
+"personal" means any use not intended for financial gain.
+"commercial" means use with product(s) and/or service(s) intended for financial gain.
 
-This software, may be used, modified, and/or incorporated, into personal projects, for personal use.
-This software, may be used commercially, for commercial use, as long as, the source code of the product, contains substantial original additions and/or
-modifications, to the original code.
+This software may be used, modified, and/or incorporated into projects for personal use.
 
-Redistribution, for commercial purpose, of the unmodified software, or a substantially
-unchanged copy of it, is prohibited, without prior written permission.
+Commercial use of this software is allowed when:
+1.) Substantial modifications and/or additions have first been incorporated into the software (More than minor cosmetic and/or structural changes).
+2.) The software changes must be reasonably demonstrable in the behavior, functionality, and/or structure of the running software(s) and/or service(s).
 
-This copyright notice and license must be retained, in all copies, of the software.
+Redistribution, with commercial intent, of the unmodified software, or a substantially unchanged copy of it, is prohibited without prior written permission.
+
+This copyright notice and license must be retained, precisely as-is, in all copies of the software.
 '''
 
 __name__ = 'aes_gcm_crypt'
