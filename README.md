@@ -17,10 +17,13 @@ This feature, is designed to prevent recovery of the original file's content, fr
 AES-GCM, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
 <br></br>
 
-## Usage (Windows):  
+## Usage: 
+
 </br>
 
-### 1.) Pick encryption/decryption options  
+### Windows
+
+#### 1.) Pick encryption/decryption options  
 
 ![Preview](assets/previews/windows_preview_1.png)
 ![Preview](assets/previews/windows_preview_2.png)
