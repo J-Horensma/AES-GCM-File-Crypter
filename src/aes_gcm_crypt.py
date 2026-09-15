@@ -21,7 +21,7 @@ __name__ = 'aes_gcm_crypt'
 __version__ = '1.0.0.0'
 __author__ = 'Joel Horensma'
 __email__ = 'N/A'
-__license__ = 'Commercial-Use License, With Redistribution Restrictions'
+__license__ = 'Custom License, With Redistribution Restrictions'
 __description__ = 'A cryptography library, for secure cryptography of variables, files, and/or entire folders, with AES-GCM cryptography and forensic recovery prevention.'
 
 from io import IOBase
