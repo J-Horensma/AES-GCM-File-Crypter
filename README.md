@@ -1,7 +1,7 @@
 ![Preview](assets/icon/ico/256x256.ico)  
 </br>
 
-# AES-GCM File-Crypter (Graphical User Interface)  
+# AES-GCM File-Crypter  
 </br></br>
 
 ## About This Application:
@@ -17,9 +17,11 @@ This feature, is designed to prevent recovery of data, from the RAM, of the devi
 ### 2.) Disk Data Recovery Prevention
 After the encryption/decryption step, a temporary file is made, where the encrypted/decrypted data is copied to, then the temporary file, is re-named to the original file's name, after the original file's deletion. The original file, is over-written with random bytes, then deleted, and the temporary file, is re-named to the original file's name, as previously mentioned. \
 This feature, is designed to prevent recovery of the original file's content, from the disk of the device using this application.
+</br></br>
 
 ## What Is AES-GCM?
 AES-GCM, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
+</br></br>
 
 ## Usage (Windows): 
 
