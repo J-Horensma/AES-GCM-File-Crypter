@@ -9,9 +9,9 @@ For clarity:
 - "commercial", means use with a product and/or service, intended for financial gain
 
 This software, may be used, modified, and/or incorporated, into projects, for personal use.
-Commercial use of this software, is allowed, only when substancial modifications and/or additions have first been incorporated, 
-into the final software, meaning more than minor cosmetic and/or structural modifications and/or additions,
-have been incorporated, into the software, and this must be demonstratable, when using the resulting software.
+Commercial use of this software, is allowed, only when:
+1.) Substancial modifications and/or additions have first been incorporated, into the software (More than minor cosmetic and/or structural changes)
+2.) The resulting software changes, must be demonstratable, while the software/service is running
 
 Redistribution, with commercial intent, of the unmodified software, or a substantially
 unchanged copy of it, is prohibited, without prior written permission.
