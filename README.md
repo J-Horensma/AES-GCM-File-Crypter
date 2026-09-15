@@ -4,8 +4,8 @@
 # AES-GCM File-Crypter  
 </br></br>
 
-## About This Application:
-This application, makes AES-GCM cryptography of files and/or entire folders, quick, secure, and easy.
+## About:
+
 </br></br>
 
 ## Forensic Recovery Prevention Features:
