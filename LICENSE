@@ -4,16 +4,16 @@ Custom License, With Redistribution Restrictions
 "AES-GCM File-Crypter" Copyright © 2026 Joel Horensma
 
 For clarity:
-- "software", means the content of "AES-GCM File-Crypter.pyw"
-- "personal", means any use, not intended for financial gain
-- "commercial", means use with product/s and/or service/s, intended for financial gain
+"software" means the content of AES-GCM File-Crypter.pyw.
+"personal" means any use not intended for financial gain.
+"commercial" means use with product(s) and/or service(s) intended for financial gain.
 
-This software, may be used, modified, and/or incorporated, into projects, for personal use.
-Commercial use of this software, is allowed, only when:
-1.) Substantial modifications and/or additions have first been incorporated, into the software (More than minor cosmetic and/or structural changes)
-2.) The software changes, must be reasonably demonstrable, in the behavior, functionality, and/or structure of the running software/s and/or service/s.
+This software may be used, modified, and/or incorporated into projects for personal use.
 
-Redistribution, with commercial intent, of the unmodified software, or a substantially
-unchanged copy of it, is prohibited, without prior written permission.
+Commercial use of this software is allowed only when:
+1.) Substantial modifications and/or additions have first been incorporated into the software (more than minor cosmetic and/or structural changes).
+2.) The software changes must be reasonably demonstrable in the behavior, functionality, and/or structure of the running software(s) and/or service(s).
 
-This copyright notice and license must be retained, in all copies, of the software.
+Redistribution, with commercial intent, of the unmodified software, or a substantially unchanged copy of it, is prohibited without prior written permission.
+
+This copyright notice and license must be retained in all copies of the software.
