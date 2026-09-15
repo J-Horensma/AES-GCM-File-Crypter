@@ -15,7 +15,6 @@ This feature, is designed to prevent recovery of the original file's content, fr
 
 ## What Is AES-GCM?
 AES-GCM, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
-<br></br>
 
 ## Usage (Windows): 
 
@@ -30,7 +29,6 @@ AES-GCM, is the most secure and modern approach for encryption/decryption and ha
 ![Preview](assets/previews/windows_preview_4.png)  
 
 ### 3.) Encrypt/decrypt a file or an entire folder  
-<br></br>
 
 ## Usage (Linux):
 
