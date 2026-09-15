@@ -5,7 +5,7 @@
 </br></br>
 
 ## About:
-
+A GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention.
 </br></br>
 
 ## Forensic Recovery Prevention Features:
