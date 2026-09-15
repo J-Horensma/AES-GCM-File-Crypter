@@ -19,8 +19,8 @@ After the encryption/decryption step, a temporary file is made, where the encryp
 This feature, is designed to prevent recovery of the original file's content, from the disk of the device using this application.
 </br></br>
 
-## What Is AES-GCM?
-AES-GCM, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
+## What Is AES-GCM Cryptography?
+AES-GCM Cryptography, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
 </br></br>
 
 ## Usage (Windows): 
