@@ -1,8 +1,7 @@
 ![Preview](assets/icon/ico/256x256.ico)  
 </br>
 
-# AES-GCM File-Crypter  
-</br></br>
+# AES-GCM File-Crypter
 
 ## About:
 A GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention.
