@@ -1,8 +1,8 @@
 ![Preview](assets/icon/ico/256x256.ico)  
-<br></br>
+</br>
 
 # AES-GCM File-Crypter (Graphical User Interface)  
-</br>
+</br></br>
 
 ## About This Application:
 This application, makes AES-GCM cryptography of files and/or entire folders, quick, secure, and easy.
