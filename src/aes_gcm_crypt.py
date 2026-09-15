@@ -1,6 +1,6 @@
 '''
-Commercial-Use License, With Redistribution Restrictions
---------------------------------------------------------
+Custom License, With Redistribution Restrictions
+------------------------------------------------
 
 "aes_gcm_crypt" Copyright © 2026 Joel Horensma
 
@@ -11,7 +11,7 @@ Any modified version/s and/or products incorporating the software, may be distri
 commercially (Without written notice), provided that it/they (The source code, being sold) contains substantial original additions or
 modifications.
 
-Sale of the unmodified software, or a substantially
+Redistribution, for commercial purpose, of the unmodified software, or a substantially
 unchanged copy of it, is prohibited, without prior written permission.
 
 The copyright notice and this license must be retained, in all copies, of the software.
