@@ -10,7 +10,7 @@ A GUI application, for securely encrypting/decrypting files and/or entire folder
 ## What Is AES-GCM Cryptography?
 AES-GCM Cryptography, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).
 
-## Forensic Recovery Prevention Features:
+## Forensic Recovery Prevention Features, Of This Application:
 
 ### 1.) RAM Data Recovery Prevention
 When encrypting/decrypting with this application, data normally stored, in the computer's RAM, until an application is closed, is immediately removed, after the encryption/decryption is finished. \
