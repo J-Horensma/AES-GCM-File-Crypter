@@ -1,6 +1,6 @@
 '''
-Custom License, With Redistribution Restrictions
-------------------------------------------------
+Custom License, With Redistribution Limitations
+-----------------------------------------------
 
 "aes_gcm_crypt" Copyright © 2026 Joel Horensma
 
