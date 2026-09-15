@@ -5,7 +5,7 @@
 <br></br>
 
 ## About This Application
-This application, is for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features. \
+This is a GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features. \
 </br>
 
 ## What Is AES-GCM Cryptography?
