@@ -8,7 +8,7 @@ This application, makes AES-GCM cryptography of files and/or entire folders, qui
 
 ## Forensic Recovery Prevention:
 1.) When encrypting/decrypting with this application, data normally stored, in the computer's RAM, until an application is closed, is immediately removed, after the encryption/decryption is finished. \
-This feature, is designed to prevent recovery of data, from the RAM, of the device using this application. \
+This feature, is designed to prevent recovery of data, from the RAM, of the device using this application.
 
 2.) After the encryption/decryption step, a temporary file is made, where the encrypted/decrypted data is copied to, then the temporary file, is re-named to the original file's name, after the original file's deletion. The original file, is over-written with random bytes, then deleted, and the temporary file, is re-named to the original file's name, as previously mentioned. \
 This feature, is designed to prevent recovery of the original file's content, from the disk of the device using this application.
