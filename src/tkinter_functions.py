@@ -7,7 +7,7 @@ Custom License, With Redistribution Restrictions
 For clarity, "software", means this file, "personal", means not for profit, and "commercial", means for profit.
 
 This software may be used, modified, and/or incorporated into personal and/or commercial products.
-Any modified version/s or products incorporating the software, may be distributed
+Any modified version, incorporating the software, may be distributed
 commercially, provided that the source code, of the product, being sold, contains substantial original additions and/or
 modifications.
 
