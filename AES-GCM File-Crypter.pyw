@@ -7,14 +7,14 @@ Custom License, With Redistribution Restrictions
 For clarity, "software", means this file, "personal", means not for profit, and "commercial", means for profit.
 
 This software may be used, modified, and/or incorporated into personal and/or commercial products.
-Any modified version/s and/or products incorporating the software, may be distributed
-commercially (Without written notice), provided that it/they (The source code, of the product, being sold) contains substantial original additions and/or
+Any modified version/s or products incorporating the software, may be distributed
+commercially, provided that the source code, of the product, being sold, contains substantial original additions and/or
 modifications.
 
 Redistribution, for commercial purpose, of the unmodified software, or a substantially
 unchanged copy of it, is prohibited, without prior written permission.
 
-The copyright notice and this license must be retained, in all copies, of the software.
+This copyright notice and license must be retained, in all copies, of the software.
 '''
 
 __name__ = 'AES-GCM File-Crypter'
