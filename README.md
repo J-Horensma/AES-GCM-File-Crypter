@@ -17,7 +17,7 @@ This feature, is designed to prevent recovery of the original file's content, fr
 AES-GCM, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
 <br></br>
 
-## Windows Version (In the "dist/windows" folder):  
+## Usage (Windows):  
 </br>
 
 ### 1.) Pick encryption/decryption options  
@@ -33,7 +33,7 @@ AES-GCM, is the most secure and modern approach for encryption/decryption and ha
 ### 3.) Encrypt/decrypt a file or an entire folder  
 <br></br>
 
-## Linux Version (In the "dist/linux" folder):  
+## Usage (Linux):  
 </br>
 
 ### 1.) Pick encryption/decryption options  
