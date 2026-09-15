@@ -4,7 +4,7 @@
 # AES-GCM File-Crypter
 <br></br>
 
-## About This Application:
+## About This Application
 This application, is for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features. \
 </br>
 
