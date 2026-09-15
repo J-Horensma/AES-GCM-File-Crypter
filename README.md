@@ -17,39 +17,34 @@ This feature, is designed to prevent recovery of the original file's content, fr
 AES-GCM, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
 <br></br>
 
-## Usage: 
+## Usage (Windows): 
 
-</br>
-
-### Windows:
-
-#### 1.) Pick encryption/decryption options  
+### 1.) Pick encryption/decryption options  
 
 ![Preview](assets/previews/windows_preview_1.png)
 ![Preview](assets/previews/windows_preview_2.png)
 ![Preview](assets/previews/windows_preview_3.png)  
 
-#### 2.) Enter the password  
+### 2.) Enter the password  
 
 ![Preview](assets/previews/windows_preview_4.png)  
 
-#### 3.) Encrypt/decrypt a file or an entire folder  
+### 3.) Encrypt/decrypt a file or an entire folder  
 <br></br>
 
-### Linux:  
-</br>
+## Usage (Linux):
 
-#### 1.) Pick encryption/decryption options  
+### 1.) Pick encryption/decryption options  
 
 ![Preview](assets/previews/linux_preview_1.png)
 ![Preview](assets/previews/linux_preview_2.png)
 ![Preview](assets/previews/linux_preview_3.png)  
 
-#### 2.) Enter the password  
+### 2.) Enter the password  
 
 ![Preview](assets/previews/linux_preview_4.png)  
 
-#### 3.) Encrypt/decrypt a file or an entire folder  
+### 3.) Encrypt/decrypt a file or an entire folder  
 <br></br>
 
 ## Compile, Yourself (Optional):  
