@@ -5,7 +5,7 @@ Custom License, With Redistribution Limitations
 "AES-GCM File-Crypter" Copyright © 2026 Joel Horensma
 
 For clarity:
-"software" means the content of the file "AES-GCM File-Crypter.pyw".
+"software" means the content of this file.
 "personal" means any use not intended for financial gain.
 "commercial" means use with product(s) and/or service(s) intended for financial gain.
 
