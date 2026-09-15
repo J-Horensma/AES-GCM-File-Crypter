@@ -10,7 +10,7 @@ A GUI application, for securely encrypting/decrypting files and/or entire folder
 
 ## What Is AES-GCM Cryptography?
 AES-GCM Cryptography, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit).  
-</br></br>
+</br>
 
 ## Forensic Recovery Prevention Features:
 
