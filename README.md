@@ -4,7 +4,7 @@
 # AES-GCM File-Crypter (Graphical User Interface)  
 
 ## What Does This Application Do?
-This application, makes AES-GCM cryptography of files and/or entire folders, quick and easy for Windows and Linux.
+This application, makes AES-GCM cryptography of files and/or entire folders, quick, easy, and secure.
 
 ## Forensic Recovery Prevention:
 1.) When encrypting/decrypting with this application, data normally stored, in the computer's RAM, until an application is closed, is immediately removed, after the encryption/decryption is finished. \
