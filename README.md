@@ -2,8 +2,9 @@
 </br>
 
 # AES-GCM File-Crypter
+</br>
 
-## About:
+## About This Application:
 A GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention.
 
 ## What Is AES-GCM Cryptography?
