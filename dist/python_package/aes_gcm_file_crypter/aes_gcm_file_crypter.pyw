@@ -329,7 +329,7 @@ def main():
         print(f'{ERROR}\nclosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
-#LAUNCH THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
+#CALL THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
 if __package__ in (None, ''):
     main()
 else:
