@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aes-gcm-file-crypter"
-version = "1.0.0.0"
+version = "1.0.0"
 description = "A GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -29,4 +29,4 @@ aes_gcm_file_crypter = [
 ]
 
 [project.scripts]
-aesgcm = "aes_gcm_file_crypter.__main__:main"
+aes_gcm_file_crypter = "aes_gcm_file_crypter.__main__:main"
