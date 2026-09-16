@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aes-gcm-file-crypter"
+version = "1.0.0"
+description = "A GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Joel Horensma" }
+]
+requires-python = ">=3.8"
+
+dependencies = [
+    "cryptography>=42.0.0",
+    "pywin32; platform_system=='Windows'"
+]
+
+[tool.setuptools]
+packages = ["aes_gcm_file_crypter"]
+
+[tool.setuptools.package-data]
+aes_gcm_file_crypter = [
+    "assets/icon/ico/*",
+    "assets/icon/png/*",
+    "src/*.py"
+]
+
+[project.scripts]
+aesgcm = "aes_gcm_file_crypter.__main__:main"
