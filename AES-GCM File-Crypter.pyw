@@ -61,6 +61,7 @@ def main():
             ROOT_WINDOW.quit()
         from signal import signal, SIGTSTP
         signal(SIGTSTP, handle_ctrl_z)
+        
     def disable_buttons():
         ENCRYPT_FOLDER_BUTTON.config(state='disabled')
         DECRYPT_FOLDER_BUTTON.config(state='disabled')
@@ -325,7 +326,7 @@ def main():
         print('"Ctrl + c", was pressed, closing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
     except BaseException as ERROR:
-        print(ERROR, 'closing AES-GCM File-Crypter...')
+        print(f'{ERROR}\nclosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
 #LAUNCH THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
@@ -333,5 +334,6 @@ if __package__ in (None, ''):
     main()
 else:
     #SKIP CALLING THE "main()" FUNCTION, IF THIS FILE IS IMPORTED AS A PYTHON PACKAGE,
-    #SO THE "main()" FUNCTION DOES NOT RE-LAUNCH, WHEN THE APPLICATION IS CLOSED
+    #SO THE "main()" FUNCTION, DOES NOT RE-LAUNCH WHEN THE APPLICATION IS CLOSED, BECAUSE IT IS CALLED
+    #BY "__main__.py"
     pass
