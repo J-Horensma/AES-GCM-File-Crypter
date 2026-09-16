@@ -337,3 +337,4 @@ else:
     #SO THE "main()" FUNCTION, DOES NOT RE-LAUNCH WHEN THE APPLICATION IS CLOSED, BECAUSE IT IS CALLED
     #BY "__main__.py"
     pass
+s
