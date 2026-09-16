@@ -21,7 +21,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 '''
 
 __name__ = 'AES-GCM File-Crypter'
-__version__ = '1.0.0.0'
+__version__ = '1.0.0'
 __author__ = 'Joel Horensma'
 __email__ = 'N/A'
 __license__ = 'Custom License, With Redistribution Restrictions'
