@@ -559,4 +559,3 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             return None
         except BaseException as ERROR:
             raise Exception(f'[Exception]\nFunction: "aes_gcm_decrypt_variable()"\n{ERROR}')
-s
