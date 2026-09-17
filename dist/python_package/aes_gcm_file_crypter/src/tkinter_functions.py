@@ -20,13 +20,6 @@ Redistribution, with commercial intent, of the unmodified software, or a substan
 This copyright notice and license must be retained, precisely as-is, in all copies of the software.
 '''
 
-__name__ = 'tkinter_functions'
-__version__ = '1.0.0'
-__author__ = 'Joel Horensma'
-__email__ = 'N/A'
-__license__ = 'Custom License, With Redistribution Restrictions'
-__description__ = 'A tkinter library, for various usages.'
-
 from os.path import abspath, isdir, isfile, expanduser
 from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
