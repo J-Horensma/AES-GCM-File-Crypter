@@ -20,13 +20,6 @@ Redistribution, with commercial intent, of the unmodified software, or a substan
 This copyright notice and license must be retained, precisely as-is, in all copies of the software.
 '''
 
-__name__ = 'aes_gcm_crypt'
-__version__ = '1.0.0'
-__author__ = 'Joel Horensma'
-__email__ = 'N/A'
-__license__ = 'Custom License, With Redistribution Restrictions'
-__description__ = 'A cryptography library, for secure cryptography of variables, files, and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features.'
-
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
 from os.path import abspath, join, isdir, isfile
