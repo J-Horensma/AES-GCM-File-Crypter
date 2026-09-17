@@ -20,13 +20,6 @@ Redistribution, with commercial intent, of the unmodified software, or a substan
 This copyright notice and license must be retained, precisely as-is, in all copies of the software.
 '''
 
-__name__ = 'AES-GCM File-Crypter'
-__version__ = '1.0.0'
-__author__ = 'Joel Horensma'
-__email__ = 'N/A'
-__license__ = 'Custom License, With Redistribution Restrictions'
-__description__ = 'A GUI application, for securely encrypting/decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features.'
-
 from threading import Thread
 from os.path import abspath, normpath, dirname, join
 from platform import system
