@@ -273,9 +273,9 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     ROOT_WINDOW = Tk()
-    BASE_DIRECTORY = dirname(abspath(__file__))
-    ICON_ICO = join(BASE_DIRECTORY, normpath('assets/icon/ico/icon.ico'))
-    ICON_PNG = join(BASE_DIRECTORY, normpath('assets/icon/png/256x256.png'))
+    BASE_DIRECTORY = dirname(__file__)
+    ICON_ICO = join(BASE_DIRECTORY, normpath(r'assets\icon\ico\icon.ico'))
+    ICON_PNG = join(BASE_DIRECTORY, normpath(r'assets\icon\png\256x256.png'))
     set_window_icon(ROOT_WINDOW, ICON_ICO, ICON_PNG)
     ROOT_WINDOW.configure(bg='#D3D5D4')
     WINDOW_WIDTH = 900
