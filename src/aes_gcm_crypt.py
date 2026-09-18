@@ -77,8 +77,8 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
 #3.) RETURNS "True" OR "False"
 def is_normal(PATH):
     try:
-        #CHECK IF THE PATH, IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
         PATH = abspath(PATH)
+        #CHECK IF THE PATH, IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
         PATH_STATUS = Path(PATH).lstat()
         PATH_MODE = PATH_STATUS.st_mode
         if not any([S_ISDIR(PATH_MODE), S_ISREG(PATH_MODE)]):
@@ -296,8 +296,10 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a string type.')
-    elif not isabs(FILE_PATH) and isfile(FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be an absolute path to an existing file.')
+    elif not isabs(FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be an absolute path.')
+    elif not isfile(FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
     elif not isinstance(PASSWORD, str):
@@ -307,7 +309,6 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     elif BLOCK_SIZE is not None and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter, must be an integer type.')
     try:
-        FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
         #USING THE "get_aes_key_and_salt()" FUNCTION, IN COMBINATION,
@@ -396,6 +397,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
 def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be a string type.')
+    elif not isabs(FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be a path to an existing file.')
     elif not isinstance(PASSWORD, str):
