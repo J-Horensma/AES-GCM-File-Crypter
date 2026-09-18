@@ -25,7 +25,7 @@ from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS, AS WELL AS, ABSOLUTE ICON ICO AND ICON PNG FILE PATH STRINGS
+#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS, AS WELL AS, ICON ICO AND ICON PNG FILE PATH STRINGS
 #2.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
     if not isinstance(WINDOW, (Tk, Toplevel)):
@@ -90,24 +90,24 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
-#2.) ACCEPTS OPTIONAL ICON_ICO AND ICON_PNG FULL PATH STRINGS
+#2.) ACCEPTS OPTIONAL ICON_ICO AND ICON_PNG FILE PATH STRINGS
 #3.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT MESSAGE STRINGS
 #4.) IF NO PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S ARE SUPPLIED, DEFAULT/S IS/ARE SET
 #5.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
 #6.) RETURNS THE USER-SELECTED OPTION, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
-def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO=None, ICON_PNG=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
+def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
     elif DROPDOWN_MENU_OPTIONS is not None and not isinstance(DROPDOWN_MENU_OPTIONS, list):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter, must be a list type.')
-    elif ICON_ICO is not None and not isinstance(ICON_ICO, str):
-        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico parameter, must be a string type.')
-    elif ICON_ICO is not None and not isfile(ICON_ICO):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico parameter, must be an existing absolute file path.')
-    elif ICON_PNG is not None and not isinstance(ICON_PNG, str):
-        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon png parameter, must be a string type.')
-    elif ICON_PNG is not None and not isfile(ICON_PNG):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png parameter, must be an existing absolute file path.')
+    elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be a string type.')
+    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be an existing absolute file path.')
+    elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be a string type.')
+    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be an existing absolute file path.')
     elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt title parameter, must be a string type.')
     elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
@@ -123,8 +123,8 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO=None, ICON
         DROPDOWN_MENU_WINDOW.destroy()
     #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
     DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
-    if ICON_ICO and ICON_PNG:
-        set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO, ICON_PNG)
+    if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
+        set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
     #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
     DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
     DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
@@ -168,22 +168,22 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) ACCEPTS OPTIONAL ICON_ICO AND ICON_PNG ABSOLUTE PATH STRINGS
+#2.) ACCEPTS OPTIONAL ICON_ICO AND ICON_PNG FILE PATH STRINGS
 #3.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT MESSAGE STRINGS
 #4.) IF NO PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S ARE SUPPLIED, DEFAULT/S IS/ARE SET
 #5.) PROMPTS THE USER TO INPUT A PASSWORD
 #6.) ALLOWS THE USER TO SHOW/HIDE, THE INPUT
-def password_input_prompt(ROOT_WINDOW, ICON_ICO=None, ICON_PNG=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
+def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
-    elif ICON_ICO is not None and not isinstance(ICON_ICO, str):
-            raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe icon ico parameter, must be a string type.')
-    elif ICON_ICO is not None and not isfile(ICON_ICO):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon ico parameter, must be an existing absolute file path.')
-    elif ICON_PNG is not None and not isinstance(ICON_PNG, str):
-        raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe icon png parameter, must be a string type.')
-    elif ICON_PNG is not None and not isfile(ICON_PNG):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon png parameter, must be an existing absolute file path.')
+    elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
+            raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be a string type.')
+    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be an existing absolute file path.')
+    elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be a string type.')
+    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be an existing absolute file path.')
     elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe prompt title parameter, must be a string type.')
     elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
@@ -199,8 +199,8 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO=None, ICON_PNG=None, PROMPT_TITL
         PASSWORD_INPUT_WINDOW.destroy()
     #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
     PASSWORD_INPUT_WINDOW = Toplevel(ROOT_WINDOW)
-    if ICON_ICO and ICON_PNG:
-        set_window_icon(PASSWORD_INPUT_WINDOW, ICON_ICO, ICON_PNG)
+    if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
+        set_window_icon(PASSWORD_INPUT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
     #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
     PASSWORD_INPUT_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
     PASSWORD_INPUT_WINDOW.title(PROMPT_TITLE)
@@ -241,7 +241,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     elif PROMPT_PATH is not None and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be an existing absolute folder path.')
     PROMPT_TITLE = 'Choose A Folder:' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_PATH = abspath(expanduser('~')) if PROMPT_PATH is None else abspath(PROMPT_PATH)
+    PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
     PATH = filedialog.askdirectory(
         title=PROMPT_TITLE,
         initialdir=PROMPT_PATH
@@ -265,7 +265,7 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     elif FILE_TYPES is not None and not isinstance(FILE_TYPES, list):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe file types parameter, must be a list type.')
     PROMPT_TITLE = 'Choose A File' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_PATH = abspath(expanduser('~')) if PROMPT_PATH is None else abspath(PROMPT_PATH)
+    PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
     FILE_TYPES = [('All Files', '*.*')] if FILE_TYPES is None else FILE_TYPES
     PATH = filedialog.askopenfilename(
         title=PROMPT_TITLE,
