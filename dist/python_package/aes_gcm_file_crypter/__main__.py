@@ -44,21 +44,25 @@ def cli():
     ARGUMENTS = PARSER.parse_args()
     if ARGUMENTS.COMMAND == 'encrypt_folder':
         from .src.aes_gcm_crypt import aes_gcm_encrypt_folder
+        print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
         ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, ARGUMENTS.password)
         print(ENCRYPT_RESULT[1])
         return
     elif ARGUMENTS.COMMAND == 'decrypt_folder':
         from .src.aes_gcm_crypt import aes_gcm_decrypt_folder
+        print(f'Decrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
         DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.password)
         print(DECRYPT_RESULT[1])
         return
     elif ARGUMENTS.COMMAND == 'encrypt_file':
         from .src.aes_gcm_crypt import aes_gcm_encrypt_file
+        print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
         ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, ARGUMENTS.password)
         print(ENCRYPT_RESULT[1])
         return
     elif ARGUMENTS.COMMAND == 'decrypt_file':
         from .src.aes_gcm_crypt import aes_gcm_decrypt_file
+        print(f'Decrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
         DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, ARGUMENTS.password)
         print(DECRYPT_RESULT[1])
         return
