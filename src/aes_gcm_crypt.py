@@ -555,4 +555,3 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             return [False, f'INCORRECT_PASSWORD!']
         except BaseException as ERROR:
             return [False, f'ERROR!\n{ERROR}']
-s
