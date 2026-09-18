@@ -22,7 +22,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
-from os.path import abspath, join, isdir, isfile
+from os.path import isabs, abspath, isdir, isfile, join
 from platform import system
 from stat import S_ISDIR, S_ISREG
 from pathlib import Path
@@ -77,8 +77,8 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
 #3.) RETURNS "True" OR "False"
 def is_normal(PATH):
     try:
-        #CHECK IF THE PATH, IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
         PATH = abspath(PATH)
+        #CHECK IF THE PATH, IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
         PATH_STATUS = Path(PATH).lstat()
         PATH_MODE = PATH_STATUS.st_mode
         if not any([S_ISDIR(PATH_MODE), S_ISREG(PATH_MODE)]):
@@ -137,7 +137,7 @@ def has_permissions(PATH, PERMISSIONS):
             ]
             CreateFileW.restype = wintypes.HANDLE
             def can_access(PATH):
-                handle = CreateFileW(
+                HANDLE = CreateFileW(
                     PATH,
                     GENERIC_READ,
                     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -146,9 +146,9 @@ def has_permissions(PATH, PERMISSIONS):
                     FILE_FLAG_BACKUP_SEMANTICS,
                     None
                 )
-                if handle == wintypes.HANDLE(-1).value:
+                if HANDLE == wintypes.HANDLE(-1).value:
                     return False
-                kernel32.CloseHandle(handle)
+                kernel32.CloseHandle(HANDLE)
                 return True
             if not can_access(PATH):
                 return False
@@ -231,6 +231,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a string type.')
+    elif not isabs(FOLDER_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
@@ -240,7 +242,6 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     elif not PASSWORD.strip():
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter, cannot be empty.')
     try:
-        FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
@@ -263,6 +264,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a string type.')
+    elif not isabs(FOLDER_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     elif not isinstance(PASSWORD, str):
@@ -270,7 +273,6 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
     elif not PASSWORD.strip():
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, cannot be empty.')
     try:
-        FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
@@ -294,6 +296,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a string type.')
+    elif not isabs(FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
@@ -305,7 +309,6 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     elif BLOCK_SIZE is not None and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter, must be an integer type.')
     try:
-        FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
         #USING THE "get_aes_key_and_salt()" FUNCTION, IN COMBINATION,
@@ -394,6 +397,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
 def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be a string type.')
+    elif not isabs(FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be a path to an existing file.')
     elif not isinstance(PASSWORD, str):
