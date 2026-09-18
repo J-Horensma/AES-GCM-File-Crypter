@@ -231,8 +231,10 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a string type.')
-    elif not isabs(FOLDER_PATH) and isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be an absolute path to an existing folder.')
+    elif not isabs(FOLDER_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be an absolute path.')
+    elif not isdir(FOLDER_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
     elif not isinstance(PASSWORD, str):
@@ -262,8 +264,10 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a string type.')
-    elif not isabs(FOLDER_PATH) and isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be an absolute path to an existing folder.')
+    elif not isabs(FOLDER_PATH):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be an absolute path.')
+    elif not isdir(FOLDER_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     elif not isinstance(PASSWORD, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, must be a string type.')
     elif not PASSWORD.strip():
@@ -292,8 +296,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a string type.')
-    elif not isfile(FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a path to an existing file.')
+    elif not isabs(FILE_PATH) and isfile(FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be an absolute path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
     elif not isinstance(PASSWORD, str):
