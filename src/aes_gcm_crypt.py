@@ -22,7 +22,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
-from os.path import abspath, join, isdir, isfile
+from os.path import isabs, abspath, isdir, isfile, join
 from platform import system
 from stat import S_ISDIR, S_ISREG
 from pathlib import Path
@@ -231,8 +231,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a string type.')
-    elif not isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
+    elif not isabs(FOLDER_PATH) and isdir(FOLDER_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be an absolute path to an existing folder.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
     elif not isinstance(PASSWORD, str):
@@ -240,7 +240,6 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     elif not PASSWORD.strip():
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter, cannot be empty.')
     try:
-        FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
@@ -263,14 +262,13 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a string type.')
-    elif not isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
+    elif not isabs(FOLDER_PATH) and isdir(FOLDER_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be an absolute path to an existing folder.')
     elif not isinstance(PASSWORD, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, must be a string type.')
     elif not PASSWORD.strip():
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, cannot be empty.')
     try:
-        FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
