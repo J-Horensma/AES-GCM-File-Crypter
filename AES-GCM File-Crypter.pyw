@@ -109,11 +109,11 @@ def main():
         ACTIVITY_LOG.see('end')
         PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
         PROGRESS_BAR.pack(fill='both')
-        def finish_process(RESULT):
+        def finish_process(ENCRYPT_RESULT):
             PROGRESS_BAR.stop()
             PROGRESS_BAR.pack_forget()
             enable_buttons()
-            ACTIVITY = RESULT[1]
+            ACTIVITY = ENCRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
@@ -121,8 +121,8 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(RESULT))
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD)
+            ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_folder_thread():    
@@ -151,11 +151,11 @@ def main():
         ACTIVITY_LOG.see('end')
         PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
         PROGRESS_BAR.pack(fill='both')
-        def finish_process(RESULT):
+        def finish_process(DECRYPT_RESULT):
             PROGRESS_BAR.stop()
             PROGRESS_BAR.pack_forget()
             enable_buttons()
-            ACTIVITY = RESULT[1]
+            ACTIVITY = DECRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
@@ -163,8 +163,8 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(RESULT))
+            DECRYPT_RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD)
+            ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_encrypt_file_thread():
@@ -207,11 +207,11 @@ def main():
         ACTIVITY_LOG.see('end')
         PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
         PROGRESS_BAR.pack(fill='both')
-        def finish_process(RESULT):
+        def finish_process(ENCRYPT_RESULT):
             PROGRESS_BAR.stop()
             PROGRESS_BAR.pack_forget()
             enable_buttons()
-            ACTIVITY = RESULT[1]
+            ACTIVITY = ENCRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
@@ -219,8 +219,8 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(RESULT))
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD)
+            ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_file_thread():
@@ -249,11 +249,11 @@ def main():
         ACTIVITY_LOG.see('end')
         PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
         PROGRESS_BAR.pack(fill='both')
-        def finish_process(RESULT):
+        def finish_process(DECRYPT_RESULT):
             PROGRESS_BAR.stop()
             PROGRESS_BAR.pack_forget()
             enable_buttons()
-            ACTIVITY = RESULT[1]
+            ACTIVITY = DECRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
@@ -261,15 +261,15 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(RESULT))
+            DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD)
+            ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
     ROOT_WINDOW = Tk()
     BASE_DIRECTORY = abspath(dirname(__file__))
     ICON_ICO_PATH = join(BASE_DIRECTORY, 'assets', 'icon', 'ico', 'icon.ico'))
     ICON_PNG_PATH = join(BASE_DIRECTORY, 'assets', 'icon', 'png', '256x256.png'))
-    set_window_icon(ROOT_WINDOW, ICON_ICO, ICON_PNG)
+    set_window_icon(ROOT_WINDOW, ICON_ICO_PATH, ICON_PNG_PATH)
     ROOT_WINDOW.configure(bg='#D3D5D4')
     WINDOW_WIDTH = 900
     WINDOW_HEIGHT = 500
