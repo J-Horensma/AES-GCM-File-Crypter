@@ -30,13 +30,13 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 def set_window_icon(WINDOW, ICON_ICO, ICON_PNG):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class.')
-    elif ICON_ICO is not None and not isinstance(ICON_ICO, str):
+    elif not isinstance(ICON_ICO, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon ico parameter, must be a string type.')
-    elif ICON_ICO is not None and not isfile(ICON_ICO):
+    elif not isfile(ICON_ICO):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon ico parameter, must be an existing absolute file path.')
-    elif ICON_PNG is not None and not isinstance(ICON_PNG, str):
+    elif ICON_PNG not isinstance(ICON_PNG, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon png parameter, must be a string type.')
-    elif ICON_PNG is not None and not isfile(ICON_PNG):
+    elif not isfile(ICON_PNG):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon png parameter, must be an existing absolute file path.')
     if system() == 'Windows':
         ICON_IMAGE = PhotoImage(file=ICON_PNG)
