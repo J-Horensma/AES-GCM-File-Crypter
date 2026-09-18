@@ -137,7 +137,7 @@ def has_permissions(PATH, PERMISSIONS):
             ]
             CreateFileW.restype = wintypes.HANDLE
             def can_access(PATH):
-                handle = CreateFileW(
+                HANDLE = CreateFileW(
                     PATH,
                     GENERIC_READ,
                     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -146,9 +146,9 @@ def has_permissions(PATH, PERMISSIONS):
                     FILE_FLAG_BACKUP_SEMANTICS,
                     None
                 )
-                if handle == wintypes.HANDLE(-1).value:
+                if HANDLE == wintypes.HANDLE(-1).value:
                     return False
-                kernel32.CloseHandle(handle)
+                kernel32.CloseHandle(HANDLE)
                 return True
             if not can_access(PATH):
                 return False
