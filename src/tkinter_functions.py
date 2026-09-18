@@ -27,29 +27,29 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS, AS WELL AS, ABSOLUTE ICON ICO AND ICON PNG FILE PATH STRINGS
 #2.) SETS THE WINDOW ICON
-def set_window_icon(WINDOW, ICON_ICO, ICON_PNG):
+def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class.')
-    elif not isinstance(ICON_ICO, str):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon ico parameter, must be a string type.')
-    elif not isfile(ICON_ICO):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon ico parameter, must be an existing absolute file path.')
-    elif ICON_PNG not isinstance(ICON_PNG, str):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon png parameter, must be a string type.')
-    elif not isfile(ICON_PNG):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon png parameter, must be an existing absolute file path.')
+    elif not isinstance(ICON_ICO_FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon ico file path parameter, must be a string type.')
+    elif not isfile(ICON_ICO_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon ico file path parameter, must be an existing absolute file path.')
+    elif ICON_PNG_FILE_PATH not isinstance(ICON_PNG_FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon png file path parameter, must be a string type.')
+    elif not isfile(ICON_PNG_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon png file path parameter, must be an existing absolute file path.')
     if system() == 'Windows':
-        ICON_IMAGE = PhotoImage(file=ICON_PNG)
+        ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
         WINDOW.iconphoto(True, ICON_IMAGE)
         try:
-            WINDOW.iconbitmap(ICON_ICO)
+            WINDOW.iconbitmap(ICON_ICO_FILE_PATH)
         except:
             pass
     elif system() == 'Darwin':
-        ICON_IMAGE = PhotoImage(file=ICON_ICO)
+        ICON_IMAGE = PhotoImage(file=ICON_ICO_FILE_PATH)
         WINDOW.iconphoto(True, ICON_IMAGE)
     else:
-        ICON_IMAGE = PhotoImage(file=ICON_PNG)
+        ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
         WINDOW.iconphoto(True, ICON_IMAGE)
 
 #THIS FUNCTION:
