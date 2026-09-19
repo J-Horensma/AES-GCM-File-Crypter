@@ -123,27 +123,27 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
     elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be set if using an icon with this function, on Mac.')
-    elif system() not in ['Windows', 'Darwin'] and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
+    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be set if using an icon with this function, on an OS other than Mac.')
-    if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
-    elif DROPDOWN_MENU_OPTIONS is not None and not isinstance(DROPDOWN_MENU_OPTIONS, list):
+    elif not isinstance(ROOT_WINDOW, Tk):
+        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
+    elif not isinstance(DROPDOWN_MENU_OPTIONS, list):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter, must be a list type.')
-    elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
+    elif not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be a string type.')
-    elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
+    elif not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be a string type.')
-    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
+    elif not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt title parameter, must be a string type.')
-    elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
+    elif not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt message parameter, must be a string type.')
-    elif ICON_ICO_FILE_PATH is not None and not isabs(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be an absolute path.')
-    elif ICON_PNG_FILE_PATH is not None and not isabs(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be an absolute path.')
-    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be a path to an existing file.')
     try:
         PROMPT_TITLE = 'Select An Option:' if PROMPT_TITLE is None else PROMPT_TITLE
