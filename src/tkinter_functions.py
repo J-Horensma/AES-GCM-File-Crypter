@@ -26,9 +26,9 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS,
-#ICON ICO FILE PATH AND ICON PNG FILE PATH STRINGS
-#2.) SETS THE WINDOW ICON
-def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
+#2.) ACCEPTS EITHER AN ICON ICO AND/OR AN ICON PNG FILE PATH STRING/S
+#3.) SETS THE WINDOW ICON
+def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file paths, must both be set when calling this function, on Windows.')
     elif system() == 'Darwin' and not ICON_ICO_FILE_PATH:
@@ -71,7 +71,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
 #2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN, AS A LIST
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "get_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
+        raise TypeError('[TypeError]\nFunction: "get_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
     try:
         ROOT_WINDOW.update_idletasks()
         SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
@@ -85,7 +85,7 @@ def get_device_screen_size(ROOT_WINDOW):
 #2.) CLEARS ALL WIDGETS, IN THE ROOT WINDOW
 def clear_root_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "clear_root_window()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
+        raise TypeError('[TypeError]\nFunction: "clear_root_window()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
     try:
         ROOT_WINDOW.update_idletasks()
         for WIDGET in ROOT_WINDOW.winfo_children():
@@ -98,7 +98,7 @@ def clear_root_window(ROOT_WINDOW):
 #2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENTIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class type.')
     elif not isinstance(WINDOW_WIDTH, int):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter, must be an integer.')
     elif not isinstance(WINDOW_HEIGHT, int):
