@@ -4,7 +4,7 @@
 <br></br>
 
 ## About
-This application, has a GUI and a CLI edition, for securely encrypting or decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features. \
+This application, has a GUI and a CLI edition, for securely encrypting or decrypting files and/or entire folders, with AES-GCM cryptography and recovery prevention features. \
 </br>
 
 ## What Is AES-GCM Cryptography?
