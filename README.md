@@ -4,14 +4,14 @@
 <br></br>
 
 ## About
-This application, has a GUI and a CLI edition, for securely encrypting or decrypting files and/or entire folders, with AES-GCM cryptography and recovery prevention features. \
+This application, has a GUI and a CLI edition, for securely encrypting or decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features. \
 </br>
 
-## What Is AES-GCM Cryptography?
+## Why AES-GCM Cryptography?
 AES-GCM Cryptography, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit). \
 </br>
 
-## Forensic Recovery Prevention Features:
+## What Are The Forensic Recovery Prevention Features?:
 
 ### 1.) RAM Data Recovery Prevention
 When encrypting/decrypting with this application, data normally stored, in the computer's RAM, until an application is closed, is immediately removed, after the encryption/decryption is finished. \
