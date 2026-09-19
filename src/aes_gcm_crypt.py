@@ -224,9 +224,10 @@ def check_aes_gcm_headers(FILE):
         
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
-#2.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
-#3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
-def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
+#2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
+#3.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
+#4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
+def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a string type.')
@@ -234,6 +235,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer type.')
     elif not isinstance(PASSWORD, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter, must be a string type.')
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe block size parameter, must be an integer type.')
     elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be an absolute path.')
     elif not isdir(FOLDER_PATH):
@@ -241,12 +244,13 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     try:
+        BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
             for FILE_NAME in FILES:
                 FILE_PATH = join(ROOT, FILE_NAME)
-                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD)
+                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE)
                 if not ENCRYPT_RESULT[0]:
                     ERRORS += ENCRYPT_RESULT[1].splitlines()
         if ERRORS:
@@ -260,22 +264,25 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
 #2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
 #3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
-def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
+def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a string type.')
     elif not isinstance(PASSWORD, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, must be a string type.')
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe block size parameter, must be an integer type.')
     elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     try:
+        BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
             for FILE_NAME in FILES:
                 FILE_PATH = join(ROOT, FILE_NAME)
-                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD)
+                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE)
                 if not DECRYPT_RESULT[0]:
                     ERRORS += DECRYPT_RESULT[1].splitlines()
         if ERRORS:
@@ -553,7 +560,3 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             return [False, f'INCORRECT_PASSWORD!']
         except BaseException as ERROR:
             return [False, f'ERROR!\n{ERROR}']
-
-#TODO:
-#1.) A BLOCK SIZE OPTION NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION
-#2.) (FINAL ERROR CHECK ONLY) ENSURE PATHS ARE OS NORMALIZED
