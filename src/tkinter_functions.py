@@ -26,15 +26,15 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS,
-#2.) ACCEPTS EITHER AN ICON ICO AND/OR AN ICON PNG FILE PATH STRING/S
+#2.) ACCEPTS ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #3.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file paths, must both be set when calling this function, on Windows.')
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file path parameters, must both be set when calling this function, on Windows.')
     elif system() == 'Darwin' and not ICON_ICO_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path, must be set when calling this function, on Mac.')
-    elif system() not in ['Windows', 'Darwin'] and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path, must be set when calling this function, on an OS other than Mac.')
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be set when calling this function, on Mac.')
+    elif system() != 'Darwin'] and not ICON_PNG_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be set when calling this function, on an OS other than Mac.')
     elif not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class type.')
     elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
@@ -113,12 +113,18 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
-#2.) ACCEPTS OPTIONAL ICON_ICO AND ICON_PNG FILE PATH STRINGS
+#2.) ACCEPTS ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #3.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT MESSAGE STRINGS
-#4.) IF NO PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S ARE SUPPLIED, DEFAULT/S IS/ARE SET
+#4.) IF NO PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S IS/ARE SUPPLIED, DEFAULT/S IS/ARE SET
 #5.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
 #6.) RETURNS THE USER-SELECTED OPTION, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
+    if system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
+    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be set if using an icon with this function, on Mac.')
+    elif system() not in ['Windows', 'Darwin'] and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be set if using an icon with this function, on an OS other than Mac.')
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
     elif DROPDOWN_MENU_OPTIONS is not None and not isinstance(DROPDOWN_MENU_OPTIONS, list):
