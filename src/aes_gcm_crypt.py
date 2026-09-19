@@ -322,7 +322,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}']
         #OPEN THE FILE TO ENCRYPT, IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
-            #CHECK IF THE FILE, IS EMPTY OR ALREADY AES-GCM ENCRYPTED
+            #CHECK IF THE FILE IS EMPTY OR ALREADY AES-GCM ENCRYPTED
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
             if AES_GCM_HEADERS_CHECK[1] == 'FILE_EMPTY':
                 return [False, f'FILE_EMPTY!\nFile path: {FILE_PATH}']
@@ -376,7 +376,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
                 del PLAINTEXT_CHUNK
             RANDOM_BYTES_OVERWRITE_FILE.flush()
             fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
-        #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE, TO THE ORIGINAL FILE NAME AND EXTENSION
+        #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'AES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}']
     except OSError as ERROR:
@@ -389,6 +389,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
 #TODO:
 #1.) BLOCK SIZE OPTION, NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION
 #2.) ENSURE PATHS ARE OS NORMALIZED
+#3.) ENSURE SENSITIVE VARIABLES ARE DELETED PROPERLY
 
 #THIS FUNCTION:
 #1.) REQUIRES FILE PATH AND PASSWORD STRINGS
@@ -398,29 +399,29 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
 def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be a string type.')
+    elif not isinstance(PASSWORD, str):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter, must be a string type.')
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe block size parameter, must be an integer type.')
     elif not isabs(FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter, must be a path to an existing file.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter, must be a string type.')
-    elif not PASSWORD.strip():
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter, cannot be empty.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}']
-        #STREAM THE DATA (TO DECRYPT ALL FILE TYPES)
-        with open(FILE_PATH, 'r+b') as INFILE:
-            #CHECK IF THE FILE, IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
+        #OPEN THE FILE TO DECRYPT, IN READ BYTES MODE
+        with open(FILE_PATH, 'rb') as INFILE:
+            #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
             if not AES_GCM_HEADERS_CHECK[0]:
                 return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}']
             ALGORITHM_AND_MODE, KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES, TOTAL_HEADERS_SIZE = AES_GCM_HEADERS_CHECK
-            #DERIVE A KEY, THAT MATCHES THE ORIGINAL KEY,
-            #USING THE USER-ENTERED PASSWORD AND THE SALT BYTES STORED, IN THE FILE'S SALT BYTES HEADER
+            #DERIVE A KEY THAT MATCHES THE ORIGINAL KEY, USING THE USER-ENTERED PASSWORD AND THE SALT BYTES STORED, 
+            #IN THE FILE'S SALT BYTES HEADER
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES)[0]
             #DELETE THE PASSWORD VARIABLE, ONCE A KEY IS DERIVED, TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE MEMORY
             del PASSWORD
@@ -428,7 +429,7 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
             #START THE DECRYPTION STREAMER
             DECRYPTOR = CIPHER.decryptor()
-            #SET THE FILE POINTER, TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
+            #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
             INFILE.seek(TOTAL_HEADERS_SIZE)
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
                 #STREAM-DECRYPT THE ENCRYPTED DATA, IN CHUNKS (TO ALLOW DECRYPTION OF ALL FILE TYPES)
@@ -438,7 +439,7 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
                     #CHECK FOR THE END OF THE FILE
                     if not SIZE_DATA or len(SIZE_DATA) < 4:
                         break
-                    #READ THE AES-GCM ENCRYPTED CHUNK SIZE INTEGER
+                    #READ THE CHUNK SIZE INTEGER
                     (CHUNK_SIZE,) = unpack('>I', SIZE_DATA)
                     #CHECK IF THE CHUNK SIZE INTEGER, IS CORRUPTED
                     if CHUNK_SIZE <= 0:
@@ -454,8 +455,8 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
                     #DELETE EACH ENCRYPTED DATA CHUNK, AFTER DECRYPTION, TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE MEMORY
                     del ENCRYPTED_CHUNK
                     OUTFILE.write(PLAINTEXT_CHUNK)
-                    #DELETE EACH PLAINTEXT DATA CHUNK, AFTER WRITING THE CHUNK, TO THE ".tmp" FILE,
-                    #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE MEMORY
+                    #DELETE EACH PLAINTEXT DATA CHUNK, AFTER WRITING THE CHUNK, TO THE ".tmp" FILE TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, 
+                    #IN THE MEMORY
                     del PLAINTEXT_CHUNK
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 FINAL_BYTES = DECRYPTOR.finalize()
@@ -476,7 +477,7 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
                 del ENCRYPTED_CHUNK
             RANDOM_BYTES_OVERWRITE_FILE.flush()
             fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
-        #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE, TO THE ORIGINAL FILE NAME
+        #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}']
     except InvalidTag:
