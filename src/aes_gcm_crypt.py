@@ -48,7 +48,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
     elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be a bytes type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     elif SALT_BYTES and len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be 16 bytes long.')
     else:
@@ -239,7 +239,7 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     try:
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
@@ -304,7 +304,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     try:
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
@@ -485,11 +485,6 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     except BaseException as ERROR:
         return [False, f'ERROR!\n{ERROR}\nFile path: {FILE_PATH}']
 
-#TODO:
-#1.) BLOCK SIZE OPTION, NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION
-#2.) ENSURE PATHS ARE OS NORMALIZED
-#3.) ENSURE SENSITIVE VARIABLES ARE DELETED PROPERLY
-
 #THIS FUNCTION:
 #1.) REQUIRES A PLAINTEXT STRING OR BYTES TYPE VARIABLE, KEY SIZE INTEGER, AND A PASSWORD STRING
 #2.) CREATES A 16 BYTE SALT AND 12 BYTE NONCE
@@ -499,14 +494,12 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PLAINTEXT_VARIABLE, (str, bytes)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe plaintext variable parameter, must be a string or bytes type.')
-    elif not PLAINTEXT_VARIABLE:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe plaintext variable parameter, cannot be empty.')
-    elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter, must be an integer type, of 128, 192, or 256.')
+    elif not isinstance(KEY_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter, must be an integer type.')
     elif not isinstance(PASSWORD, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter, must be a string type.')
-    elif not PASSWORD:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter, cannot be empty.')
+    elif KEY_SIZE not in KEY_SIZE_LIST:
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     else:
         try:
             PLAINTEXT = PLAINTEXT_VARIABLE.encode() if isinstance(PLAINTEXT_VARIABLE, str) else PLAINTEXT_VARIABLE
@@ -562,3 +555,8 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             return [False, f'INCORRECT_PASSWORD!']
         except BaseException as ERROR:
             return [False, f'ERROR!\n{ERROR}']
+
+#TODO:
+#1.) BLOCK SIZE OPTION, NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION
+#2.) ENSURE PATHS ARE OS NORMALIZED
+#3.) ENSURE SENSITIVE VARIABLES ARE DELETED PROPERLY
