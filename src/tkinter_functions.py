@@ -307,7 +307,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
 #2.) ACCEPTS AN OPTIONAL FILE TYPES LIST
 #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
 #3.) PROMPTS THE USER TO CHOOSE A FILE PATH
-#4.) RETURNS THE ABSOLUTE FILE PATH, THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#4.) RETURNS THE ABSOLUTE FILE PATH THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter, must be a string type.')
