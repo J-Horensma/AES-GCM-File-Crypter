@@ -40,13 +40,14 @@ from cryptography.exceptions import InvalidTag
 #4.) A PASSWORD HASH IS GENERATED, AS A KEY, FOR AES CRYPTOGRAPHY
 #5.) RETURNS THE KEY AND SALT BYTES, AS A LIST
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
+    KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(KEY_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter, must be an integer type.')
     elif not isinstance(PASSWORD, str):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter, must be a string type.')
     elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be a bytes type.')
-    elif KEY_SIZE not in [128, 192, 256]:
+    elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
     elif SALT_BYTES and len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be 16 bytes long.')
@@ -229,16 +230,16 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a string type.')
+    elif not isinstance(KEY_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer type.')
+    elif not isinstance(PASSWORD, str):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter, must be a string type.')
     elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter, must be a string type.')
-    elif not PASSWORD.strip():
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter, cannot be empty.')
     try:
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
