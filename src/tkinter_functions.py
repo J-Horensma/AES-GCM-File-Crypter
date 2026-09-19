@@ -207,26 +207,36 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) ACCEPTS OPTIONAL ICON_ICO AND ICON_PNG FILE PATH STRINGS
+#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #3.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT MESSAGE STRINGS
 #4.) IF NO PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S IS/ARE SUPPLIED, DEFAULT/S IS/ARE SET
 #5.) PROMPTS THE USER TO INPUT A PASSWORD
 #6.) ALLOWS THE USER TO SHOW/HIDE, THE INPUT
 def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
-    if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
-    elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
+    if system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
+        raise ValueError('[ValueError]\nFunction: "password_input_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
+    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be set if using an icon with this function, on Mac.')
+    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be set if using an icon with this function, on an OS other than Mac.')
+    elif not isinstance(ROOT_WINDOW, Tk):
+        raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
+    elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
             raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be a string type.')
-    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be an existing absolute file path.')
-    elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
+    elif ICON_PNG_FILE_PATH and not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be a string type.')
-    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be an existing absolute file path.')
-    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe prompt title parameter, must be a string type.')
-    elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
+    elif PROMPT_MESSAGE and not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "password_input_prompt()"\nThe prompt message parameter, must be a string type.')
+    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be an absolute path.')
+    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be an absolute path.')
+    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be a path to an existing file.')
+    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be a path to an existing file.')
     PROMPT_TITLE = 'Enter A Password:' if PROMPT_TITLE is None else PROMPT_TITLE
     PROMPT_MESSAGE = 'Enter A Password:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
     PASSWORD_INPUT_VALUE = None
