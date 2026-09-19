@@ -29,23 +29,25 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 #ICON ICO FILE PATH AND ICON PNG FILE PATH STRINGS
 #2.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
-    if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class.')
-    elif not ICON_ICO_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be set.')
-    elif not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be set.')
-    elif not isinstance(ICON_ICO_FILE_PATH, str):
+    if system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file paths, must both be set when calling this function, on Windows.')
+    elif system() == 'Darwin' and not ICON_ICO_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path, must be set when calling this function, on Mac.')
+    elif system() not in ['Windows', 'Darwin'] and not ICON_PNG_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path, must be set when calling this function, on an OS other than Mac.')
+    elif not isinstance(WINDOW, (Tk, Toplevel)):
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class type.')
+    elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be a string type.')
-    elif not isinstance(ICON_PNG_FILE_PATH, str):
+    elif ICON_PNG_FILE_PATH and not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be a string type.')
-    elif not isabs(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be an absolute path.')
-    elif not isabs(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be an absolute path.')
-    elif not isfile(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be a path to an existing file.')
-    elif not isfile(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be a path to an existing file.')
     try:
         if system() == 'Windows':
