@@ -36,8 +36,8 @@ from cryptography.exceptions import InvalidTag
 #THIS FUNCTION:
 #1.) REQUIRES A KEY SIZE INTEGER AND A PASSWORD STRING
 #2.) ACCEPTS AN OPTIONAL SALT BYTES
-#3.) IF A 16 BYTE SALT, IS NOT SUPPLIED, ONE IS GENERATED
-#4.) A PASSWORD HASH IS GENERATED, AS A KEY, FOR AES CRYPTOGRAPHY
+#3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
+#4.) A PASSWORD HASH IS GENERATED, AS A KEY FOR AES CRYPTOGRAPHY
 #5.) RETURNS THE KEY AND SALT BYTES, AS A LIST
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
     KEY_SIZE_LIST = [128, 192, 256]
@@ -224,7 +224,7 @@ def check_aes_gcm_headers(FILE):
         
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
-#2.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE SUPPLIED FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
+#2.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
 #3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
@@ -258,19 +258,17 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD):
 
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
-#2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE SUPPLIED FOLDER PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
+#2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
 #3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a string type.')
+    elif not isinstance(PASSWORD, str):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, must be a string type.')
     elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter, must be a path to an existing folder.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, must be a string type.')
-    elif not PASSWORD.strip():
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter, cannot be empty.')
     try:
         ERRORS = []
         for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
@@ -289,7 +287,7 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD):
 
 #1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) AES-GCM ENCRYPTS THE SUPPLIED FILE PATH, WITH THE SUPPLIED KEY SIZE (SECURELY, FOR ANY FILE TYPE)
+#3.) AES-GCM ENCRYPTS THE FILE PATH (SECURELY, FOR ANY FILE TYPE)
 #4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     KEY_SIZE_LIST = [128, 192, 256]
