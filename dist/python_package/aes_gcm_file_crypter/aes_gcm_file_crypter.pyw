@@ -75,14 +75,14 @@ def main():
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
         PROMPT_TITLE = 'Select An Encryption:'
         PROMPT_MESSAGE = 'Select An Encryption:'
-        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO, ICON_PNG, PROMPT_TITLE, PROMPT_MESSAGE)
+        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         while True:
             PROMPT_TITLE = 'Password'
             PROMPT_MESSAGE = 'Enter A Password:'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO, ICON_PNG, PROMPT_TITLE, PROMPT_MESSAGE)
+            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if PASSWORD is None:
                 return
             elif not PASSWORD:
@@ -133,7 +133,7 @@ def main():
         while True:
             PROMPT_TITLE = 'Password'
             PROMPT_MESSAGE = 'Enter The Password:'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO, ICON_PNG, PROMPT_TITLE, PROMPT_MESSAGE)
+            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
@@ -175,14 +175,14 @@ def main():
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
         PROMPT_TITLE = 'Select An Encryption:'
         PROMPT_MESSAGE = 'Select An Encryption:'
-        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO, ICON_PNG, PROMPT_TITLE, PROMPT_MESSAGE)
+        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         while True:
             PROMPT_TITLE = 'Password'
             PROMPT_MESSAGE = 'Enter A Password:'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO, ICON_PNG, PROMPT_TITLE, PROMPT_MESSAGE)
+            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
@@ -231,7 +231,7 @@ def main():
         while True:
             PROMPT_TITLE = 'Password'
             PROMPT_MESSAGE = 'Enter The Password:'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO, ICON_PNG, PROMPT_TITLE, PROMPT_MESSAGE)
+            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
@@ -267,9 +267,9 @@ def main():
 
     ROOT_WINDOW = Tk()
     BASE_DIRECTORY = abspath(dirname(__file__))
-    ICON_ICO_PATH = join(BASE_DIRECTORY, 'assets', 'icon', 'ico', 'icon.ico'))
-    ICON_PNG_PATH = join(BASE_DIRECTORY, 'assets', 'icon', 'png', '256x256.png'))
-    set_window_icon(ROOT_WINDOW, ICON_ICO_PATH, ICON_PNG_PATH)
+    ICON_ICO_FILE_PATH = join(BASE_DIRECTORY, 'assets', 'icon', 'ico', 'icon.ico')
+    ICON_PNG_FILE_PATH = join(BASE_DIRECTORY, 'assets', 'icon', 'png', '256x256.png')
+    set_window_icon(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
     ROOT_WINDOW.configure(bg='#D3D5D4')
     WINDOW_WIDTH = 900
     WINDOW_HEIGHT = 500
