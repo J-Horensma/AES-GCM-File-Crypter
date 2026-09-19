@@ -25,19 +25,28 @@ from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS, AS WELL AS, ICON ICO AND ICON PNG FILE PATH STRINGS
+#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS,
+#ICON ICO FILE PATH AND ICON PNG FILE PATH STRINGS
 #2.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class.')
+    elif not ICON_ICO_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be set.')
+    elif not ICON_PNG_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be set.')
     elif not isinstance(ICON_ICO_FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon ico file path parameter, must be a string type.')
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be a string type.')
+    elif not isinstance(ICON_PNG_FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be a string type.')
+    elif not isabs(ICON_ICO_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be an absolute path.')
+    elif not isabs(ICON_PNG_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be an absolute path.')
     elif not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon ico file path parameter, must be an existing absolute file path.')
-    elif ICON_PNG_FILE_PATH not isinstance(ICON_PNG_FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()()"\nThe icon png file path parameter, must be a string type.')
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be a path to an existing file.')
     elif not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()()"\nThe icon png file path parameter, must be an existing absolute file path.')
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be a path to an existing file.')
     if system() == 'Windows':
         ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
         WINDOW.iconphoto(True, ICON_IMAGE)
