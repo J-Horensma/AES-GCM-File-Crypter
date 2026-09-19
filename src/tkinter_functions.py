@@ -281,13 +281,13 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
     return PASSWORD_INPUT_VALUE
 
 #THIS FUNCTION:
-#1.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT PATH STRINGS
+#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
-#3.) RETURNS THE FULL FOLDER PATH, THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#3.) RETURNS THE ABSOLUTE FOLDER PATH THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
-    if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
+    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter, must be a string type.')
-    elif PROMPT_PATH is not None and not isdir(PROMPT_PATH):
+    elif PROMPT_PATH and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be an existing absolute folder path.')
     PROMPT_TITLE = 'Choose A Folder:' if PROMPT_TITLE is None else PROMPT_TITLE
     PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
