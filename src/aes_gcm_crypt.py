@@ -40,17 +40,15 @@ from cryptography.exceptions import InvalidTag
 #4.) A PASSWORD HASH IS GENERATED, AS A KEY, FOR AES CRYPTOGRAPHY
 #5.) RETURNS THE KEY AND SALT BYTES, AS A LIST
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
-    if not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter, must be a string type.')
-    elif not PASSWORD.strip():
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter, cannot be empty.')
-    elif not isinstance(KEY_SIZE, int):
+    if not isinstance(KEY_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter, must be an integer type.')
+    elif not isinstance(PASSWORD, str):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter, must be a string type.')
+    elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be a bytes type.')
     elif KEY_SIZE not in [128, 192, 256]:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
-    elif SALT_BYTES is not None and not isinstance(SALT_BYTES, bytes):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be a bytes type.')
-    elif SALT_BYTES is not None and len(SALT_BYTES) != 16:
+    elif SALT_BYTES and len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter, must be 16 bytes long.')
     else:
         try:
