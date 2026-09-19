@@ -20,7 +20,7 @@ Redistribution, with commercial intent, of the unmodified software, or a substan
 This copyright notice and license must be retained, precisely as-is, in all copies of the software.
 '''
 
-from os.path import abspath, isdir, isfile, expanduser
+from os.path import isabs, isdir, isfile, abspath, expanduser
 from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
 
@@ -33,7 +33,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file path parameters, must both be set when calling this function, on Windows.')
     elif system() == 'Darwin' and not ICON_ICO_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be set when calling this function, on Mac.')
-    elif system() != 'Darwin'] and not ICON_PNG_FILE_PATH:
+    elif system() != 'Darwin' and not ICON_PNG_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be set when calling this function, on an OS other than Mac.')
     elif not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class type.')
