@@ -287,8 +287,10 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter, must be a string type.')
+    elif PROMPT_PATH and not isabs(PROMPT_PATH):
+        raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be an absolute path.')
     elif PROMPT_PATH and not isdir(PROMPT_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be an existing absolute folder path.')
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be a path to an existing folder.')
     PROMPT_TITLE = 'Choose A Folder:' if PROMPT_TITLE is None else PROMPT_TITLE
     PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
     PATH = filedialog.askdirectory(
@@ -301,11 +303,11 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     return PATH
 
 #THIS FUNCTION:
-#1.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT PATH STRINGS
+#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
 #2.) ACCEPTS AN OPTIONAL FILE TYPES LIST
 #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
 #3.) PROMPTS THE USER TO CHOOSE A FILE PATH
-#4.) RETURNS THE FULL FILE PATH, THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#4.) RETURNS THE ABSOLUTE FILE PATH, THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter, must be a string type.')
