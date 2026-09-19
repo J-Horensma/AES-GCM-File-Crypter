@@ -293,23 +293,23 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a string type.')
+    elif not isinstance(KEY_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter, must be an integer type.')
+    elif not isinstance(PASSWORD, str):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter, must be a string type.')
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter, must be an integer type.')
     elif not isabs(FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter, must be a path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter, must be an integer, of 128, 192, or 256.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter, must be a string type.')
-    elif not PASSWORD.strip():
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter, cannot be empty.')
-    elif BLOCK_SIZE is not None and not isinstance(BLOCK_SIZE, int):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter, must be an integer type.')
     try:
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
-        #USING THE "get_aes_key_and_salt()" FUNCTION, IN COMBINATION,
-        #WITH THE KEY SIZE, AS AN INTEGER (128, 192, OR 256), AND THE USER-ENTERED PASSWORD STRING
+        #USING THE "get_aes_key_and_salt()" FUNCTION, KEY SIZE (128, 192, OR 256), 
+        #AND THE USER-ENTERED PASSWORD STRING
         KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
         #CREATE A 12-BYTE NONCE
         NONCE_BYTES = token_bytes(12)
@@ -320,7 +320,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}']
-        #OPEN THE FILE TO ENCRYPT
+        #OPEN THE FILE TO ENCRYPT, IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE, IS EMPTY OR ALREADY AES-GCM ENCRYPTED
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
@@ -328,7 +328,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
                 return [False, f'FILE_EMPTY!\nFile path: {FILE_PATH}']
             elif AES_GCM_HEADERS_CHECK[0]:
                 return [False, f'ALREADY_AES-GCM_ENCRYPTED!\nFile path: {FILE_PATH}']
-            #CREATE AND OPEN A TEMPORARY FILE, TO WRITE TO
+            #CREATE AND OPEN A TEMPORARY FILE, TO WRITE TO, IN WRITE BYTES MODE
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
                 RESERVED_HEADERS_LENGTH_LIST = [7, 3, 12, 16, 16]
                 for RESERVED_HEADER_LENGTH in RESERVED_HEADERS_LENGTH_LIST:
@@ -376,7 +376,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
                 del PLAINTEXT_CHUNK
             RANDOM_BYTES_OVERWRITE_FILE.flush()
             fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
-        #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE, TO THE ORIGINAL FILE NAME AND EXTENTION
+        #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE, TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'AES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}']
     except OSError as ERROR:
@@ -385,6 +385,10 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
     except BaseException as ERROR:
         return [False, f'ERROR!\n{ERROR}\nFile path: {FILE_PATH}']
+
+#TODO:
+#1.) BLOCK SIZE OPTION, NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION
+#2.) ENSURE PATHS ARE OS NORMALIZED
 
 #THIS FUNCTION:
 #1.) REQUIRES FILE PATH AND PASSWORD STRINGS
