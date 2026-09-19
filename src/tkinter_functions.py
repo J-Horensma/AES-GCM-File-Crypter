@@ -47,30 +47,36 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter, must be a path to an existing file.')
     elif not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon png file path parameter, must be a path to an existing file.')
-    if system() == 'Windows':
-        ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
-        WINDOW.iconphoto(True, ICON_IMAGE)
-        try:
-            WINDOW.iconbitmap(ICON_ICO_FILE_PATH)
-        except:
-            pass
-    elif system() == 'Darwin':
-        ICON_IMAGE = PhotoImage(file=ICON_ICO_FILE_PATH)
-        WINDOW.iconphoto(True, ICON_IMAGE)
-    else:
-        ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
-        WINDOW.iconphoto(True, ICON_IMAGE)
+    try:
+        if system() == 'Windows':
+            ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
+            WINDOW.iconphoto(True, ICON_IMAGE)
+            try:
+                WINDOW.iconbitmap(ICON_ICO_FILE_PATH)
+            except:
+                pass
+        elif system() == 'Darwin':
+            ICON_IMAGE = PhotoImage(file=ICON_ICO_FILE_PATH)
+            WINDOW.iconphoto(True, ICON_IMAGE)
+        else:
+            ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
+            WINDOW.iconphoto(True, ICON_IMAGE)
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!\n{ERROR}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) RETURNS THE WIDTH AND HEIGHT, OF THE DEVICE SCREEN, AS A LIST
+#2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN, AS A LIST
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "get_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
-    ROOT_WINDOW.update_idletasks()
-    SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
-    SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
-    return [SCREEN_WIDTH, SCREEN_HEIGHT]
+    try:
+        ROOT_WINDOW.update_idletasks()
+        SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
+        SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
+        return [SCREEN_WIDTH, SCREEN_HEIGHT]
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!\n{ERROR}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -78,13 +84,16 @@ def get_device_screen_size(ROOT_WINDOW):
 def clear_root_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "clear_root_window()"\nThe root window parameter, must be a "tkinter.Tk()" class.')
-    ROOT_WINDOW.update_idletasks()
-    for WIDGET in ROOT_WINDOW.winfo_children():
-        WIDGET.destroy()
+    try:
+        ROOT_WINDOW.update_idletasks()
+        for WIDGET in ROOT_WINDOW.winfo_children():
+            WIDGET.destroy()
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!\n{ERROR}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk().Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
-#2.) CENTERS THE WINDOW, WITH A WINDOW SIZE, OF THE SUPPLIED DIMENTIONS
+#2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENTIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class.')
@@ -92,10 +101,13 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter, must be an integer.')
     elif not isinstance(WINDOW_HEIGHT, int):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window height parameter, must be an integer.')
-    WINDOW.update_idletasks()
-    X = (WINDOW.winfo_screenwidth() - WINDOW_WIDTH) // 2
-    Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
-    WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
+    try:
+        WINDOW.update_idletasks()
+        X = (WINDOW.winfo_screenwidth() - WINDOW_WIDTH) // 2
+        Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
+        WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!\n{ERROR}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
@@ -111,54 +123,61 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter, must be a list type.')
     elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be a string type.')
-    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be an existing absolute file path.')
     elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be a string type.')
-    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be an existing absolute file path.')
     elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt title parameter, must be a string type.')
     elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt message parameter, must be a string type.')
-    PROMPT_TITLE = 'Select An Option:' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_MESSAGE = 'Select An Option:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
-    SELECTED_DROPDOWN_MENU_VALUE = None
-    def close_window():
-        DROPDOWN_MENU_WINDOW.destroy()
-    def process_selected_value():
-        nonlocal SELECTED_DROPDOWN_MENU_VALUE
-        SELECTED_DROPDOWN_MENU_VALUE = DROPDOWN_MENU.get()
-        DROPDOWN_MENU_WINDOW.destroy()
-    #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
-    DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
-    if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
-        set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-    #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
-    DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
-    DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
-    #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
-    DROPDOWN_MENU_WINDOW.resizable(False, False)
-    #SEND ALL MOUSE AND KEYBOARD EVENTS TO THIS WINDOW
-    DROPDOWN_MENU_WINDOW.grab_set()
-    #WINDOW WIDGETS (START)
-    #----------------------
-    MESSAGE_LABEL = Label(DROPDOWN_MENU_WINDOW, text=PROMPT_MESSAGE, font=('Times New Roman', 18, 'bold'))
-    MESSAGE_LABEL.pack(padx=10, pady=10)
-    DROPDOWN_MENU = ttk.Combobox(DROPDOWN_MENU_WINDOW, values=DROPDOWN_MENU_OPTIONS, state='readonly', font=('Times New Roman', 18, 'bold'))
-    DROPDOWN_MENU.pack(fill='both', padx=10)
-    DROPDOWN_MENU.current(0)
-    CANCEL_BUTTON = Button(DROPDOWN_MENU_WINDOW, text='Cancel', font=('Times New Roman', 18, 'bold'), command=close_window)
-    CANCEL_BUTTON.pack(side='left', padx=10, pady=10)
-    CONFIRM_BUTTON = Button(DROPDOWN_MENU_WINDOW, text='Confirm', font=('Times New Roman', 18, 'bold'), command=process_selected_value)
-    CONFIRM_BUTTON.pack(side='right', padx=10, pady=10)
-    CONFIRM_BUTTON.focus_set()
-    DROPDOWN_MENU_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
-    #--------------------
-    #WINDOW WIDGETS (END)
-    #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE, RETURNING
-    DROPDOWN_MENU_WINDOW.wait_window()
-    return SELECTED_DROPDOWN_MENU_VALUE
+    elif ICON_ICO_FILE_PATH is not None and not isabs(ICON_ICO_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be an absolute path.')
+    elif ICON_PNG_FILE_PATH is not None and not isabs(ICON_PNG_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be an absolute path.')
+    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter, must be a path to an existing file.')
+    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be a path to an existing file.')
+    try:
+        PROMPT_TITLE = 'Select An Option:' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_MESSAGE = 'Select An Option:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
+        SELECTED_DROPDOWN_MENU_VALUE = None
+        def close_window():
+            DROPDOWN_MENU_WINDOW.destroy()
+        def process_selected_value():
+            nonlocal SELECTED_DROPDOWN_MENU_VALUE
+            SELECTED_DROPDOWN_MENU_VALUE = DROPDOWN_MENU.get()
+            DROPDOWN_MENU_WINDOW.destroy()
+        #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
+        DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
+            set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
+        DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
+        #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
+        DROPDOWN_MENU_WINDOW.resizable(False, False)
+        #SEND ALL MOUSE AND KEYBOARD EVENTS TO THIS WINDOW
+        DROPDOWN_MENU_WINDOW.grab_set()
+        #WINDOW WIDGETS (START)
+        #----------------------
+        MESSAGE_LABEL = Label(DROPDOWN_MENU_WINDOW, text=PROMPT_MESSAGE, font=('Times New Roman', 18, 'bold'))
+        MESSAGE_LABEL.pack(padx=10, pady=10)
+        DROPDOWN_MENU = ttk.Combobox(DROPDOWN_MENU_WINDOW, values=DROPDOWN_MENU_OPTIONS, state='readonly', font=('Times New Roman', 18, 'bold'))
+        DROPDOWN_MENU.pack(fill='both', padx=10)
+        DROPDOWN_MENU.current(0)
+        CANCEL_BUTTON = Button(DROPDOWN_MENU_WINDOW, text='Cancel', font=('Times New Roman', 18, 'bold'), command=close_window)
+        CANCEL_BUTTON.pack(side='left', padx=10, pady=10)
+        CONFIRM_BUTTON = Button(DROPDOWN_MENU_WINDOW, text='Confirm', font=('Times New Roman', 18, 'bold'), command=process_selected_value)
+        CONFIRM_BUTTON.pack(side='right', padx=10, pady=10)
+        CONFIRM_BUTTON.focus_set()
+        DROPDOWN_MENU_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
+        #--------------------
+        #WINDOW WIDGETS (END)
+        #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE, RETURNING
+        DROPDOWN_MENU_WINDOW.wait_window()
+        return SELECTED_DROPDOWN_MENU_VALUE
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!\n{ERROR}')
 
 #THIS FUNCTION:
 #1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" WIDGETS
@@ -168,12 +187,15 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
         raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter, must be a "tkinter.Entry()" class.')
     elif not isinstance(VISIBILITY_BUTTON, Button):
         raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe visibility button parameter, must be a "tkinter.Button()" class.')
-    if ENTRY_WIDGET.cget('show') == '':
-        ENTRY_WIDGET.config(show='*')
-        VISIBILITY_BUTTON.config(text='Show')
-    else:
-        ENTRY_WIDGET.config(show='')
-        VISIBILITY_BUTTON.config(text='Hide')
+    try:
+        if ENTRY_WIDGET.cget('show') == '':
+            ENTRY_WIDGET.config(show='*')
+            VISIBILITY_BUTTON.config(text='Show')
+        else:
+            ENTRY_WIDGET.config(show='')
+            VISIBILITY_BUTTON.config(text='Hide')
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!\n{ERROR}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
