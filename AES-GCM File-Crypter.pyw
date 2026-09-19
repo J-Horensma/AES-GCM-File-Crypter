@@ -21,7 +21,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 '''
 
 from threading import Thread
-from os.path import abspath, normpath, dirname, join
+from os.path import dirname, abspath, join
 from platform import system
 from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
