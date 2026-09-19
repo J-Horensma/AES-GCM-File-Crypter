@@ -192,9 +192,9 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
 #2.) SHOWS/HIDES THE INPUT VALUE OF THE "tkinter.Entry()" WIDGET AND CHANGES THE TEXT, OF THE SHOW/HIDE BUTTON
 def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
     if not isinstance(ENTRY_WIDGET, Entry):
-        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter, must be a "tkinter.Entry()" class.')
+        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter, must be a "tkinter.Entry()" class type.')
     elif not isinstance(VISIBILITY_BUTTON, Button):
-        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe visibility button parameter, must be a "tkinter.Button()" class.')
+        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe visibility button parameter, must be a "tkinter.Button()" class type.')
     try:
         if ENTRY_WIDGET.cget('show') == '':
             ENTRY_WIDGET.config(show='*')
