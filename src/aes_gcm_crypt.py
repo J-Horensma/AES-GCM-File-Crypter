@@ -515,33 +515,29 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
 
 #THIS FUNCTION:
 #1.) REQUIRES AN ENCRYPTED VARIABLE BYTES, KEY SIZE INTEGER, PASSWORD STRING, SALT, NONCE, AND TAG BYTES
-#2.) VALIDATES THE PASSWORD, USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
+#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
 #IN COMBINATION WITH THE PASSWORD, USING THE "get_aes_key_and_salt()" FUNCTION
 #3.) DECRYPTS AND RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM, THEN DECRYPTED PLAINTEXT (IF SUCCESS)
 def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NONCE_BYTES, TAG_BYTES):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(ENCRYPTED_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe encrypted bytes parameter, must be a bytes type.')
-    elif not ENCRYPTED_BYTES:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe encrypted bytes parameter, cannot be empty.')
-    elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter, must be an integer type, of 128, 192, or 256.')
+    elif not isinstance(KEY_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter, must be an integer type.')
+    elif not isinstance(PASSWORD, str):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter, must be a string type.')
     elif not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter, must be a bytes type.')
-    elif not SALT_BYTES:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter, cannot be empty.')
-    elif len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, must be 16 bytes long.')
     elif not isinstance(NONCE_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter, must be a bytes type.')
-    elif not NONCE_BYTES:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter, cannot be empty.')
-    elif len(NONCE_BYTES) != 12:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter, must be 12 bytes long.')
     elif not isinstance(TAG_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, must be a bytes type.')
-    elif not TAG_BYTES:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, cannot be empty.')
+    elif KEY_SIZE not in KEY_SIZE_LIST:
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
+    elif len(SALT_BYTES) != 16:
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, must be 16 bytes long.')
+    elif len(NONCE_BYTES) != 12:
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter, must be 12 bytes long.')
     elif len(TAG_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, must be 16 bytes long.')
     else:
@@ -557,6 +553,6 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             return [False, f'ERROR!\n{ERROR}']
 
 #TODO:
-#1.) BLOCK SIZE OPTION, NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION
+#1.) BLOCK SIZE OPTION, NEEDS ADDED TO ENCRYPT/DECRYPT FOLDER FUNCTION AND A MAX BLOCK SIZE CHECK IF REQUIRED
 #2.) ENSURE PATHS ARE OS NORMALIZED
 #3.) ENSURE SENSITIVE VARIABLES ARE DELETED PROPERLY
