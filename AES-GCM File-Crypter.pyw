@@ -195,7 +195,7 @@ def main():
                 CONFIRMATION = messagebox.askyesno(
                     title='Confirm Selection',
                     message=(
-                        f'The file path: "{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted. 
+                        f'The file path: "{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.' 
                         'Are you sure you want to continue?' 
                     )
                 )
