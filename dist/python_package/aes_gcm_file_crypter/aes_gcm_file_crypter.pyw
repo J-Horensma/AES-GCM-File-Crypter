@@ -25,8 +25,6 @@ from os.path import abspath, join, dirname
 from platform import system
 from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
-    #IF THE CODE IS RUN AS A MODULE (USING "python -m module_name"), 
-    #RELATIVE IMPORTS ARE USED
     from .src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
         password_input_prompt, folder_path_prompt, file_path_prompt
@@ -36,8 +34,6 @@ try:
         aes_gcm_encrypt_file, aes_gcm_decrypt_file
     )
 except ImportError:
-    #IF THE CODE IS RUN BY THIS FILE OR BY USING 'python "this_file_name"',
-    #THE NORMAL IMPORT PATH IS USED
     from src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
         password_input_prompt, folder_path_prompt, file_path_prompt
@@ -50,7 +46,7 @@ except ImportError:
 def main():
     if system() != 'Windows':
         def handle_ctrl_z(signum, frame):
-            print('"Ctrl + z", was pressed, closing AES-GCM File-Crypter...')
+            print('"Ctrl + z" was pressed, closing AES-GCM File-Crypter...')
             ROOT_WINDOW.quit()
         from signal import signal, SIGTSTP
         signal(SIGTSTP, handle_ctrl_z)
@@ -68,27 +64,27 @@ def main():
         DECRYPT_FILE_BUTTON.config(state='normal')
 
     def aes_gcm_encrypt_folder_thread():
-        PROMPT_TITLE = 'Choose A Folder, To Encrypt'
+        PROMPT_TITLE = 'Choose A Folder To Encrypt'
         FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
         if not FOLDER_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select An Encryption:'
-        PROMPT_MESSAGE = 'Select An Encryption:'
+        PROMPT_TITLE = 'Select A Key Size'
+        PROMPT_MESSAGE = 'Select A Key Size:'
         SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter A Password:'
+            PROMPT_MESSAGE = 'Enter A Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if PASSWORD is None:
                 return
             elif not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -97,7 +93,10 @@ def main():
             else:
                 CONFIRMATION = messagebox.askyesno(
                     title='Confirm Selection',
-                    message=f'The folder path: "{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted, are you sure you want to continue?' 
+                    message=(
+                        f'The folder path: "{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.'
+                        'Are you sure you want to continue?'
+                    )
                 )
                 if not CONFIRMATION:
                     return
@@ -126,18 +125,18 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_folder_thread():    
-        PROMPT_TITLE = 'Choose A Folder, To Decrypt'
+        PROMPT_TITLE = 'Choose A Folder To Decrypt'
         FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
         if not FOLDER_PATH:
             return
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter The Password:'
+            PROMPT_MESSAGE = 'Enter The Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -168,25 +167,25 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_encrypt_file_thread():
-        PROMPT_TITLE='Choose A File, To Encrypt'
+        PROMPT_TITLE='Choose A File To Encrypt'
         FILE_PATH = file_path_prompt(PROMPT_TITLE)
         if not FILE_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select An Encryption:'
-        PROMPT_MESSAGE = 'Select An Encryption:'
+        PROMPT_TITLE = 'Select A Key Size'
+        PROMPT_MESSAGE = 'Select A Key Size:'
         SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter A Password:'
+            PROMPT_MESSAGE = 'Enter A Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -195,7 +194,10 @@ def main():
             else:
                 CONFIRMATION = messagebox.askyesno(
                     title='Confirm Selection',
-                    message=f'The file path: "{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted, are you sure you want to continue?' 
+                    message=(
+                        f'The file path: "{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted. 
+                        'Are you sure you want to continue?' 
+                    )
                 )
                 if not CONFIRMATION:
                     return
@@ -224,18 +226,18 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_file_thread():
-        PROMPT_TITLE='Choose A File, To Decrypt'
+        PROMPT_TITLE='Choose A File To Decrypt'
         FILE_PATH = file_path_prompt(PROMPT_TITLE)
         if not FILE_PATH:
             return
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter The Password:'
+            PROMPT_MESSAGE = 'Enter The Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -316,10 +318,10 @@ def main():
     try:
         ROOT_WINDOW.mainloop()
     except KeyboardInterrupt:
-        print('"Ctrl + c", was pressed, closing AES-GCM File-Crypter...')
+        print('"Ctrl + c" was pressed, closing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
     except BaseException as ERROR:
-        print(f'{ERROR}\nclosing AES-GCM File-Crypter...')
+        print(f'{ERROR}\nClosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
 #CALL THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
