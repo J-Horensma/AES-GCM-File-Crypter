@@ -20,7 +20,7 @@ Redistribution of the unmodified Software or a substantially unchanged copy of i
 This copyright notice and license must be retained, precisely as-is, in all copies of the Software.
 '''
 
-from os.path import isabs, isdir, isfile, abspath, expanduser
+from os.path import isabs, isdir, isfile, expanduser
 from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
 
