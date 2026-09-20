@@ -4,27 +4,30 @@
 <br></br>
 
 ## About
-This application, has a GUI and a CLI edition, for securely encrypting or decrypting files and/or entire folders, with AES-GCM cryptography and forensic recovery prevention features. \
+This application includes both a GUI and a CLI edition for securely encrypting or decrypting files and/or entire folders using AES‑GCM cryptography, along with forensic recovery‑prevention features. \
 </br>
 
 ## Why AES-GCM Cryptography?
-AES-GCM Cryptography, is the most secure and modern approach for encryption/decryption and has 3 options (128, 192, and 256 bit). \
+AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits). \
 </br>
 
-## What Are The Forensic Recovery Prevention Features?:
+## What Are The Forensic Recovery-Prevention Features?:
 
-### 1.) RAM Data Recovery Prevention
-When encrypting/decrypting with this application, data normally stored, in the computer's RAM, until an application is closed, is immediately removed, after the encryption/decryption is finished. \
-This feature, is designed to prevent recovery of data, from the RAM, of the device using this application.
+### 1.) RAM Data-Recovery Prevention
+During encryption or decryption, any sensitive data, that would normally remain in the device's RAM until the application closes, is immediately cleared once the operation finishes. \
+This feature is designed to prevent recovery of processed data from the device’s RAM. \
 
-### 2.) Disk Data Recovery Prevention
-After the encryption/decryption step, a temporary file is made, where the encrypted/decrypted data is copied to, then the temporary file, is re-named to the original file's name, after the original file's deletion. The original file, is over-written with random bytes, then deleted, and the temporary file, is re-named to the original file's name, as previously mentioned. \
-This feature, is designed to prevent recovery of the original file's content, from the disk of the device using this application. \
+### 2.) Disk Data-Recovery Prevention
+After encryption or decryption: \
+* A temporary file is created to hold the processed data. \
+* The original file is overwritten with random bytes and then deleted. \
+* The temporary file is renamed to the original file’s name. \
+This feature is designed to prevent recovery of the original file’s contents from the device’s disk. \
 <br></br>
 
 ## Usage (Windows): 
 
-### 1.) Pick encryption/decryption options  
+### 1.) Select encryption or decryption options  
 
 ![Preview](assets/previews/windows_preview_1.png)
 ![Preview](assets/previews/windows_preview_2.png)
@@ -34,12 +37,12 @@ This feature, is designed to prevent recovery of the original file's content, fr
 
 ![Preview](assets/previews/windows_preview_4.png)  
 
-### 3.) Encrypt/decrypt a file or an entire folder  
+### 3.) Encrypt or decrypt a file or an entire folder  
 <br></br>
 
 ## Usage (Linux):
 
-### 1.) Pick encryption/decryption options  
+### 1.) Select encryption or decryption options  
 
 ![Preview](assets/previews/linux_preview_1.png)
 ![Preview](assets/previews/linux_preview_2.png)
@@ -49,19 +52,19 @@ This feature, is designed to prevent recovery of the original file's content, fr
 
 ![Preview](assets/previews/linux_preview_4.png)  
 
-### 3.) Encrypt/decrypt a file or an entire folder  
+### 3.) Encrypt or decrypt a file or an entire folder  
 <br></br>
 
 ## Compile, Yourself (Optional):  
 
 ### Windows:
-1.) Make sure the latest python, PyInstaller, and any missing requirements are installed, \
-then open a terminal and change directory to this file's directory, before entering the following shellcode
+1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
 
-2.) ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
+2.) Open a terminal, navigate to this file’s directory, and run: \
+```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
 
 ### Linux:
-1.) Make sure the latest python, PyInstaller, and any missing requirements are installed, \
-then open a terminal and change directory to this file's directory, before entering the following shellcode
+1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
 
-2.) ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
+2.) Open a terminal, navigate to this file’s directory, and run: \
+```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
