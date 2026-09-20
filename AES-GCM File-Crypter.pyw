@@ -25,8 +25,6 @@ from os.path import abspath, join, dirname
 from platform import system
 from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
-    #IF THE CODE IS RUN AS A MODULE (USING "python -m module_name"), 
-    #RELATIVE IMPORTS ARE USED
     from .src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
         password_input_prompt, folder_path_prompt, file_path_prompt
@@ -36,8 +34,6 @@ try:
         aes_gcm_encrypt_file, aes_gcm_decrypt_file
     )
 except ImportError:
-    #IF THE CODE IS RUN BY THIS FILE OR BY USING 'python "this_file_name"',
-    #THE NORMAL IMPORT PATH IS USED
     from src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
         password_input_prompt, folder_path_prompt, file_path_prompt
@@ -50,7 +46,7 @@ except ImportError:
 def main():
     if system() != 'Windows':
         def handle_ctrl_z(signum, frame):
-            print('"Ctrl + z", was pressed, closing AES-GCM File-Crypter...')
+            print('"Ctrl + z" was pressed, closing AES-GCM File-Crypter...')
             ROOT_WINDOW.quit()
         from signal import signal, SIGTSTP
         signal(SIGTSTP, handle_ctrl_z)
