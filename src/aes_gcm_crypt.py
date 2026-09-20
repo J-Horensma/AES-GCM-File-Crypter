@@ -547,7 +547,7 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     elif len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, must be 16 bytes long.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter, must be 16 bytes long.')
     elif len(NONCE_BYTES) != 12:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter, must be 12 bytes long.')
     elif len(TAG_BYTES) != 16:
