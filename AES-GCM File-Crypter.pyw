@@ -65,7 +65,7 @@ def main():
 
     def aes_gcm_encrypt_folder_thread():
         PROMPT_TITLE = 'Choose A Folder To Encrypt'
-        FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
+        FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
@@ -123,7 +123,7 @@ def main():
 
     def aes_gcm_decrypt_folder_thread():    
         PROMPT_TITLE = 'Choose A Folder To Decrypt'
-        FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
+        FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
         while True:
@@ -165,7 +165,7 @@ def main():
 
     def aes_gcm_encrypt_file_thread():
         PROMPT_TITLE='Choose A File To Encrypt'
-        FILE_PATH = file_path_prompt(PROMPT_TITLE)
+        FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
@@ -221,7 +221,7 @@ def main():
 
     def aes_gcm_decrypt_file_thread():
         PROMPT_TITLE='Choose A File To Decrypt'
-        FILE_PATH = file_path_prompt(PROMPT_TITLE)
+        FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
         while True:
