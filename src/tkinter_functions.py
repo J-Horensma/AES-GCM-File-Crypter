@@ -64,7 +64,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
             WINDOW.iconphoto(True, ICON_IMAGE)
     except BaseException as ERROR:
-        raise Exception(f'ERROR!\n{ERROR}')
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -78,7 +78,7 @@ def get_device_screen_size(ROOT_WINDOW):
         SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
         return [SCREEN_WIDTH, SCREEN_HEIGHT]
     except BaseException as ERROR:
-        raise Exception(f'ERROR!\n{ERROR}')
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -91,7 +91,7 @@ def clear_root_window(ROOT_WINDOW):
         for WIDGET in ROOT_WINDOW.winfo_children():
             WIDGET.destroy()
     except BaseException as ERROR:
-        raise Exception(f'ERROR!\n{ERROR}')
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk().Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
@@ -109,7 +109,7 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
         WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
     except BaseException as ERROR:
-        raise Exception(f'ERROR!\n{ERROR}')
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
@@ -185,7 +185,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
     except BaseException as ERROR:
-        raise Exception(f'ERROR!\n{ERROR}')
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" WIDGETS
@@ -203,7 +203,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
             ENTRY_WIDGET.config(show='')
             VISIBILITY_BUTTON.config(text='Hide')
     except BaseException as ERROR:
-        raise Exception(f'ERROR!\n{ERROR}')
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -237,48 +237,51 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be a path to an existing file.')
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be a path to an existing file.')
-    PROMPT_TITLE = 'Enter A Password' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_MESSAGE = 'Enter A Password' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
-    PASSWORD_INPUT_VALUE = None
-    def close_window():
-        PASSWORD_INPUT_WINDOW.destroy()
-    def process_password_input():
-        nonlocal PASSWORD_INPUT_VALUE
-        PASSWORD_INPUT_VALUE = PASSWORD_INPUT.get()
-        PASSWORD_INPUT_WINDOW.destroy()
-    #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
-    PASSWORD_INPUT_WINDOW = Toplevel(ROOT_WINDOW)
-    if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
-        set_window_icon(PASSWORD_INPUT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-    #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
-    PASSWORD_INPUT_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
-    PASSWORD_INPUT_WINDOW.title(PROMPT_TITLE)
-    #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
-    PASSWORD_INPUT_WINDOW.resizable(False, False)
-    #SEND ALL MOUSE AND KEYBOARD EVENTS TO THIS WINDOW
-    PASSWORD_INPUT_WINDOW.grab_set()
-    #WINDOW WIDGETS (START)
-    #----------------------
-    MESSAGE_LABEL = Label(PASSWORD_INPUT_WINDOW, text=PROMPT_MESSAGE, font=('Times New Roman', 18, 'bold'))
-    MESSAGE_LABEL.pack(padx=10, pady=10)
-    VISIBILITY = StringVar()
-    CENTERED_FRAME = Frame(PASSWORD_INPUT_WINDOW)
-    CENTERED_FRAME.pack(padx=10, anchor='center')
-    PASSWORD_INPUT = Entry(CENTERED_FRAME, textvariable=VISIBILITY, show='*', font=('Times New Roman', 26, 'bold'))
-    PASSWORD_INPUT.pack(padx=(0, 10), side='left')
-    PASSWORD_INPUT.focus_set()
-    VISIBILITY_BUTTON = Button(CENTERED_FRAME, text='Show', font=('Times New Roman', 18, 'bold'), command=lambda: toggle_input_visibility(PASSWORD_INPUT, VISIBILITY_BUTTON))
-    VISIBILITY_BUTTON.pack(side='left')
-    CANCEL_BUTTON = Button(PASSWORD_INPUT_WINDOW, text='Cancel', font=('Times New Roman', 18, 'bold'), command=close_window)
-    CANCEL_BUTTON.pack(side='left', padx=10, pady=10)
-    CONFIRM_BUTTON = Button(PASSWORD_INPUT_WINDOW, text='Confirm', font=('Times New Roman', 18, 'bold'), command=process_password_input)
-    CONFIRM_BUTTON.pack(side='right', padx=10, pady=10)
-    PASSWORD_INPUT_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
-    #--------------------
-    #WINDOW WIDGETS (END)
-    #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE, RETURNING
-    PASSWORD_INPUT_WINDOW.wait_window()
-    return PASSWORD_INPUT_VALUE
+    try:
+        PROMPT_TITLE = 'Enter A Password' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_MESSAGE = 'Enter A Password' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
+        PASSWORD_INPUT_VALUE = None
+        def close_window():
+            PASSWORD_INPUT_WINDOW.destroy()
+        def process_password_input():
+            nonlocal PASSWORD_INPUT_VALUE
+            PASSWORD_INPUT_VALUE = PASSWORD_INPUT.get()
+            PASSWORD_INPUT_WINDOW.destroy()
+        #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
+        PASSWORD_INPUT_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
+            set_window_icon(PASSWORD_INPUT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
+        PASSWORD_INPUT_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        PASSWORD_INPUT_WINDOW.title(PROMPT_TITLE)
+        #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
+        PASSWORD_INPUT_WINDOW.resizable(False, False)
+        #SEND ALL MOUSE AND KEYBOARD EVENTS TO THIS WINDOW
+        PASSWORD_INPUT_WINDOW.grab_set()
+        #WINDOW WIDGETS (START)
+        #----------------------
+        MESSAGE_LABEL = Label(PASSWORD_INPUT_WINDOW, text=PROMPT_MESSAGE, font=('Times New Roman', 18, 'bold'))
+        MESSAGE_LABEL.pack(padx=10, pady=10)
+        VISIBILITY = StringVar()
+        CENTERED_FRAME = Frame(PASSWORD_INPUT_WINDOW)
+        CENTERED_FRAME.pack(padx=10, anchor='center')
+        PASSWORD_INPUT = Entry(CENTERED_FRAME, textvariable=VISIBILITY, show='*', font=('Times New Roman', 26, 'bold'))
+        PASSWORD_INPUT.pack(padx=(0, 10), side='left')
+        PASSWORD_INPUT.focus_set()
+        VISIBILITY_BUTTON = Button(CENTERED_FRAME, text='Show', font=('Times New Roman', 18, 'bold'), command=lambda: toggle_input_visibility(PASSWORD_INPUT, VISIBILITY_BUTTON))
+        VISIBILITY_BUTTON.pack(side='left')
+        CANCEL_BUTTON = Button(PASSWORD_INPUT_WINDOW, text='Cancel', font=('Times New Roman', 18, 'bold'), command=close_window)
+        CANCEL_BUTTON.pack(side='left', padx=10, pady=10)
+        CONFIRM_BUTTON = Button(PASSWORD_INPUT_WINDOW, text='Confirm', font=('Times New Roman', 18, 'bold'), command=process_password_input)
+        CONFIRM_BUTTON.pack(side='right', padx=10, pady=10)
+        PASSWORD_INPUT_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
+        #--------------------
+        #WINDOW WIDGETS (END)
+        #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE, RETURNING
+        PASSWORD_INPUT_WINDOW.wait_window()
+        return PASSWORD_INPUT_VALUE
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')    
 
 #THIS FUNCTION:
 #1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
@@ -291,15 +294,18 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
         raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be an absolute path.')
     elif PROMPT_PATH and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be a path to an existing folder.')
-    PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
-    PATH = filedialog.askdirectory(
-        title=PROMPT_TITLE,
-        initialdir=PROMPT_PATH
-    )
-    if not PATH:
-        PATH = None
-    return PATH
+    try:
+        PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
+        PATH = filedialog.askdirectory(
+            title=PROMPT_TITLE,
+            initialdir=PROMPT_PATH
+        )
+        if not PATH:
+            PATH = None
+        return PATH
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
@@ -316,14 +322,17 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
         raise ValueError('[ValueError]\nFunction: "file_path_prompt()"\nThe prompt path parameter, must be an absolute path.')
     elif PROMPT_PATH and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "file_path_prompt()"\nThe prompt path parameter, must be a path to an existing folder.')
-    PROMPT_TITLE = 'Choose A File' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
-    FILE_TYPES = [('All Files', '*.*')] if FILE_TYPES is None else FILE_TYPES
-    PATH = filedialog.askopenfilename(
-        title=PROMPT_TITLE,
-        initialdir=PROMPT_PATH,
-        filetypes=FILE_TYPES
-    )
-    if not PATH:
-        PATH = None
-    return PATH
+    try:
+        PROMPT_TITLE = 'Choose A File' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
+        FILE_TYPES = [('All Files', '*.*')] if FILE_TYPES is None else FILE_TYPES
+        PATH = filedialog.askopenfilename(
+            title=PROMPT_TITLE,
+            initialdir=PROMPT_PATH,
+            filetypes=FILE_TYPES
+        )
+        if not PATH:
+            PATH = None
+        return PATH
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
