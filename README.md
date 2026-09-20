@@ -21,7 +21,8 @@ This feature is designed to prevent recovery of processed data from the device�
 After encryption or decryption:
 * A temporary file is created to hold the processed data.
 * The original file is overwritten with random bytes and then deleted.
-* The temporary file is renamed to the original file’s name. \
+* The temporary file is renamed to the original file’s name.
+  
 This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
 <br></br>
 
