@@ -71,7 +71,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
 #2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN, AS A LIST
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "get_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "get_device_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
     try:
         ROOT_WINDOW.update_idletasks()
         SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
@@ -95,7 +95,7 @@ def clear_root_window(ROOT_WINDOW):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk().Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
-#2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENTIONS
+#2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENSIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class type.')
@@ -146,7 +146,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter, must be a path to an existing file.')
     try:
-        PROMPT_TITLE = 'Select An Option:' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_TITLE = 'Select An Option' if PROMPT_TITLE is None else PROMPT_TITLE
         PROMPT_MESSAGE = 'Select An Option:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
         SELECTED_DROPDOWN_MENU_VALUE = None
         def close_window():
@@ -159,7 +159,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
         if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
             set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-        #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
+        #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
         DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
         #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
@@ -181,7 +181,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         DROPDOWN_MENU_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
         #--------------------
         #WINDOW WIDGETS (END)
-        #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE, RETURNING
+        #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE RETURNING
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
     except BaseException as ERROR:
@@ -189,7 +189,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
 
 #THIS FUNCTION:
 #1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" WIDGETS
-#2.) SHOWS/HIDES THE INPUT VALUE OF THE "tkinter.Entry()" WIDGET AND CHANGES THE TEXT, OF THE SHOW/HIDE BUTTON
+#2.) SHOWS/HIDES THE INPUT VALUE OF THE "tkinter.Entry()" WIDGET AND CHANGES THE TEXT OF THE SHOW/HIDE BUTTON
 def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
     if not isinstance(ENTRY_WIDGET, Entry):
         raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter, must be a "tkinter.Entry()" class type.')
@@ -211,7 +211,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
 #3.) ACCEPTS OPTIONAL PROMPT TITLE AND PROMPT MESSAGE STRINGS
 #4.) IF NO PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S IS/ARE SUPPLIED, DEFAULT/S IS/ARE SET
 #5.) PROMPTS THE USER TO INPUT A PASSWORD
-#6.) ALLOWS THE USER TO SHOW/HIDE, THE INPUT
+#6.) ALLOWS THE USER TO SHOW/HIDE THE INPUT
 def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
     if system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
         raise ValueError('[ValueError]\nFunction: "password_input_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
@@ -237,8 +237,8 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon ico file path parameter, must be a path to an existing file.')
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "password_input_prompt()"\nThe icon png file path parameter, must be a path to an existing file.')
-    PROMPT_TITLE = 'Enter A Password:' if PROMPT_TITLE is None else PROMPT_TITLE
-    PROMPT_MESSAGE = 'Enter A Password:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
+    PROMPT_TITLE = 'Enter A Password' if PROMPT_TITLE is None else PROMPT_TITLE
+    PROMPT_MESSAGE = 'Enter A Password' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
     PASSWORD_INPUT_VALUE = None
     def close_window():
         PASSWORD_INPUT_WINDOW.destroy()
@@ -250,7 +250,7 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
     PASSWORD_INPUT_WINDOW = Toplevel(ROOT_WINDOW)
     if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
         set_window_icon(PASSWORD_INPUT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-    #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
+    #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
     PASSWORD_INPUT_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
     PASSWORD_INPUT_WINDOW.title(PROMPT_TITLE)
     #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
@@ -291,7 +291,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
         raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be an absolute path.')
     elif PROMPT_PATH and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter, must be a path to an existing folder.')
-    PROMPT_TITLE = 'Choose A Folder:' if PROMPT_TITLE is None else PROMPT_TITLE
+    PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
     PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
     PATH = filedialog.askdirectory(
         title=PROMPT_TITLE,
@@ -299,7 +299,6 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     )
     if not PATH:
         PATH = None
-    PATH = abspath(PATH)
     return PATH
 
 #THIS FUNCTION:
@@ -327,5 +326,4 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     )
     if not PATH:
         PATH = None
-    PATH = abspath(PATH)
     return PATH
