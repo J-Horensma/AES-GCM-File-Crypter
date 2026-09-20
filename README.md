@@ -70,4 +70,3 @@ This feature is designed to prevent recovery of the original file’s contents f
 
 2.) Open a terminal, navigate to this file’s directory, and run: \
 ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
-s
