@@ -312,10 +312,10 @@ def main():
     try:
         ROOT_WINDOW.mainloop()
     except KeyboardInterrupt:
-        print('"Ctrl + c", was pressed, closing AES-GCM File-Crypter...')
+        print('"Ctrl + c" was pressed, closing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
     except BaseException as ERROR:
-        print(f'{ERROR}\nclosing AES-GCM File-Crypter...')
+        print(f'{ERROR}\nClosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
 #CALL THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
