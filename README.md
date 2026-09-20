@@ -14,15 +14,15 @@ AES-GCM Cryptography is one of the most secure and modern approaches for encrypt
 ## What Are The Forensic Recovery-Prevention Features?:
 
 ### 1.) RAM Data-Recovery Prevention
-During encryption or decryption, any sensitive data, that would normally remain in the device's RAM until the application closes, is immediately cleared once the operation finishes. \
-This feature is designed to prevent recovery of processed data from the device’s RAM. \
+During encryption or decryption, any sensitive data, that would normally remain in the device's RAM until the application closes, is immediately cleared once the operation finishes.
+This feature is designed to prevent recovery of processed data from the device’s RAM.
 
 ### 2.) Disk Data-Recovery Prevention
-After encryption or decryption: \
-* A temporary file is created to hold the processed data. \
-* The original file is overwritten with random bytes and then deleted. \
-* The temporary file is renamed to the original file’s name. \
-This feature is designed to prevent recovery of the original file’s contents from the device’s disk. \
+After encryption or decryption:
+* A temporary file is created to hold the processed data.
+* The original file is overwritten with random bytes and then deleted.
+* The temporary file is renamed to the original file’s name.
+This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
 <br></br>
 
 ## Usage (Windows): 
