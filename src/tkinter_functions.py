@@ -71,7 +71,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
 #2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN, AS A LIST
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "get_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "get_device_screen_size()"\nThe root window parameter, must be a "tkinter.Tk()" class type.')
     try:
         ROOT_WINDOW.update_idletasks()
         SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
