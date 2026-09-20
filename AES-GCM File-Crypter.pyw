@@ -84,7 +84,7 @@ def main():
             elif not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -133,7 +133,7 @@ def main():
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -182,7 +182,7 @@ def main():
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
@@ -231,7 +231,7 @@ def main():
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
                     title='Password Required!',
-                    message='A password, is required, try again?'
+                    message='A password is required, try again?'
                 )
                 if not CONFIRMATION:
                     return
