@@ -95,7 +95,7 @@ def clear_root_window(ROOT_WINDOW):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk().Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
-#2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENTIONS
+#2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENSIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter, must be a "tkinter.Tk()" or "Tk().Toplevel()" class type.')
