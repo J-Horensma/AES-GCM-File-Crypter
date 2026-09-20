@@ -315,7 +315,7 @@ def main():
         print('"Ctrl + c" was pressed, closing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
     except BaseException as ERROR:
-        print(f'{ERROR if ERROR else 'An unknown error occurred!'}\nClosing AES-GCM File-Crypter...')
+        print(f'{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nClosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
 #CALL THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
