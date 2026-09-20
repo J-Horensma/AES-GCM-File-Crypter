@@ -1,3 +1,4 @@
+from os.path import abspath
 import argparse
 from . import __version__
 
@@ -14,7 +15,7 @@ def cli():
     ENCRYPT_FOLDER = SUB_PARSER.add_parser(
         'encrypt_folder', 
         help='Encrypt a folder',
-        epilog=r'Example: python -m aes_gcm_file_crypter encrypt_folder /path/to/folder 256 Password'
+        epilog=f'Example: python -m aes_gcm_file_crypter encrypt_folder {abspath('/path/to/folder')} 256 Password'
     )
     ENCRYPT_FOLDER.add_argument('folder_path', help='The folder path to encrypt')
     ENCRYPT_FOLDER.add_argument('key_size', type=int, help='Must be: 128 (Least drive-space used), 192, or 256 (Most secure)')
@@ -22,14 +23,14 @@ def cli():
     DECRYPT_FOLDER = SUB_PARSER.add_parser(
         'decrypt_folder', 
         help='Decrypt a folder',
-        epilog=r'Example: python -m aes_gcm_file_crypter decrypt_folder /path/to/folder Password'
+        epilog=f'Example: python -m aes_gcm_file_crypter decrypt_folder {abspath('/path/to/folder')} Password'
     )
     DECRYPT_FOLDER.add_argument('folder_path', help='The folder path to decrypt')
     DECRYPT_FOLDER.add_argument('password', help='The same password used to encrypt the folder')
     ENCRYPT_FILE = SUB_PARSER.add_parser(
         'encrypt_file', 
         help='Encrypt a file',
-        epilog=r'Example: python -m aes_gcm_file_crypter encrypt_file /path/to/file.ext 256 Password'
+        epilog=f'Example: python -m aes_gcm_file_crypter encrypt_file {abspath('/path/to/file.ext')} 256 Password'
     )
     ENCRYPT_FILE.add_argument('file_path', help='The file path to encrypt')
     ENCRYPT_FILE.add_argument('key_size', type=int, help='Must be: 128 (Least drive-space used), 192, or 256 (Most secure)')
@@ -37,7 +38,7 @@ def cli():
     DECRYPT_FILE = SUB_PARSER.add_parser(
         'decrypt_file',
         help='Decrypt a file',
-        epilog=r'Example: python -m aes_gcm_file_crypter decrypt_file /path/to/file.ext Password'
+        epilog=f'Example: python -m aes_gcm_file_crypter decrypt_file {abspath('/path/to/file.ext')} Password'
     )
     DECRYPT_FILE.add_argument('file_path', help='The file path to decrypt')
     DECRYPT_FILE.add_argument('password', help='The same password used to encrypt the file')
@@ -67,7 +68,6 @@ def cli():
         print(DECRYPT_RESULT[1])
         return
 
-    #THIS IS NOT IMPORTING, IN LINUX, AS A PACKAGE
     from .aes_gcm_file_crypter import main
     main()
 
