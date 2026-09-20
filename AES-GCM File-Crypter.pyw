@@ -69,15 +69,15 @@ def main():
         if not FOLDER_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select An Encryption:'
-        PROMPT_MESSAGE = 'Select An Encryption:'
+        PROMPT_TITLE = 'Select A Key Size'
+        PROMPT_MESSAGE = 'Select A Key Size:'
         SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter A Password:'
+            PROMPT_MESSAGE = 'Enter A Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if PASSWORD is None:
                 return
@@ -128,7 +128,7 @@ def main():
             return
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter The Password:'
+            PROMPT_MESSAGE = 'Enter The Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
@@ -169,15 +169,15 @@ def main():
         if not FILE_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select An Encryption:'
-        PROMPT_MESSAGE = 'Select An Encryption:'
+        PROMPT_TITLE = 'Select A Key Size'
+        PROMPT_MESSAGE = 'Select A Key Size:'
         SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter A Password:'
+            PROMPT_MESSAGE = 'Enter A Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
@@ -226,7 +226,7 @@ def main():
             return
         while True:
             PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter The Password:'
+            PROMPT_MESSAGE = 'Enter The Password'
             PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
             if not PASSWORD:
                 CONFIRMATION = messagebox.askyesno(
