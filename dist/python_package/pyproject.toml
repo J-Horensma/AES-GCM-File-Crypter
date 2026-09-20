@@ -30,3 +30,4 @@ aes_gcm_file_crypter = [
 
 [project.scripts]
 aes_gcm_file_crypter = "aes_gcm_file_crypter.__main__:main"
+s
