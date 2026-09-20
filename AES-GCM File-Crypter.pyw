@@ -93,10 +93,7 @@ def main():
             else:
                 CONFIRMATION = messagebox.askyesno(
                     title='Confirm Selection',
-                    message=(
-                        f'The folder path: "{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.'
-                        'Are you sure you want to continue?'
-                    )
+                    message=f'The folder path:\n"{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
                 )
                 if not CONFIRMATION:
                     return
@@ -194,10 +191,7 @@ def main():
             else:
                 CONFIRMATION = messagebox.askyesno(
                     title='Confirm Selection',
-                    message=(
-                        f'The file path: "{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.' 
-                        'Are you sure you want to continue?' 
-                    )
+                    message=f'The file path:\n"{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
                 )
                 if not CONFIRMATION:
                     return
