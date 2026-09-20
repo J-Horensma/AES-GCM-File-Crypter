@@ -1,23 +1,23 @@
 '''
-Custom License, With Redistribution Limitations
------------------------------------------------
+Custom License With Redistribution Limitations
+----------------------------------------------
 
 "AES-GCM File-Crypter" Copyright © 2026 Joel Horensma
 
 For clarity:
-"software" means the source code of this file.
-"personal" means any use not intended for financial gain.
-"commercial" means use with product(s) and/or service(s) intended for financial gain.
+"Software" means the source code, in this file.
+"Personal" means any use not intended for financial gain.
+"Commercial" means use with product(s) and/or service(s) intended for financial gain.
 
-This software may be used, modified, and/or incorporated into projects for personal use.
+This Software may be used, modified, and/or incorporated into projects for personal use.
 
-Commercial use of this software is allowed when:
-1.) Substantial modifications and/or additions have first been incorporated into the software (More than minor cosmetic and/or structural changes).
-2.) The software changes must be reasonably demonstrable in the behavior, functionality, and/or structure of the running software(s) and/or service(s).
+Commercial use of this Software is allowed when:
+1.) Substantial modifications and/or additions have first been incorporated into the Software (More than minor cosmetic and/or structural changes).
+2.) The Software changes must be reasonably demonstratable, in the behavior, functionality, and/or structure of the running Software(s) and/or service(s).
 
-Redistribution, with commercial intent, of the unmodified software, or a substantially unchanged copy of it, is prohibited without prior written permission.
+Redistribution of the unmodified Software or a substantially unchanged copy of it, with Commercial intent and without prior written permission, is prohibited.
 
-This copyright notice and license must be retained, precisely as-is, in all copies of the software.
+This copyright notice and license must be retained, precisely as-is, in all copies of the Software.
 '''
 
 from threading import Thread
