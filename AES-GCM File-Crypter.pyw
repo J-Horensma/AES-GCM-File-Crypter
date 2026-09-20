@@ -64,7 +64,7 @@ def main():
         DECRYPT_FILE_BUTTON.config(state='normal')
 
     def aes_gcm_encrypt_folder_thread():
-        PROMPT_TITLE = 'Choose A Folder, To Encrypt'
+        PROMPT_TITLE = 'Choose A Folder To Encrypt'
         FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
         if not FOLDER_PATH:
             return
@@ -122,7 +122,7 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_folder_thread():    
-        PROMPT_TITLE = 'Choose A Folder, To Decrypt'
+        PROMPT_TITLE = 'Choose A Folder To Decrypt'
         FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
         if not FOLDER_PATH:
             return
@@ -164,7 +164,7 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_encrypt_file_thread():
-        PROMPT_TITLE='Choose A File, To Encrypt'
+        PROMPT_TITLE='Choose A File To Encrypt'
         FILE_PATH = file_path_prompt(PROMPT_TITLE)
         if not FILE_PATH:
             return
@@ -220,7 +220,7 @@ def main():
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_file_thread():
-        PROMPT_TITLE='Choose A File, To Decrypt'
+        PROMPT_TITLE='Choose A File To Decrypt'
         FILE_PATH = file_path_prompt(PROMPT_TITLE)
         if not FILE_PATH:
             return
