@@ -250,7 +250,7 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
     PASSWORD_INPUT_WINDOW = Toplevel(ROOT_WINDOW)
     if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
         set_window_icon(PASSWORD_INPUT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-    #TRIGGER A CLOSE FUNCTION, WHEN THE "X" BUTTON, IS CLICKED
+    #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
     PASSWORD_INPUT_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
     PASSWORD_INPUT_WINDOW.title(PROMPT_TITLE)
     #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
@@ -299,7 +299,6 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     )
     if not PATH:
         PATH = None
-    PATH = abspath(PATH)
     return PATH
 
 #THIS FUNCTION:
@@ -327,5 +326,4 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     )
     if not PATH:
         PATH = None
-    PATH = abspath(PATH)
     return PATH
