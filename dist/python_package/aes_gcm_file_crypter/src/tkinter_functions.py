@@ -64,7 +64,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
             WINDOW.iconphoto(True, ICON_IMAGE)
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -78,7 +78,7 @@ def get_device_screen_size(ROOT_WINDOW):
         SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
         return [SCREEN_WIDTH, SCREEN_HEIGHT]
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -91,7 +91,7 @@ def clear_root_window(ROOT_WINDOW):
         for WIDGET in ROOT_WINDOW.winfo_children():
             WIDGET.destroy()
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk().Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
@@ -109,7 +109,7 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
         WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
@@ -185,7 +185,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" WIDGETS
@@ -203,7 +203,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
             ENTRY_WIDGET.config(show='')
             VISIBILITY_BUTTON.config(text='Hide')
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -281,7 +281,7 @@ def password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         PASSWORD_INPUT_WINDOW.wait_window()
         return PASSWORD_INPUT_VALUE
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')    
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')    
 
 #THIS FUNCTION:
 #1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
@@ -305,7 +305,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
             PATH = None
         return PATH
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
@@ -335,4 +335,4 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
             PATH = None
         return PATH
     except BaseException as ERROR:
-        raise Exception(f'ERROR!:\n{ERROR if ERROR else 'An unknown error occurred!'}')
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
