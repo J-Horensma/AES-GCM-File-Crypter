@@ -156,11 +156,11 @@ def has_permissions(PATH, PERMISSIONS):
         return False
     
 #THIS FUNCTION:
-#1.) REQUIRES A FILE OBJECT, OPENED IN READ BYTES MODE
+#1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS, AS A LIST, OR "None", WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE):
     if not isinstance(FILE, IOBase) or 'r' not in FILE.mode or 'b' not in FILE.mode:
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter, must be a file object, in read bytes mode.')
+        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter, must be a file object, in binary read mode.')
     else:
         try:
             TOTAL_HEADERS_SIZE = 0
@@ -547,7 +547,7 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter, must be an integer type of 128, 192, or 256.')
     elif len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter, must be 16 bytes long.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter, must be 16 bytes long.')
     elif len(NONCE_BYTES) != 12:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter, must be 12 bytes long.')
     elif len(TAG_BYTES) != 16:
