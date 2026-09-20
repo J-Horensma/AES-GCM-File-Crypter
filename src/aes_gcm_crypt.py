@@ -156,11 +156,11 @@ def has_permissions(PATH, PERMISSIONS):
         return False
     
 #THIS FUNCTION:
-#1.) REQUIRES A FILE OBJECT, OPENED IN READ BYTES MODE
+#1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS, AS A LIST, OR "None", WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE):
     if not isinstance(FILE, IOBase) or 'r' not in FILE.mode or 'b' not in FILE.mode:
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter, must be a file object, in read bytes mode.')
+        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter, must be a file object, in binary read mode.')
     else:
         try:
             TOTAL_HEADERS_SIZE = 0
