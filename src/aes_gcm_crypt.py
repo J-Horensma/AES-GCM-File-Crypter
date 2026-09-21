@@ -22,7 +22,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
-from os.path import isabs, abspath, isdir, isfile, join
+from os.path import isabs, abspath, join, isdir, isfile
 from platform import system
 from stat import S_ISDIR, S_ISREG
 from pathlib import Path
@@ -396,6 +396,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     except PermissionError as ERROR:
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
     except BaseException as ERROR:
+        if isfile(FILE_PATH + '.tmp'):
+            remove(FILE_PATH + '.tmp') 
         return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
@@ -495,6 +497,8 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     except PermissionError as ERROR:
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
     except BaseException as ERROR:
+        if isfile(FILE_PATH + '.tmp'):
+            remove(FILE_PATH + '.tmp')
         return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
