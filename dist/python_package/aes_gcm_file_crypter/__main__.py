@@ -47,29 +47,33 @@ def cli():
     DECRYPT_FILE.add_argument('password', help='The same password used to encrypt the file.')
     DECRYPT_FILE.add_argument('block_size', help='An optional block size integer representing the amount of bytes for each file chunk to be read (Higher is faster, but requires more RAM). The default is 65536 (Can cause errors if used incorrectly).', type=int, nargs='?', default=65536)
     ARGUMENTS = PARSER.parse_args()
-    if ARGUMENTS.COMMAND == 'encrypt_folder':
-        from .src.aes_gcm_crypt import aes_gcm_encrypt_folder
-        print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
-        ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, ARGUMENTS.password, ARGUMENTS.block_size)
-        print(ENCRYPT_RESULT[1])
-        return
-    elif ARGUMENTS.COMMAND == 'decrypt_folder':
-        from .src.aes_gcm_crypt import aes_gcm_decrypt_folder
-        print(f'Decrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
-        DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.password, ARGUMENTS.block_size)
-        print(DECRYPT_RESULT[1])
-        return
-    elif ARGUMENTS.COMMAND == 'encrypt_file':
-        from .src.aes_gcm_crypt import aes_gcm_encrypt_file
-        print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
-        ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, ARGUMENTS.password, ARGUMENTS.block_size)
-        print(ENCRYPT_RESULT[1])
-        return
-    elif ARGUMENTS.COMMAND == 'decrypt_file':
-        from .src.aes_gcm_crypt import aes_gcm_decrypt_file
-        print(f'Decrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
-        DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, ARGUMENTS.password, ARGUMENTS.block_size)
-        print(DECRYPT_RESULT[1])
+    try:
+        if ARGUMENTS.COMMAND == 'encrypt_folder':
+            from .src.aes_gcm_crypt import aes_gcm_encrypt_folder
+            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, ARGUMENTS.password, ARGUMENTS.block_size)
+            print(ENCRYPT_RESULT[1])
+            return
+        elif ARGUMENTS.COMMAND == 'decrypt_folder':
+            from .src.aes_gcm_crypt import aes_gcm_decrypt_folder
+            print(f'Decrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
+            DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.password, ARGUMENTS.block_size)
+            print(DECRYPT_RESULT[1])
+            return
+        elif ARGUMENTS.COMMAND == 'encrypt_file':
+            from .src.aes_gcm_crypt import aes_gcm_encrypt_file
+            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, ARGUMENTS.password, ARGUMENTS.block_size)
+            print(ENCRYPT_RESULT[1])
+            return
+        elif ARGUMENTS.COMMAND == 'decrypt_file':
+            from .src.aes_gcm_crypt import aes_gcm_decrypt_file
+            print(f'Decrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
+            DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, ARGUMENTS.password, ARGUMENTS.block_size)
+            print(DECRYPT_RESULT[1])
+            return
+    except BaseException as ERROR:
+        print(ERROR)
         return
 
     from .aes_gcm_file_crypter import main
