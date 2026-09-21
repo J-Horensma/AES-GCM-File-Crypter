@@ -398,7 +398,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
     except BaseException as ERROR:
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
-        return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFile path: {FILE_PATH}']
+        return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred! ' + 'Try a smaller block size.' if BLOCK_SIZE > 65536 else ''}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES FILE PATH AND PASSWORD STRINGS
@@ -499,7 +499,7 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     except BaseException as ERROR:
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
-        return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFile path: {FILE_PATH}']
+        return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred! ' + 'Try a smaller block size.' if BLOCK_SIZE > 65536 else ''}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES A PLAINTEXT STRING OR BYTES TYPE VARIABLE, KEY SIZE INTEGER, AND A PASSWORD STRING
