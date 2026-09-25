@@ -37,35 +37,42 @@ from cryptography.exceptions import InvalidTag
 #1.) REQUIRES A KEY SIZE INTEGER AND A PASSWORD STRING
 #2.) ACCEPTS AN OPTIONAL SALT BYTES
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
-#4.) A PASSWORD HASH IS GENERATED, AS A KEY FOR AES CRYPTOGRAPHY
-#5.) RETURNS THE KEY AND SALT BYTES, AS A LIST
-def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None):
+#4.) ACCEPTS AN OPTIONAL KDF ITERATIONS INTEGER
+#5.) IF A KDF ITERATIONS INTEGER OVER 600_000 IS NOT SUPPLIED,
+#THE DEFAULT IS SET TO 600_000
+#6.) A PASSWORD HASH IS GENERATED, AS A KEY FOR AES CRYPTOGRAPHY
+#7.) RETURNS THE KEY AND SALT BYTES, AS A LIST
+def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
-    if not isinstance(KEY_SIZE, int):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string type.')
+    if KEY_SIZE not in KEY_SIZE_LIST:
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
+    elif not isinstance(PASSWORD, (str, bytes)):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string or bytes type.')
     elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type.')
-    elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
     elif SALT_BYTES and len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
+    elif KDF_ITERATIONS and not isinstance(KDF_ITERATIONS, int):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer type.')
+    elif KDF_ITERATIONS and KDF_ITERATIONS < 600_000:
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer of 600000 or more.')
     else:
         try:
+            KDF_ITERATIONS = 600_000 if KDF_ITERATIONS is None else KDF_ITERATIONS
             SALT_BYTES = token_bytes(16) if SALT_BYTES is None else SALT_BYTES
             #CREATE A KEY (1 BYTE = 8 BITS):
             #16 BYTES = 128 BIT, KEY LENGTH (AES-128)
             #24 BYTES = 192 BIT, KEY LENGTH (AES-192)
             #32 BYTES = 256 BIT, KEY LENGTH (AES-256)
-            KEY_BYTES_LENGTH = KEY_SIZE // 8
+            KEY_BYTES_LENGTH = (KEY_SIZE // 8)
             KEY_DERIVATION_FUNCTION = PBKDF2HMAC(
                 algorithm=SHA256(),
                 length=KEY_BYTES_LENGTH,
                 salt=SALT_BYTES,
-                iterations=200_000
+                iterations=KDF_ITERATIONS
             )
-            KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(PASSWORD.encode())
+            ENCODED_PASSWORD = PASSWORD.encode() if not isinstance(PASSWORD, bytes) else PASSWORD
+            KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
             return [KEY_BYTES, SALT_BYTES]
         except BaseException as ERROR:
             raise Exception(f'[Exception]\nFunction: "get_aes_key_and_salt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
