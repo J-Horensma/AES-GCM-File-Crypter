@@ -294,6 +294,8 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         def process_password():
             nonlocal PASSWORD_VALUE
             PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            PASSWORD_ENTRY.delete(0, 'end')
+            CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -403,6 +405,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         def process_password():
             nonlocal PASSWORD_VALUE
             PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
@@ -430,7 +433,6 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
         ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         ENTER_PASSWORD_WINDOW.wait_window()
-        del PASSWORD_ENTRY
         return PASSWORD_VALUE
     except BaseException as ERROR:
         raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
