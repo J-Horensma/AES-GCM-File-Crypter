@@ -195,12 +195,15 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
         raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter must be a "tkinter.Entry()" class type.')
     elif not isinstance(VISIBILITY_BUTTON, Button):
         raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe visibility button parameter must be a "tkinter.Button()" class type.')
-    if ENTRY_WIDGET.cget('show') == '':
-        ENTRY_WIDGET.config(show='*')
-        VISIBILITY_BUTTON.config(text='Show')
-    else:
-        ENTRY_WIDGET.config(show='')
-        VISIBILITY_BUTTON.config(text='Hide')
+    try:
+        if ENTRY_WIDGET.cget('show') == '':
+            ENTRY_WIDGET.config(show='*')
+            VISIBILITY_BUTTON.config(text='Show')
+        else:
+            ENTRY_WIDGET.config(show='')
+            VISIBILITY_BUTTON.config(text='Hide')
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
@@ -217,32 +220,35 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe confirm button parameter must be a "tkinter.Button()" class type.')
     elif not isinstance(MINIMUM_PASSWORD_LENGTH, int):
         raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe minimum password length parameter must be an integer type.')
-    PASSWORD_VALUE = PASSWORD_ENTRY.get()
-    CONFIRM_PASSWORD_VALUE = CONFIRM_PASSWORD_ENTRY.get()
-    def is_ascii_only(VALUE):
-        return all(CHARACTER in printable for CHARACTER in VALUE)
-    ASCII_CHECK =  all([is_ascii_only(VALUE) for VALUE in [PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]])
-    LENGTH_CHECK = len(PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH
-    MATCH_CHECK = PASSWORD_VALUE == CONFIRM_PASSWORD_VALUE
-    IS_PASSWORD_EMPTY = True if not PASSWORD_VALUE else False
-    IS_CONFIRM_PASSWORD_EMPTY = True if not CONFIRM_PASSWORD_VALUE else False
-    if IS_PASSWORD_EMPTY and IS_CONFIRM_PASSWORD_EMPTY:
-        STATUS_LABEL.config(text='Cannot be empty!', fg='red')
-    elif not ASCII_CHECK:
-        STATUS_LABEL.config(text='Contains invalid characters!', fg='red')
-    elif not LENGTH_CHECK:
-        STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} characters', fg='red')
-    elif any([PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]) and any([IS_PASSWORD_EMPTY, IS_CONFIRM_PASSWORD_EMPTY]):
-        STATUS_LABEL.config(text='Fill both fields', fg='grey')
-    elif not MATCH_CHECK:
-        STATUS_LABEL.config(text='Do not match!', fg='red')
-    if all([ASCII_CHECK, LENGTH_CHECK, MATCH_CHECK]):
-        STATUS_LABEL.config(text='Acceptable and matching', fg='green')
-        #ENABLE THE CONFIRM BUTTON IF ALL CHECKS PASS
-        CONFIRM_BUTTON.config(state='normal')
-    else:
-        #DISABLE THE CONFIRM BUTTON IF ANY CHECKS FAIL
-        CONFIRM_BUTTON.config(state='disabled')
+    try:
+        PASSWORD_VALUE = PASSWORD_ENTRY.get()
+        CONFIRM_PASSWORD_VALUE = CONFIRM_PASSWORD_ENTRY.get()
+        def is_ascii_only(VALUE):
+            return all(CHARACTER in printable for CHARACTER in VALUE)
+        ASCII_CHECK =  all([is_ascii_only(VALUE) for VALUE in [PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]])
+        LENGTH_CHECK = len(PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH
+        MATCH_CHECK = PASSWORD_VALUE == CONFIRM_PASSWORD_VALUE
+        IS_PASSWORD_EMPTY = True if not PASSWORD_VALUE else False
+        IS_CONFIRM_PASSWORD_EMPTY = True if not CONFIRM_PASSWORD_VALUE else False
+        if IS_PASSWORD_EMPTY and IS_CONFIRM_PASSWORD_EMPTY:
+            STATUS_LABEL.config(text='Cannot be empty!', fg='red')
+        elif not ASCII_CHECK:
+            STATUS_LABEL.config(text='Contains invalid characters!', fg='red')
+        elif not LENGTH_CHECK:
+            STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} characters', fg='red')
+        elif any([PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]) and any([IS_PASSWORD_EMPTY, IS_CONFIRM_PASSWORD_EMPTY]):
+            STATUS_LABEL.config(text='Fill both fields', fg='grey')
+        elif not MATCH_CHECK:
+            STATUS_LABEL.config(text='Do not match!', fg='red')
+        if all([ASCII_CHECK, LENGTH_CHECK, MATCH_CHECK]):
+            STATUS_LABEL.config(text='Acceptable and matching', fg='green')
+            #ENABLE THE CONFIRM BUTTON IF ALL CHECKS PASS
+            CONFIRM_BUTTON.config(state='normal')
+        else:
+            #DISABLE THE CONFIRM BUTTON IF ANY CHECKS FAIL
+            CONFIRM_BUTTON.config(state='disabled')
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -272,59 +278,62 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "create_password_prompt()"\nThe icon ico file path parameter must be a path to an existing file.')
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
-    #SET THE DEFAULT MINIMUM PASSWORD LENGTH TO 12
-    MINIMUM_PASSWORD_LENGTH = 12 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
-    PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
-    CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
-    if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-        set_window_icon(CREATE_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-    CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
-    CREATE_PASSWORD_WINDOW.resizable(False, False)
-    CREATE_PASSWORD_WINDOW.grab_set()
-    PASSWORD_VALUE = None
-    def close_window():
-        CREATE_PASSWORD_WINDOW.destroy()
-    def process_password():
-        nonlocal PASSWORD_VALUE
-        PASSWORD_VALUE = PASSWORD_ENTRY.get()
-        CREATE_PASSWORD_WINDOW.destroy()
-    CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
-    ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-    ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
-    Label(ROW_1_FRAME, text='Create A Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
-    PASSWORD_VISIBILITY_VARIABLE = StringVar()
-    PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
-    PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-    #SET FOCUS ON THE ENTRY
-    PASSWORD_ENTRY.focus_force()
-    #SET PASSWORD VISIBILITY BUTTON
-    PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
-    PASSWORD_VISIBILITY_BUTTON.pack(side='left')
-    ROW_2_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-    ROW_2_FRAME.pack(padx=10, pady=5, anchor='center')
-    Label(ROW_2_FRAME, text='Confirm Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
-    CONFIRM_PASSWORD_VISIBILITY_VARIABLE = StringVar()
-    CONFIRM_PASSWORD_ENTRY = Entry(ROW_2_FRAME, textvariable=CONFIRM_PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
-    CONFIRM_PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-    #SET CONFIRM PASSWORD VISIBILITY BUTTON
-    CONFIRM_PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(CONFIRM_PASSWORD_ENTRY, CONFIRM_PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
-    CONFIRM_PASSWORD_VISIBILITY_BUTTON.pack(side='left')
-    #SET A PASSWORD CHECK STATUS LABEL
-    STATUS_LABEL = Label(CREATE_PASSWORD_WINDOW, text=None, anchor='s', font=('Times New Roman', 14, 'bold'))
-    STATUS_LABEL.pack(pady=(5, 10))
-    ROW_3_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-    ROW_3_FRAME.pack(pady=10, fill='x')
-    CANCEL_BUTTON = Button(ROW_3_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
-    CANCEL_BUTTON.pack(side='left', padx=10)
-    CONFIRM_BUTTON = Button(ROW_3_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
-    CONFIRM_BUTTON.pack(side='right', padx=10)
-    #UPDATE THE STATUS LABEL ON-KEY UP
-    PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
-    CONFIRM_PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
-    #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
-    CREATE_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
-    CREATE_PASSWORD_WINDOW.wait_window()
-    return PASSWORD_VALUE
+    try:
+        #SET THE DEFAULT MINIMUM PASSWORD LENGTH TO 12
+        MINIMUM_PASSWORD_LENGTH = 12 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
+        PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
+        CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
+            set_window_icon(CREATE_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
+        CREATE_PASSWORD_WINDOW.resizable(False, False)
+        CREATE_PASSWORD_WINDOW.grab_set()
+        PASSWORD_VALUE = None
+        def close_window():
+            CREATE_PASSWORD_WINDOW.destroy()
+        def process_password():
+            nonlocal PASSWORD_VALUE
+            PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            CREATE_PASSWORD_WINDOW.destroy()
+        CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
+        Label(ROW_1_FRAME, text='Create A Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
+        PASSWORD_VISIBILITY_VARIABLE = StringVar()
+        PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
+        PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
+        #SET FOCUS ON THE ENTRY
+        PASSWORD_ENTRY.focus_force()
+        #SET PASSWORD VISIBILITY BUTTON
+        PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
+        PASSWORD_VISIBILITY_BUTTON.pack(side='left')
+        ROW_2_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_2_FRAME.pack(padx=10, pady=5, anchor='center')
+        Label(ROW_2_FRAME, text='Confirm Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
+        CONFIRM_PASSWORD_VISIBILITY_VARIABLE = StringVar()
+        CONFIRM_PASSWORD_ENTRY = Entry(ROW_2_FRAME, textvariable=CONFIRM_PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
+        CONFIRM_PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
+        #SET CONFIRM PASSWORD VISIBILITY BUTTON
+        CONFIRM_PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(CONFIRM_PASSWORD_ENTRY, CONFIRM_PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
+        CONFIRM_PASSWORD_VISIBILITY_BUTTON.pack(side='left')
+        #SET A PASSWORD CHECK STATUS LABEL
+        STATUS_LABEL = Label(CREATE_PASSWORD_WINDOW, text=None, anchor='s', font=('Times New Roman', 14, 'bold'))
+        STATUS_LABEL.pack(pady=(5, 10))
+        ROW_3_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_3_FRAME.pack(pady=10, fill='x')
+        CANCEL_BUTTON = Button(ROW_3_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
+        CANCEL_BUTTON.pack(side='left', padx=10)
+        CONFIRM_BUTTON = Button(ROW_3_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
+        CONFIRM_BUTTON.pack(side='right', padx=10)
+        #UPDATE THE STATUS LABEL ON-KEY UP
+        PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
+        CONFIRM_PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
+        #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
+        CREATE_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
+        CREATE_PASSWORD_WINDOW.wait_window()
+        return PASSWORD_VALUE
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "ENTRY_VARIABLE.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))"
@@ -337,20 +346,23 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe password entry parameter must be a "tkinter.Entry()" class type.')
     elif not isinstance(CONFIRM_BUTTON, Button):
         raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe confirm button parameter must be a "tkinter.Button()" class type.')
-    PASSWORD_VALUE = PASSWORD_ENTRY.get()
-    ASCII_CHECK =  all(CHARACTER in printable for CHARACTER in PASSWORD_VALUE)
-    if not PASSWORD_VALUE:
-        STATUS_LABEL.config(text='Cannot be empty!', fg='red')
-    elif not ASCII_CHECK:
-        STATUS_LABEL.config(text='Contains invalid characters!', fg='red')
-    else:
-        STATUS_LABEL.config(text='')
-    if not PASSWORD_VALUE or not ASCII_CHECK:
-        #DISABLE THE CONFIRM BUTTON
-        CONFIRM_BUTTON.config(state='disabled')
-    else:
-        #ENABLE THE CONFIRM BUTTON
-        CONFIRM_BUTTON.config(state='normal')
+    try:
+        PASSWORD_VALUE = PASSWORD_ENTRY.get()
+        ASCII_CHECK =  all(CHARACTER in printable for CHARACTER in PASSWORD_VALUE)
+        if not PASSWORD_VALUE:
+            STATUS_LABEL.config(text='Cannot be empty!', fg='red')
+        elif not ASCII_CHECK:
+            STATUS_LABEL.config(text='Contains invalid characters!', fg='red')
+        else:
+            STATUS_LABEL.config(text='')
+        if not PASSWORD_VALUE or not ASCII_CHECK:
+            #DISABLE THE CONFIRM BUTTON
+            CONFIRM_BUTTON.config(state='disabled')
+        else:
+            #ENABLE THE CONFIRM BUTTON
+            CONFIRM_BUTTON.config(state='normal')
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -377,48 +389,51 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe prompt title parameter must be a string type.')
-    PROMPT_TITLE = 'Enter Password' if PROMPT_TITLE is None else PROMPT_TITLE
-    ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
-    if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-        set_window_icon(ENTER_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-    ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
-    ENTER_PASSWORD_WINDOW.resizable(False, False)
-    ENTER_PASSWORD_WINDOW.grab_set()
-    PASSWORD_VALUE = None
-    def close_window():
-        ENTER_PASSWORD_WINDOW.destroy()
-    def process_password():
-        nonlocal PASSWORD_VALUE
-        PASSWORD_VALUE = PASSWORD_ENTRY.get()
-        ENTER_PASSWORD_WINDOW.destroy()
-    ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
-    ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-    ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
-    Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
-    PASSWORD_VISIBILITY_VARIABLE = StringVar()
-    PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
-    PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-    #SET FOCUS ON THE ENTRY
-    PASSWORD_ENTRY.focus_force()
-    #SET PASSWORD VISIBILITY BUTTON
-    PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
-    PASSWORD_VISIBILITY_BUTTON.pack(side='left')
-    #SET A PASSWORD CHECK STATUS LABEL
-    STATUS_LABEL = Label(ENTER_PASSWORD_WINDOW, font=('Times New Roman', 14, 'bold'), fg='grey')
-    STATUS_LABEL.pack(pady=(5, 10))
-    ROW_2_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-    ROW_2_FRAME.pack(pady=10, fill='x')
-    CANCEL_BUTTON = Button(ROW_2_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
-    CANCEL_BUTTON.pack(side='left', padx=10)
-    CONFIRM_BUTTON = Button(ROW_2_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
-    CONFIRM_BUTTON.pack(side='right', padx=10)
-    #UPDATE THE STATUS LABEL ON-KEY UP
-    PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))
-    #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
-    ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
-    ENTER_PASSWORD_WINDOW.wait_window()
-    del PASSWORD_ENTRY
-    return PASSWORD_VALUE
+    try:
+        PROMPT_TITLE = 'Enter Password' if PROMPT_TITLE is None else PROMPT_TITLE
+        ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
+            set_window_icon(ENTER_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
+        ENTER_PASSWORD_WINDOW.resizable(False, False)
+        ENTER_PASSWORD_WINDOW.grab_set()
+        PASSWORD_VALUE = None
+        def close_window():
+            ENTER_PASSWORD_WINDOW.destroy()
+        def process_password():
+            nonlocal PASSWORD_VALUE
+            PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            ENTER_PASSWORD_WINDOW.destroy()
+        ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
+        ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
+        Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
+        PASSWORD_VISIBILITY_VARIABLE = StringVar()
+        PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
+        PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
+        #SET FOCUS ON THE ENTRY
+        PASSWORD_ENTRY.focus_force()
+        #SET PASSWORD VISIBILITY BUTTON
+        PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
+        PASSWORD_VISIBILITY_BUTTON.pack(side='left')
+        #SET A PASSWORD CHECK STATUS LABEL
+        STATUS_LABEL = Label(ENTER_PASSWORD_WINDOW, font=('Times New Roman', 14, 'bold'), fg='grey')
+        STATUS_LABEL.pack(pady=(5, 10))
+        ROW_2_FRAME = Frame(ENTER_PASSWORD_WINDOW)
+        ROW_2_FRAME.pack(pady=10, fill='x')
+        CANCEL_BUTTON = Button(ROW_2_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
+        CANCEL_BUTTON.pack(side='left', padx=10)
+        CONFIRM_BUTTON = Button(ROW_2_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
+        CONFIRM_BUTTON.pack(side='right', padx=10)
+        #UPDATE THE STATUS LABEL ON-KEY UP
+        PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))
+        #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
+        ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
+        ENTER_PASSWORD_WINDOW.wait_window()
+        del PASSWORD_ENTRY
+        return PASSWORD_VALUE
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
 #1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
