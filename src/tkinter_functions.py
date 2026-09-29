@@ -256,7 +256,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
 #3.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #4.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Create A Password")
 #5.) DISPLAYS A CREATE PASSWORD PROMPT
-#6.) RETURNS THE USER-ENTERED PASSWORD STRING OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#6.) RETURNS THE USER-ENTERED PASSWORD, AS A BYTEARRAY, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -288,13 +288,16 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
         CREATE_PASSWORD_WINDOW.resizable(False, False)
         CREATE_PASSWORD_WINDOW.grab_set()
-        PASSWORD_VALUE = None
         def close_window():
             CREATE_PASSWORD_WINDOW.destroy()
+        PASSWORD_VALUE = None
         def process_password():
             nonlocal PASSWORD_VALUE
-            PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
+            PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
+            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
@@ -371,7 +374,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
 #2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #3.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Enter Password")
 #4.) DISPLAYS AN ENTER PASSWORD PROMPT
-#5.) RETURNS THE USER-ENTERED PASSWORD STRING OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#5.) RETURNS THE USER-ENTERED PASSWORD, AS A BYTEARRAY, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -399,12 +402,14 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
         ENTER_PASSWORD_WINDOW.resizable(False, False)
         ENTER_PASSWORD_WINDOW.grab_set()
-        PASSWORD_VALUE = None
         def close_window():
             ENTER_PASSWORD_WINDOW.destroy()
+        PASSWORD_VALUE = None
         def process_password():
             nonlocal PASSWORD_VALUE
-            PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
+            PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
