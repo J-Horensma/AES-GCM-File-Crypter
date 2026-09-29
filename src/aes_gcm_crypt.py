@@ -73,6 +73,12 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             )
             ENCODED_PASSWORD = PASSWORD.encode() if not isinstance(PASSWORD, (bytes, bytearray)) else PASSWORD
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
+            if isinstance(PASSWORD, bytearray):
+                #WIPE THE BYTES FROM THE PASSWORD VARIABLE
+                for i in range(len(PASSWORD)):
+                    PASSWORD[i] = 0
+            #DELETE THE PASSWORD VARIABLE, ONCE A KEY IS DERIVED, TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE MEMORY
+            del PASSWORD
             return [KEY_BYTES, SALT_BYTES]
         except BaseException as ERROR:
             raise Exception(f'[Exception]\nFunction: "get_aes_key_and_salt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
@@ -328,8 +334,6 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         #USING THE "get_aes_key_and_salt()" FUNCTION, KEY SIZE (128, 192, OR 256), 
         #AND THE USER-ENTERED PASSWORD STRING
         KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
-        #DELETE THE PASSWORD VARIABLE, ONCE A KEY IS DERIVED, TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE MEMORY
-        del PASSWORD
         #CREATE A 12-BYTE NONCE
         NONCE_BYTES = token_bytes(12)
         #USE THE KEY AND NONCE BYTES, TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
@@ -440,8 +444,6 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
             #DERIVE A KEY THAT MATCHES THE ORIGINAL KEY, USING THE USER-ENTERED PASSWORD AND THE SALT BYTES STORED, 
             #IN THE FILE'S SALT BYTES HEADER
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES)[0]
-            #DELETE THE PASSWORD VARIABLE, ONCE A KEY IS DERIVED, TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE MEMORY
-            del PASSWORD
             #USE THE KEY, NONCE, AND TAG BYTES, TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
             #START THE DECRYPTION STREAMER
