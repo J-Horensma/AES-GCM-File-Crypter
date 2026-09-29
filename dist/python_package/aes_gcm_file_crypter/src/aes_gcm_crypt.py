@@ -34,7 +34,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.exceptions import InvalidTag
 
 #THIS FUNCTION:
-#1.) REQUIRES A KEY SIZE INTEGER AND A PASSWORD STRING
+#1.) REQUIRES A KEY SIZE INTEGER AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL SALT BYTES
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
 #4.) ACCEPTS AN OPTIONAL KDF ITERATIONS INTEGER
@@ -46,8 +46,8 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
     KEY_SIZE_LIST = [128, 192, 256]
     if KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
-    elif not isinstance(PASSWORD, (str, bytes)):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string or bytes type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type.')
     elif SALT_BYTES and len(SALT_BYTES) != 16:
@@ -71,8 +71,17 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
                 salt=SALT_BYTES,
                 iterations=KDF_ITERATIONS
             )
-            ENCODED_PASSWORD = PASSWORD.encode() if not isinstance(PASSWORD, bytes) else PASSWORD
+            ENCODED_PASSWORD = PASSWORD.encode() if not isinstance(PASSWORD, (bytes, bytearray)) else PASSWORD
+            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC().derive()" FUNCTION STORES THE RETURNED KEY BYTES OBJECT VALUE,
+            #IN C-SIDE BUFFERS, NOT THE RAM
+            #C-SIDE BUFFERS ARE MORE DIFFICULT TO INSPECT
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
+            if isinstance(PASSWORD, bytearray):
+                #WIPE THE BYTES FROM THE PASSWORD VARIABLE
+                for i in range(len(PASSWORD)):
+                    PASSWORD[i] = 0
+            #DELETE THE PASSWORD VARIABLE ONCE A KEY IS DERIVED TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE RAM
+            del PASSWORD
             return [KEY_BYTES, SALT_BYTES]
         except BaseException as ERROR:
             raise Exception(f'[Exception]\nFunction: "get_aes_key_and_salt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
@@ -230,7 +239,7 @@ def check_aes_gcm_headers(FILE):
             raise Exception(f'[Exception]\nFunction: "check_aes_gcm_headers()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
         
 #THIS FUNCTION:
-#1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
+#1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
 #3.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
 #4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
@@ -240,8 +249,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter must be a string type.')
     elif not isinstance(KEY_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter must be an integer type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a string type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe block size parameter must be an integer type.')
     elif not isabs(FOLDER_PATH):
@@ -269,14 +278,14 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
-#1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
+#1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
 #3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter must be a string type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a string type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe block size parameter must be an integer type.')
     elif not isabs(FOLDER_PATH):
@@ -301,7 +310,7 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     except BaseException as ERROR:
         return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
-#1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING
+#1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
 #3.) AES-GCM ENCRYPTS THE FILE PATH (SECURELY, FOR ANY FILE TYPE)
 #4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
@@ -311,8 +320,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a string type.')
     elif not isinstance(KEY_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter must be an integer type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a string type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter must be an integer type.')
     elif not isabs(FILE_PATH):
@@ -328,8 +337,6 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         #USING THE "get_aes_key_and_salt()" FUNCTION, KEY SIZE (128, 192, OR 256), 
         #AND THE USER-ENTERED PASSWORD STRING
         KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
-        #DELETE THE PASSWORD VARIABLE, ONCE A KEY IS DERIVED, TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE MEMORY
-        del PASSWORD
         #CREATE A 12-BYTE NONCE
         NONCE_BYTES = token_bytes(12)
         #USE THE KEY AND NONCE BYTES, TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
@@ -361,11 +368,11 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
                         break
                     ENCRYPTED_CHUNK = ENCRYPTOR.update(PLAINTEXT_CHUNK)
                     #DELETE EACH PLAINTEXT DATA CHUNK VARIABLE, AFTER ENCRYPTION, 
-                    #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE MEMORY
+                    #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE RAM
                     del PLAINTEXT_CHUNK
                     OUTFILE.write(pack('>I', len(ENCRYPTED_CHUNK)) + ENCRYPTED_CHUNK)
                     #DELETE EACH ENCRYPTED DATA CHUNK VARIABLE, AFTER WRITING TO THE TEMPORARY FILE, 
-                    #TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE MEMORY
+                    #TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE RAM
                     del ENCRYPTED_CHUNK
                 #CLOSE THE ENCRYPTION STREAM
                 ENCRYPTOR.finalize()
@@ -377,12 +384,13 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
                 for HEADER in HEADERS_LIST:
                     HEADER_BYTES = HEADER if isinstance(HEADER, bytes) else str(HEADER).encode()
                     OUTFILE.write(pack('>I', len(HEADER_BYTES)) + HEADER_BYTES)
-                #DELETE THE HEADERS LIST VARIABLE AND THE HEADER VARIABLE, AFTER WRITING TO THE TEMPORARY FILE, 
-                #TO PREVENT ANY HEADER DATA FROM BEING STORED, IN THE MEMORY
-                del HEADERS_LIST
-                del HEADER
+                #DELETE THE HEADERS LIST AND HEADER VARIABLES, AFTER WRITING TO THE TEMPORARY FILE, 
+                #TO PREVENT ANY HEADER DATA FROM BEING STORED, IN THE RAM
+                del HEADERS_LIST, HEADER
+                #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
+                del NONCE_BYTES, TAG_BYTES, SALT_BYTES
         #OVERWRITE THE ORIGINAL FILE'S PLAINTEXT CONTENTS WITH RANDOM BYTES,
-        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT DATA, FROM THE DRIVE
+        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT DATA FROM THE DRIVE
         with open(FILE_PATH, 'r+b') as RANDOM_BYTES_OVERWRITE_FILE:
             while True:
                 PLAINTEXT_CHUNK = RANDOM_BYTES_OVERWRITE_FILE.read(BLOCK_SIZE)
@@ -391,7 +399,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
                 RANDOM_BYTES_OVERWRITE_FILE.seek(-len(PLAINTEXT_CHUNK), 1)
                 RANDOM_BYTES_OVERWRITE_FILE.write(token_bytes(len(PLAINTEXT_CHUNK)))
                 #DELETE EACH PLAINTEXT DATA CHUNK, AFTER EACH RANDOM BYTES OVERWRITE, 
-                #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE MEMORY
+                #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE RAM
                 del PLAINTEXT_CHUNK
             RANDOM_BYTES_OVERWRITE_FILE.flush()
             fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
@@ -409,15 +417,15 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         return [False, f'ERROR!:\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
-#1.) REQUIRES FILE PATH AND PASSWORD STRINGS
+#1.) REQUIRES A FILE PATH STRING AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
 #3.) AES-GCM DECRYPTS THE SUPPLIED FILE PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
 #4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter must be a string type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter must be a string type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe block size parameter must be an integer type.')
     elif not isabs(FILE_PATH):
@@ -440,10 +448,10 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
             #DERIVE A KEY THAT MATCHES THE ORIGINAL KEY, USING THE USER-ENTERED PASSWORD AND THE SALT BYTES STORED, 
             #IN THE FILE'S SALT BYTES HEADER
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES)[0]
-            #DELETE THE PASSWORD VARIABLE, ONCE A KEY IS DERIVED, TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE MEMORY
-            del PASSWORD
             #USE THE KEY, NONCE, AND TAG BYTES, TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
+            #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
+            del NONCE_BYTES, TAG_BYTES, SALT_BYTES
             #START THE DECRYPTION STREAMER
             DECRYPTOR = CIPHER.decryptor()
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
@@ -469,11 +477,11 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
                         remove(FILE_PATH + '.tmp')
                         return [False, f'CHUNK_DATA_CORRUPTED!\nFile path: {FILE_PATH}']
                     PLAINTEXT_CHUNK = DECRYPTOR.update(ENCRYPTED_CHUNK)
-                    #DELETE EACH ENCRYPTED DATA CHUNK, AFTER DECRYPTION, TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE MEMORY
+                    #DELETE EACH ENCRYPTED DATA CHUNK, AFTER DECRYPTION, TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE RAM
                     del ENCRYPTED_CHUNK
                     OUTFILE.write(PLAINTEXT_CHUNK)
-                    #DELETE EACH PLAINTEXT DATA CHUNK, AFTER WRITING THE CHUNK, TO THE ".tmp" FILE TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, 
-                    #IN THE MEMORY
+                    #DELETE EACH PLAINTEXT DATA CHUNK, AFTER WRITING THE CHUNK TO THE ".tmp" FILE, 
+                    #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE RAM
                     del PLAINTEXT_CHUNK
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 FINAL_BYTES = DECRYPTOR.finalize()
@@ -489,8 +497,8 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
                     break
                 RANDOM_BYTES_OVERWRITE_FILE.seek(-len(ENCRYPTED_CHUNK), 1)
                 RANDOM_BYTES_OVERWRITE_FILE.write(token_bytes(len(ENCRYPTED_CHUNK)))
-                #DELETE EACH AES-GCM ENCRYPTED DATA CHUNK, AFTER EACH RANDOM BYTES OVERWRITE,
-                #OF THE FILE CHUNK, TO PREVENT ANY AES-GCM ENCRYPTED DATA FROM BEING STORED, IN THE MEMORY
+                #DELETE EACH AES-GCM ENCRYPTED DATA CHUNK, AFTER EACH RANDOM BYTES OVERWRITE OF THE FILE CHUNK, 
+                #TO PREVENT ANY AES-GCM ENCRYPTED DATA FROM BEING STORED, IN THE RAM
                 del ENCRYPTED_CHUNK
             RANDOM_BYTES_OVERWRITE_FILE.flush()
             fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
@@ -511,7 +519,7 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
         return [False, f'ERROR!:\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
-#1.) REQUIRES A PLAINTEXT STRING OR BYTES TYPE VARIABLE, KEY SIZE INTEGER, AND A PASSWORD STRING
+#1.) REQUIRES A PLAINTEXT STRING OR BYTES TYPE VARIABLE, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) CREATES A 16 BYTE SALT AND 12 BYTE NONCE
 #3.) AES-GCM ENCRYPTS THE VARIABLE
 #4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM, THEN SALT, NONCE, AND TAG BYTES (IF SUCCESS)
@@ -521,8 +529,8 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe plaintext variable parameter must be a string or bytes type.')
     elif not isinstance(KEY_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a string type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
     else:
@@ -539,7 +547,7 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
             return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
 
 #THIS FUNCTION:
-#1.) REQUIRES AN ENCRYPTED VARIABLE BYTES, KEY SIZE INTEGER, PASSWORD STRING, SALT, NONCE, AND TAG BYTES
+#1.) REQUIRES AN ENCRYPTED VARIABLE BYTES, KEY SIZE INTEGER, PASSWORD STRING, BYTES, OR BYTEARRAY, SALT, NONCE, AND TAG BYTES
 #2.) VALIDATES THE PASSWORD USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
 #IN COMBINATION WITH THE PASSWORD, USING THE "get_aes_key_and_salt()" FUNCTION
 #3.) DECRYPTS AND RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM, THEN DECRYPTED PLAINTEXT (IF SUCCESS)
@@ -549,8 +557,8 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe encrypted bytes parameter must be a bytes type.')
     elif not isinstance(KEY_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter must be an integer type.')
-    elif not isinstance(PASSWORD, str):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a string type.')
+    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter must be a bytes type.')
     elif not isinstance(NONCE_BYTES, bytes):
