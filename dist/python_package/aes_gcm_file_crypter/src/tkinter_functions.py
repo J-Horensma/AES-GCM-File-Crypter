@@ -21,6 +21,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 '''
 
 from os.path import isabs, isdir, isfile, expanduser
+from string import printable
 from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
 
