@@ -256,7 +256,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
 #3.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #4.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Create A Password")
 #5.) DISPLAYS A CREATE PASSWORD PROMPT
-#6.) RETURNS THE USER-ENTERED PASSWORD VALUE
+#6.) RETURNS THE USER-ENTERED PASSWORD, AS A BYTEARRAY, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -290,10 +290,19 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         CREATE_PASSWORD_WINDOW.grab_set()
         PASSWORD_VALUE = None
         def close_window():
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            PASSWORD_ENTRY.delete(0, 'end')
+            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
+            CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         def process_password():
             nonlocal PASSWORD_VALUE
-            PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
+            PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            PASSWORD_ENTRY.delete(0, 'end')
+            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
+            CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -366,10 +375,10 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#3.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
-#4.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Enter Password")
-#5.) DISPLAYS AN ENTER PASSWORD PROMPT
-#6.) RETURNS THE USER-ENTERED PASSWORD VALUE
+#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
+#3.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Enter Password")
+#4.) DISPLAYS AN ENTER PASSWORD PROMPT
+#5.) RETURNS THE USER-ENTERED PASSWORD, AS A BYTEARRAY, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
 def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -399,10 +408,15 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ENTER_PASSWORD_WINDOW.grab_set()
         PASSWORD_VALUE = None
         def close_window():
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         def process_password():
             nonlocal PASSWORD_VALUE
-            PASSWORD_VALUE = PASSWORD_ENTRY.get()
+            #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
+            PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
@@ -430,7 +444,6 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
         ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         ENTER_PASSWORD_WINDOW.wait_window()
-        del PASSWORD_ENTRY
         return PASSWORD_VALUE
     except BaseException as ERROR:
         raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
