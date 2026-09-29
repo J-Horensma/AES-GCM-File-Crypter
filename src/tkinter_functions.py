@@ -288,9 +288,13 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
         CREATE_PASSWORD_WINDOW.resizable(False, False)
         CREATE_PASSWORD_WINDOW.grab_set()
-        def close_window():
-            CREATE_PASSWORD_WINDOW.destroy()
         PASSWORD_VALUE = None
+        def close_window():
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            PASSWORD_ENTRY.delete(0, 'end')
+            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
+            CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
+            CREATE_PASSWORD_WINDOW.destroy()
         def process_password():
             nonlocal PASSWORD_VALUE
             #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
@@ -402,9 +406,11 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
         ENTER_PASSWORD_WINDOW.resizable(False, False)
         ENTER_PASSWORD_WINDOW.grab_set()
-        def close_window():
-            ENTER_PASSWORD_WINDOW.destroy()
         PASSWORD_VALUE = None
+        def close_window():
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            PASSWORD_ENTRY.delete(0, 'end')
+            ENTER_PASSWORD_WINDOW.destroy()
         def process_password():
             nonlocal PASSWORD_VALUE
             #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
