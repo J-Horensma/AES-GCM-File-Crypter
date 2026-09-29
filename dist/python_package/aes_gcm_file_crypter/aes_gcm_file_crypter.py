@@ -27,7 +27,7 @@ from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
     from .src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
-        password_input_prompt, folder_path_prompt, file_path_prompt
+        create_password_prompt, enter_password_prompt, folder_path_prompt, file_path_prompt
     )
     from .src.aes_gcm_crypt import (
         aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
@@ -36,7 +36,7 @@ try:
 except ImportError:
     from src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
-        password_input_prompt, folder_path_prompt, file_path_prompt
+        create_password_prompt, enter_password_prompt, folder_path_prompt, file_path_prompt
     )
     from src.aes_gcm_crypt import (
         aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
@@ -75,30 +75,17 @@ def main():
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
-        while True:
-            PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter A Password'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
-            if PASSWORD is None:
+        MINIMUM_PASSWORD_LENGTH = 16
+        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        if PASSWORD is None:
+            return
+        else:
+            CONFIRMATION = messagebox.askyesno(
+                title='Confirm Selection',
+                message=f'The folder path:\n"{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
+            )
+            if not CONFIRMATION:
                 return
-            elif not PASSWORD:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Password Required!',
-                    message='A password is required, try again?'
-                )
-                if not CONFIRMATION:
-                    return
-                else:
-                    continue
-            else:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Confirm Selection',
-                    message=f'The folder path:\n"{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
-                )
-                if not CONFIRMATION:
-                    return
-                else:
-                    break
         ACTIVITY_LOG.config(state='normal')
         ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
@@ -126,21 +113,9 @@ def main():
         FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
-        while True:
-            PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter The Password'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
-            if not PASSWORD:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Password Required!',
-                    message='A password is required, try again?'
-                )
-                if not CONFIRMATION:
-                    return
-                else:
-                    continue
-            else:
-                break
+        PASSWORD = enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        if PASSWORD is None:
+            return
         ACTIVITY_LOG.config(state='normal')
         ACTIVITY_LOG.insert('insert', f'Decrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
@@ -175,28 +150,17 @@ def main():
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
-        while True:
-            PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter A Password'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
-            if not PASSWORD:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Password Required!',
-                    message='A password is required, try again?'
-                )
-                if not CONFIRMATION:
-                    return
-                else:
-                    continue
-            else:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Confirm Selection',
-                    message=f'The file path:\n"{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
-                )
-                if not CONFIRMATION:
-                    return
-                else:
-                    break
+        MINIMUM_PASSWORD_LENGTH = 16
+        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        if PASSWORD is None:
+            return
+        else:
+            CONFIRMATION = messagebox.askyesno(
+                title='Confirm Selection',
+                message=f'The file path:\n"{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
+            )
+            if not CONFIRMATION:
+                return
         ACTIVITY_LOG.config(state='normal')
         ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the file: "{FILE_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
@@ -224,21 +188,9 @@ def main():
         FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
-        while True:
-            PROMPT_TITLE = 'Password'
-            PROMPT_MESSAGE = 'Enter The Password'
-            PASSWORD = password_input_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
-            if not PASSWORD:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Password Required!',
-                    message='A password is required, try again?'
-                )
-                if not CONFIRMATION:
-                    return
-                else:
-                    continue
-            else:
-                break
+        PASSWORD = enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        if PASSWORD is None:
+            return
         ACTIVITY_LOG.config(state='normal')
         ACTIVITY_LOG.insert('insert', f'Decrypting the file: "{FILE_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
@@ -318,11 +270,10 @@ def main():
         print(f'{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nClosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
-#CALL THE "main()" FUNCTION, IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
+#CALL THE "main()" FUNCTION IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
 if __package__ in (None, ''):
     main()
 else:
-    #SKIP CALLING THE "main()" FUNCTION, IF THIS FILE IS IMPORTED AS A PYTHON PACKAGE,
-    #SO THE "main()" FUNCTION, DOES NOT RE-LAUNCH WHEN THE APPLICATION IS CLOSED, BECAUSE IT IS CALLED
-    #BY "__main__.py"
+    #SKIP CALLING THE "main()" FUNCTION IF THIS FILE IS IMPORTED AS A PYTHON PACKAGE,
+    #SO THE "main()" FUNCTION DOES NOT RE-LAUNCH WHEN THE APPLICATION IS CLOSED
     pass
