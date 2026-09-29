@@ -281,7 +281,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
         #SET THE DEFAULT MINIMUM PASSWORD LENGTH TO 12
-        MINIMUM_PASSWORD_LENGTH = 12 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
+        MINIMUM_PASSWORD_LENGTH = 16 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
         CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
         if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
