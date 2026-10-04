@@ -93,13 +93,13 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
 def is_normal(PATH):
     try:
         PATH = abspath(PATH)
-        #CHECK IF THE PATH, IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
+        #CHECK IF THE PATH IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
         PATH_STATUS = Path(PATH).lstat()
         PATH_MODE = PATH_STATUS.st_mode
         if not any([S_ISDIR(PATH_MODE), S_ISREG(PATH_MODE)]):
             return False
         elif system() == 'Windows':
-            #CHECK IF THE PATH, IS A SYSTEM, HIDDEN, OR REPARSE-POINT PATH
+            #CHECK IF THE PATH, IS A HIDDEN, SYSTEM, OR REPARSE-POINT PATH
             WINDOWS_FILE_ATTRIBUTE_HIDDEN = 0x2
             WINDOWS_FILE_ATTRIBUTE_SYSTEM = 0x4
             WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT = 0x400
@@ -263,7 +263,7 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
+        for ROOT, FOLDERS, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
             for FILE_NAME in FILES:
                 FILE_PATH = join(ROOT, FILE_NAME)
@@ -296,7 +296,7 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        for ROOT, DIRECTORIES, FILES in walk(FOLDER_PATH):
+        for ROOT, FOLDERS, FILES in walk(FOLDER_PATH):
             FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
             for FILE_NAME in FILES:
                 FILE_PATH = join(ROOT, FILE_NAME)
