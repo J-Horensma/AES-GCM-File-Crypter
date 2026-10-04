@@ -26,6 +26,115 @@ from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
 
 #THIS FUNCTION:
+#1.) REQUIRES A PATH STRING
+#2.) CHECKS IF THE PATH, IS A NORMAL PATH
+#3.) RETURNS "True" OR "False"
+def is_normal(PATH):
+    try:
+        PATH = abspath(PATH)
+        #CHECK IF THE PATH IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
+        PATH_STATUS = Path(PATH).lstat()
+        PATH_MODE = PATH_STATUS.st_mode
+        if not any([S_ISDIR(PATH_MODE), S_ISREG(PATH_MODE)]):
+            return False
+        elif system() == 'Windows':
+            #CHECK IF THE PATH, IS A HIDDEN, SYSTEM, OR REPARSE-POINT PATH
+            WINDOWS_FILE_ATTRIBUTE_HIDDEN = 0x2
+            WINDOWS_FILE_ATTRIBUTE_SYSTEM = 0x4
+            WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+            WINDOWS_FILE_ATTRIBUTES = PATH_STATUS.st_file_attributes
+            if WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_SYSTEM:
+                return False
+            elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_HIDDEN:
+                return False
+            elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT:
+                return False
+        return True
+    except:
+        return False
+
+#THIS FUNCTION:
+#1.) REQUIRES A PATH AND PERMISSIONS STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
+#2.) CHECKS IF THE PATH, HAS THE REQUESTED PERMISSIONS
+#3.) RETURNS "True" OR "False"
+def has_permissions(PATH, PERMISSIONS):
+    try:
+        PATH = abspath(PATH)
+        if not set(PERMISSIONS) <= {'R','W','X'}:
+            return False
+        #CHECK STATIC METADATA PERMISSIONS
+        if 'R' in PERMISSIONS and not access(PATH, R_OK):
+            return False
+        if 'W' in PERMISSIONS and not access(PATH, W_OK):
+            return False
+        if 'X' in PERMISSIONS and not access(PATH, X_OK):
+            return False
+        if system() == 'Windows':
+            #CHECK WINDOWS DYNAMIC METADATA PERMISSIONS
+            from ctypes import wintypes, WinDLL
+            GENERIC_READ  = 0x80000000
+            FILE_SHARE_READ = 0x00000001
+            FILE_SHARE_WRITE = 0x00000002
+            FILE_SHARE_DELETE = 0x00000004
+            OPEN_EXISTING = 3
+            FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+            kernel32 = WinDLL('kernel32', use_last_error=True)
+            CreateFileW = kernel32.CreateFileW
+            CreateFileW.argtypes = [
+                wintypes.LPCWSTR,
+                wintypes.DWORD,
+                wintypes.DWORD,
+                wintypes.LPVOID,
+                wintypes.DWORD,
+                wintypes.DWORD,
+                wintypes.HANDLE
+            ]
+            CreateFileW.restype = wintypes.HANDLE
+            def can_access(PATH):
+                HANDLE = CreateFileW(
+                    PATH,
+                    GENERIC_READ,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                    None,
+                    OPEN_EXISTING,
+                    FILE_FLAG_BACKUP_SEMANTICS,
+                    None
+                )
+                if HANDLE == wintypes.HANDLE(-1).value:
+                    return False
+                kernel32.CloseHandle(HANDLE)
+                return True
+            if not can_access(PATH):
+                return False
+        return True
+    except:
+        return False
+
+#THIS FUNCTION:
+#1.) REQUIRES A FOLDER PATH STRING
+#2.) RECURSIVELY SCANS THE PATH
+#3.) RETURNS THE TOTAL AMOUNT OF ACCESSABLE FILES AND THEIR BYTES TOTAL
+def recursive_files_and_bytes_total(FOLDER_PATH):
+    if not isabs(FOLDER_PATH):
+        raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
+    elif not isdir(FOLDER_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
+    try:
+        DENIED_FILES = []
+        FILES_TOTAL = 0
+        BYTES_TOTAL = 0
+        for ROOT, FOLDERS, FILES in os.walk(FOLDER_PATH):
+            FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')]) else DENIED_FILES.append(join(ROOT, FILE))]
+            for FILE in FILES:
+                FILES_TOTAL += 1
+                SCAN_PATH = join(ROOT, FILE)
+                FILE_SIZE = getsize(SCAN_PATH)
+                BYTES_TOTAL += FILE_SIZE
+        return FILES_TOTAL, BYTES_TOTAL
+    except BaseException as ERROR:
+        raise Exception(f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+                     
+#THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW OR "Tk().Toplevel()" WINDOW CLASS
 #2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING/S
 #3.) SETS THE WINDOW ICON
