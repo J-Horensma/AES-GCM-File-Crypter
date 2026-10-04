@@ -120,11 +120,10 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
     try:
-        DENIED_FILES = []
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
         for ROOT, FOLDERS, FILES in os.walk(FOLDER_PATH):
-            FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')]) else DENIED_FILES.append(join(ROOT, FILE))]
+            FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
             for FILE in FILES:
                 FILES_TOTAL += 1
                 SCAN_PATH = join(ROOT, FILE)
