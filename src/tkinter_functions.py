@@ -120,6 +120,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
     try:
+        FOLDER_PATH = abspath(FOLDER_PATH)
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
         for ROOT, FOLDERS, FILES in os.walk(FOLDER_PATH):
