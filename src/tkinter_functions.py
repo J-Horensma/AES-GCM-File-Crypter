@@ -266,17 +266,15 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
             DROPDOWN_MENU_WINDOW.destroy()
         #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
         DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH and ICON_PNG_FILE_PATH:
-            set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-        #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
-        DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        #SET THE WINDOW ICON
+        set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
         #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
         DROPDOWN_MENU_WINDOW.resizable(False, False)
+        #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
+        DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         #SEND ALL MOUSE AND KEYBOARD EVENTS TO THIS WINDOW
         DROPDOWN_MENU_WINDOW.grab_set()
-        #WINDOW WIDGETS (START)
-        #----------------------
         MESSAGE_LABEL = Label(DROPDOWN_MENU_WINDOW, text=PROMPT_MESSAGE, font=('Times New Roman', 18, 'bold'))
         MESSAGE_LABEL.pack(padx=10, pady=10)
         DROPDOWN_MENU = ttk.Combobox(DROPDOWN_MENU_WINDOW, values=DROPDOWN_MENU_OPTIONS, state='readonly', font=('Times New Roman', 18, 'bold'))
@@ -288,8 +286,6 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         CONFIRM_BUTTON.pack(side='right', padx=10, pady=10)
         CONFIRM_BUTTON.focus_set()
         DROPDOWN_MENU_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
-        #--------------------
-        #WINDOW WIDGETS (END)
         #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE RETURNING
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
@@ -396,6 +392,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
             set_window_icon(CREATE_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
         CREATE_PASSWORD_WINDOW.resizable(False, False)
+        CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         CREATE_PASSWORD_WINDOW.grab_set()
         PASSWORD_VALUE = None
         def close_window():
@@ -413,16 +410,15 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
             #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
-        CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
         ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
         Label(ROW_1_FRAME, text='Create A Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
         PASSWORD_VISIBILITY_VARIABLE = StringVar()
         PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
         PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-        #SET FOCUS ON THE ENTRY
+        #SET FOCUS ON THE PASSWORD ENTRY
         PASSWORD_ENTRY.focus_force()
-        #SET PASSWORD VISIBILITY BUTTON
+        #SET THE PASSWORD VISIBILITY BUTTON
         PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_2_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -514,6 +510,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
             set_window_icon(ENTER_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
         ENTER_PASSWORD_WINDOW.resizable(False, False)
+        ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ENTER_PASSWORD_WINDOW.grab_set()
         PASSWORD_VALUE = None
         def close_window():
@@ -527,14 +524,13 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
             #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
-        ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
         Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
         PASSWORD_VISIBILITY_VARIABLE = StringVar()
         PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
         PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-        #SET FOCUS ON THE ENTRY
+        #SET FOCUS ON THE PASSWORD ENTRY
         PASSWORD_ENTRY.focus_force()
         #SET PASSWORD VISIBILITY BUTTON
         PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
