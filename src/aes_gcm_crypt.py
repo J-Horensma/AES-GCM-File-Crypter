@@ -173,9 +173,36 @@ def has_permissions(PATH, PERMISSIONS):
         return False
 
 #THIS FUNCTION:
+#1.) REQUIRES A BYTES NUMBER STRING OR INTEGER
+#2.) CONVERTS THE SUPPLIED BYTES NUMBER
+#3.) RETURNS THE CONVERTED BYTES AS A STRING
+def convert_bytes(BYTES_NUMBER):
+    if not isinstance(BYTES_NUMBER, (str, int)):
+        raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be a string or integer type.')
+    try:
+        BINARY_INCREMENT = 1024
+        if BYTES_NUMBER < BINARY_INCREMENT:return f'{BYTES_NUMBER} Bytes'
+        KILOBYTES = f'{round(BYTES_NUMBER/BINARY_INCREMENT, 2)}'
+        if BYTES_NUMBER >= BINARY_INCREMENT and BYTES_NUMBER < BINARY_INCREMENT ** 2:return f'{KILOBYTES} KB'
+        MEGABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 2), 2)
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 2) and BYTES_NUMBER < BINARY_INCREMENT ** 3:return f'{MEGABYTES} MB'
+        GIGABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 3), 2)
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 3) and BYTES_NUMBER < BINARY_INCREMENT ** 4:return f'{GIGABYTES} GB'
+        TERABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 4), 2)
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 4) and BYTES_NUMBER < BINARY_INCREMENT ** 5:return f'{TERABYTES} TB'
+        PETABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 5), 2)
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 5) and BYTES_NUMBER < BINARY_INCREMENT ** 6:return f'{PETABYTES} PB'
+        EXABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 6), 2)
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 6) and BYTES_NUMBER < BINARY_INCREMENT ** 7:return f'{EXABYTES} EB'
+        ZETTABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 7), 2)
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 7) and BYTES_NUMBER < BINARY_INCREMENT ** 8:return f'{ZETTABYTES} ZB'
+    except BaseException as ERROR:
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_bytes()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        
+#THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILE(S) INTEGER, AND THEIR BYTES TOTAL STRING
+#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILE(S) INTEGER, AND A BYTES TOTAL STRING FOR ALL FILE(S)
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
