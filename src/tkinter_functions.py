@@ -144,7 +144,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
-#2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDS ON THE OS, BEING USED)
+#2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDS ON THE OS BEING USED)
 #3.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
@@ -275,8 +275,9 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
             DROPDOWN_MENU_WINDOW.destroy()
         #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
         DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
-        #SET THE WINDOW ICON
-        set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
+            #SET THE WINDOW ICON
+            set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
         #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
         DROPDOWN_MENU_WINDOW.resizable(False, False)
@@ -393,7 +394,6 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
-        #SET THE DEFAULT MINIMUM PASSWORD LENGTH TO 12
         MINIMUM_PASSWORD_LENGTH = 16 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
         CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
@@ -539,9 +539,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         PASSWORD_VISIBILITY_VARIABLE = StringVar()
         PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
         PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-        #SET FOCUS ON THE PASSWORD ENTRY
         PASSWORD_ENTRY.focus_force()
-        #SET PASSWORD VISIBILITY BUTTON
         PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         #SET A PASSWORD CHECK STATUS LABEL
