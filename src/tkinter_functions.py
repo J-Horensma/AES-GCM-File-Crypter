@@ -27,7 +27,7 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
-#2.) CHECKS IF THE PATH, IS A NORMAL PATH
+#2.) CHECKS IF THE PATH IS A NORMAL PATH
 #3.) RETURNS "True" OR "False"
 def is_normal(PATH):
     try:
@@ -54,22 +54,23 @@ def is_normal(PATH):
         return False
 
 #THIS FUNCTION:
-#1.) REQUIRES A PATH AND PERMISSIONS STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
-#2.) CHECKS IF THE PATH, HAS THE REQUESTED PERMISSIONS
+#1.) REQUIRES A PATH STRING AND A PERMISSIONS STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
+#2.) CHECKS IF THE SUPPLIED PATH, HAS THE REQUESTED PERMISSIONS
 #3.) RETURNS "True" OR "False"
 def has_permissions(PATH, PERMISSIONS):
     try:
         PATH = abspath(PATH)
+        #ENSURE R, W, AND/OR X, ARE INCLUDED, IN THE PERMISSIONS PARAMETER
         if not set(PERMISSIONS) <= {'R','W','X'}:
             return False
         #CHECK STATIC METADATA PERMISSIONS
-        if 'R' in PERMISSIONS and not access(PATH, R_OK):
+        elif 'R' in PERMISSIONS and not access(PATH, R_OK):
             return False
-        if 'W' in PERMISSIONS and not access(PATH, W_OK):
+        elif 'W' in PERMISSIONS and not access(PATH, W_OK):
             return False
-        if 'X' in PERMISSIONS and not access(PATH, X_OK):
+        elif 'X' in PERMISSIONS and not access(PATH, X_OK):
             return False
-        if system() == 'Windows':
+        elif system() == 'Windows':
             #CHECK WINDOWS DYNAMIC METADATA PERMISSIONS
             from ctypes import wintypes, WinDLL
             GENERIC_READ  = 0x80000000
@@ -113,7 +114,7 @@ def has_permissions(PATH, PERMISSIONS):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS ABSOLUTE FOLDER PATH AND FILE PATH (LISTS), TOTAL AMOUNT OF ACCESSABLE FILES (INTEGER), AND THEIR BYTES TOTAL (STRING)
+#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILES INTEGER, AND THEIR BYTES TOTAL STRING
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
@@ -140,7 +141,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         return ABSOLUTE_FOLDER_PATHS, ABSOLUTE_FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
-                     
+        
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
 #2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING/S
