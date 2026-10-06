@@ -392,13 +392,6 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
     try:
         MINIMUM_PASSWORD_LENGTH = 16 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
-        CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            set_window_icon(CREATE_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-        CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
-        CREATE_PASSWORD_WINDOW.resizable(False, False)
-        CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
-        CREATE_PASSWORD_WINDOW.grab_set()
         PASSWORD_VALUE = None
         def close_window():
             #DELETE THE PASSWORD ENTRY FROM THE RAM
@@ -415,6 +408,13 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
             #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
+        CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
+            set_window_icon(CREATE_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
+        CREATE_PASSWORD_WINDOW.resizable(False, False)
+        CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        CREATE_PASSWORD_WINDOW.grab_set()
         ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
         ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
         Label(ROW_1_FRAME, text='Create A Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
@@ -508,13 +508,6 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe prompt title parameter must be a string type.')
     try:
         PROMPT_TITLE = 'Enter Password' if PROMPT_TITLE is None else PROMPT_TITLE
-        ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            set_window_icon(ENTER_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-        ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
-        ENTER_PASSWORD_WINDOW.resizable(False, False)
-        ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
-        ENTER_PASSWORD_WINDOW.grab_set()
         PASSWORD_VALUE = None
         def close_window():
             #DELETE THE PASSWORD ENTRY FROM THE RAM
@@ -527,6 +520,13 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
             #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
+        ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
+            set_window_icon(ENTER_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
+        ENTER_PASSWORD_WINDOW.resizable(False, False)
+        ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        ENTER_PASSWORD_WINDOW.grab_set()
         ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
         Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
