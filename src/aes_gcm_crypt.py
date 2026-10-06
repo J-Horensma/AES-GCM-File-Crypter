@@ -473,7 +473,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
-        return [False, f'ERROR!:\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
+        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES A FILE PATH STRING AND A PASSWORD STRING, BYTES, OR BYTEARRAY
@@ -575,7 +575,7 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
-        return [False, f'ERROR!:\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
+        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES A PLAINTEXT STRING OR BYTES TYPE VARIABLE, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
@@ -603,7 +603,7 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
             TAG_BYTES = ENCRYPTOR.tag
             return [True, ENCRYPTED_VARIABLE_BYTES, SALT_BYTES, NONCE_BYTES, TAG_BYTES]
         except BaseException as ERROR:
-            return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
+            return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_variable()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
 
 #THIS FUNCTION:
 #1.) REQUIRES AN ENCRYPTED VARIABLE BYTES, KEY SIZE INTEGER, PASSWORD STRING, BYTES, OR BYTEARRAY, SALT, NONCE, AND TAG BYTES
@@ -642,4 +642,4 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
         except InvalidTag:
             return [False, f'INCORRECT_PASSWORD!']
         except BaseException as ERROR:
-            return [False, f'ERROR!\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
+            return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_variable()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
