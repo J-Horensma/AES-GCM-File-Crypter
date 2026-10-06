@@ -54,13 +54,13 @@ def is_normal(PATH):
         return False
 
 #THIS FUNCTION:
-#1.) REQUIRES A PATH STRING AND A PERMISSIONS STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
-#2.) CHECKS IF THE SUPPLIED PATH, HAS THE REQUESTED PERMISSIONS
+#1.) REQUIRES A PATH STRING AND A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
+#2.) CHECKS IF THE SUPPLIED PATH, HAS THE REQUESTED PERMISSION(S)
 #3.) RETURNS "True" OR "False"
 def has_permissions(PATH, PERMISSIONS):
     try:
         PATH = abspath(PATH)
-        #ENSURE R, W, AND/OR X, ARE INCLUDED, IN THE PERMISSIONS PARAMETER
+        #ENSURE R, W, AND/OR X ARE INCLUDED, IN THE PERMISSIONS PARAMETER
         if not set(PERMISSIONS) <= {'R','W','X'}:
             return False
         #CHECK STATIC METADATA PERMISSIONS
@@ -114,7 +114,7 @@ def has_permissions(PATH, PERMISSIONS):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILES INTEGER, AND THEIR BYTES TOTAL STRING
+#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILE(S) INTEGER, AND THEIR BYTES TOTAL STRING
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
@@ -144,7 +144,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
-#2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING/S
+#2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDS ON THE OS, BEING USED)
 #3.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
@@ -187,7 +187,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN, AS A LIST
+#2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN AS A LIST
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "get_device_screen_size()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -213,7 +213,7 @@ def clear_window(WINDOW):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
+#1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS AND WINDOW WIDTH AND HEIGHT INTEGERS
 #2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENSIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
@@ -232,10 +232,10 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
-#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
-#3.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT MESSAGE STRING/S (DEFAULT IS "Select An Option")
+#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
+#3.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT MESSAGE STRING(S) (DEFAULT IS "Select An Option")
 #4.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
-#5.) RETURNS THE USER-SELECTED OPTION AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#5.) RETURNS THE USER-SELECTED OPTION AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
     if system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
@@ -367,10 +367,10 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
 #2.) ACCEPTS AN OPTIONAL MINIMUM PASSWORD LENGTH INTEGER (DEFAULT IS 16)
-#3.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
+#3.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
 #4.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Create A Password")
 #5.) DISPLAYS A CREATE PASSWORD PROMPT
-#6.) RETURNS THE USER-ENTERED PASSWORD, AS A BYTEARRAY, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#6.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -489,10 +489,10 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING/S
+#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
 #3.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Enter Password")
 #4.) DISPLAYS AN ENTER PASSWORD PROMPT
-#5.) RETURNS THE USER-ENTERED PASSWORD, AS A BYTEARRAY, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#5.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -563,9 +563,9 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
-#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
+#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING(S)
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
-#3.) RETURNS THE ABSOLUTE FOLDER PATH THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#3.) RETURNS THE ABSOLUTE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter must be a string type.')
@@ -587,11 +587,11 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
+#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING(S)
 #2.) ACCEPTS AN OPTIONAL FILE TYPES LIST
 #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
 #3.) PROMPTS THE USER TO CHOOSE A FILE PATH
-#4.) RETURNS THE ABSOLUTE FILE PATH THAT WAS CHOSEN, AS A STRING, OR "None", IF THE WINDOW IS CLOSED OR CANCELLED
+#4.) RETURNS THE ABSOLUTE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter must be a string type.')
