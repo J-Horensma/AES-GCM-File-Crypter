@@ -273,13 +273,10 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
             nonlocal SELECTED_DROPDOWN_MENU_VALUE
             SELECTED_DROPDOWN_MENU_VALUE = DROPDOWN_MENU.get()
             DROPDOWN_MENU_WINDOW.destroy()
-        #CREATE A NEW WINDOW, SEPARATE FROM THE ROOT WINDOW
         DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
         if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            #SET THE WINDOW ICON
             set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
-        #PREVENT RESIZING WIDTH AND HEIGHT OF THE WINDOW
         DROPDOWN_MENU_WINDOW.resizable(False, False)
         #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
         DROPDOWN_MENU_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
@@ -294,7 +291,6 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         CANCEL_BUTTON.pack(side='left', padx=10, pady=10)
         CONFIRM_BUTTON = Button(DROPDOWN_MENU_WINDOW, text='Confirm', font=('Times New Roman', 18, 'bold'), command=process_selected_value)
         CONFIRM_BUTTON.pack(side='right', padx=10, pady=10)
-        CONFIRM_BUTTON.focus_set()
         DROPDOWN_MENU_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
         #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE RETURNING
         DROPDOWN_MENU_WINDOW.wait_window()
@@ -479,10 +475,8 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         else:
             STATUS_LABEL.config(text='')
         if not PASSWORD_VALUE or not ASCII_CHECK:
-            #DISABLE THE CONFIRM BUTTON
             CONFIRM_BUTTON.config(state='disabled')
         else:
-            #ENABLE THE CONFIRM BUTTON
             CONFIRM_BUTTON.config(state='normal')
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_enter_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
