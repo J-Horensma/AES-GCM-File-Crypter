@@ -88,7 +88,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
 
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
-#2.) CHECKS IF THE PATH, IS A NORMAL PATH
+#2.) CHECKS IF THE PATH IS A NORMAL PATH
 #3.) RETURNS "True" OR "False"
 def is_normal(PATH):
     try:
@@ -115,22 +115,23 @@ def is_normal(PATH):
         return False
 
 #THIS FUNCTION:
-#1.) REQUIRES A PATH AND PERMISSIONS STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
-#2.) CHECKS IF THE PATH, HAS THE REQUESTED PERMISSIONS
+#1.) REQUIRES A PATH STRING AND A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
+#2.) CHECKS IF THE SUPPLIED PATH, HAS THE REQUESTED PERMISSION(S)
 #3.) RETURNS "True" OR "False"
 def has_permissions(PATH, PERMISSIONS):
     try:
         PATH = abspath(PATH)
+        #ENSURE R, W, AND/OR X ARE INCLUDED, IN THE PERMISSIONS PARAMETER
         if not set(PERMISSIONS) <= {'R','W','X'}:
             return False
         #CHECK STATIC METADATA PERMISSIONS
-        if 'R' in PERMISSIONS and not access(PATH, R_OK):
+        elif 'R' in PERMISSIONS and not access(PATH, R_OK):
             return False
-        if 'W' in PERMISSIONS and not access(PATH, W_OK):
+        elif 'W' in PERMISSIONS and not access(PATH, W_OK):
             return False
-        if 'X' in PERMISSIONS and not access(PATH, X_OK):
+        elif 'X' in PERMISSIONS and not access(PATH, X_OK):
             return False
-        if system() == 'Windows':
+        elif system() == 'Windows':
             #CHECK WINDOWS DYNAMIC METADATA PERMISSIONS
             from ctypes import wintypes, WinDLL
             GENERIC_READ  = 0x80000000
@@ -170,7 +171,38 @@ def has_permissions(PATH, PERMISSIONS):
         return True
     except:
         return False
-    
+
+#THIS FUNCTION:
+#1.) REQUIRES A FOLDER PATH STRING
+#2.) RECURSIVELY SCANS THE PATH
+#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILE(S) INTEGER, AND THEIR BYTES TOTAL STRING
+def recursive_files_and_bytes_total(FOLDER_PATH):
+    if not isabs(FOLDER_PATH):
+        raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
+    elif not isdir(FOLDER_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
+    try:
+        FOLDER_PATH = abspath(FOLDER_PATH)
+        ABSOLUTE_FOLDER_PATHS = []
+        ABSOLUTE_FILE_PATHS = []
+        FILES_TOTAL = 0
+        BYTES_TOTAL = 0
+        for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
+            FOLDER_NAMES = [FOLDER_NAME for FOLDER_NAME in FOLDER_NAMES]
+            FILE_NAMES = [FILE_NAME for FILE_NAME in FILE_NAMES if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')])]
+            for FOLDER_NAME in FOLDER_NAMES:
+                ABSOLUTE_FOLDER_PATH = abspath(join(ROOT, FOLDER_NAME))
+                ABSOLUTE_FOLDER_PATHS.append(ABSOLUTE_FOLDER_PATH)
+            for FILE_NAME in FILE_NAMES:
+                FILES_TOTAL += 1
+                ABSOLUTE_FILE_PATH = abspath(join(ROOT, FILE_NAME))
+                ABSOLUTE_FILE_PATHS.append(ABSOLUTE_FILE_PATH)
+                FILE_SIZE = getsize(ABSOLUTE_FILE_PATH)
+                BYTES_TOTAL += FILE_SIZE
+        return ABSOLUTE_FOLDER_PATHS, ABSOLUTE_FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
+    except BaseException as ERROR:
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+      
 #THIS FUNCTION:
 #1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS, AS A LIST, OR "None", WITH ERROR INFORMATION
