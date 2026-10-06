@@ -84,7 +84,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             del PASSWORD
             return [KEY_BYTES, SALT_BYTES]
         except BaseException as ERROR:
-            raise Exception(f'[Exception]\nFunction: "get_aes_key_and_salt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+            raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
@@ -295,7 +295,7 @@ def check_aes_gcm_headers(FILE):
                 FILE.seek(0); return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
             FILE.seek(0); return [ALGORITHM_AND_MODE_HEADER.decode(), int(KEY_SIZE_HEADER.decode()), NONCE_BYTES_HEADER, TAG_BYTES_HEADER, SALT_BYTES_HEADER, TOTAL_HEADERS_SIZE]
         except BaseException as ERROR:
-            raise Exception(f'[Exception]\nFunction: "check_aes_gcm_headers()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+            raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "check_aes_gcm_headers()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
         
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
@@ -334,11 +334,11 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
             return [False, f'{ERRORS}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
         return [True, f'AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
-        return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
+        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
+#2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD IS CORRECT)
 #3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FOLDER_PATH, str):
@@ -367,7 +367,7 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
             return [False, f'{ERRORS}\nFOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
         return [True, f'FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
-        return [False, f'ERROR!:\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
+        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
