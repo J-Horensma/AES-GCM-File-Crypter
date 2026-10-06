@@ -515,14 +515,14 @@ def progressbar_window(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
         WINDOW_TITLE = '' if not WINDOW_TITLE else WINDOW_TITLE
-        def close_window():
-            PROGRESSBAR_WINDOW.destroy()
+        def prevent_close():
+            pass
         PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
         if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
             set_window_icon(PROGRESSBAR_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         PROGRESSBAR_WINDOW.title(WINDOW_TITLE)
         PROGRESSBAR_WINDOW.resizable(False, False)
-        PROGRESSBAR_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        PROGRESSBAR_WINDOW.protocol('WM_DELETE_WINDOW', prevent_close)
         PROGRESSBAR_STYLE = ttk.Style()
         PROGRESSBAR_STYLE.theme_use('default')
         PROGRESSBAR_STYLE.configure('Green.Horizontal.TProgressbar', thickness=38, background='#5CB85C', relief='raised')
