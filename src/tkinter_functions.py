@@ -24,131 +24,14 @@ from os.path import isabs, isdir, isfile, expanduser
 from string import printable
 from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
-
+  
 #THIS FUNCTION:
-#1.) REQUIRES A PATH STRING
-#2.) CHECKS IF THE PATH IS A NORMAL PATH
-#3.) RETURNS "True" OR "False"
-def is_normal(PATH):
-    try:
-        PATH = abspath(PATH)
-        #CHECK IF THE PATH IS A FIFO, MOUNTPOINT, SOCKET, JUNCTION, SYMLINK, CLOUD-PLACEHOLDER, VIRTUALIZATION, DOOR, OR WHITEOUT
-        PATH_STATUS = Path(PATH).lstat()
-        PATH_MODE = PATH_STATUS.st_mode
-        if not any([S_ISDIR(PATH_MODE), S_ISREG(PATH_MODE)]):
-            return False
-        elif system() == 'Windows':
-            #CHECK IF THE PATH, IS A HIDDEN, SYSTEM, OR REPARSE-POINT PATH
-            WINDOWS_FILE_ATTRIBUTE_HIDDEN = 0x2
-            WINDOWS_FILE_ATTRIBUTE_SYSTEM = 0x4
-            WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT = 0x400
-            WINDOWS_FILE_ATTRIBUTES = PATH_STATUS.st_file_attributes
-            if WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_SYSTEM:
-                return False
-            elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_HIDDEN:
-                return False
-            elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT:
-                return False
-        return True
-    except:
-        return False
-
-#THIS FUNCTION:
-#1.) REQUIRES A PATH STRING AND A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
-#2.) CHECKS IF THE SUPPLIED PATH, HAS THE REQUESTED PERMISSION(S)
-#3.) RETURNS "True" OR "False"
-def has_permissions(PATH, PERMISSIONS):
-    try:
-        PATH = abspath(PATH)
-        #ENSURE R, W, AND/OR X ARE INCLUDED, IN THE PERMISSIONS PARAMETER
-        if not set(PERMISSIONS) <= {'R','W','X'}:
-            return False
-        #CHECK STATIC METADATA PERMISSIONS
-        elif 'R' in PERMISSIONS and not access(PATH, R_OK):
-            return False
-        elif 'W' in PERMISSIONS and not access(PATH, W_OK):
-            return False
-        elif 'X' in PERMISSIONS and not access(PATH, X_OK):
-            return False
-        elif system() == 'Windows':
-            #CHECK WINDOWS DYNAMIC METADATA PERMISSIONS
-            from ctypes import wintypes, WinDLL
-            GENERIC_READ  = 0x80000000
-            FILE_SHARE_READ = 0x00000001
-            FILE_SHARE_WRITE = 0x00000002
-            FILE_SHARE_DELETE = 0x00000004
-            OPEN_EXISTING = 3
-            FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
-            kernel32 = WinDLL('kernel32', use_last_error=True)
-            CreateFileW = kernel32.CreateFileW
-            CreateFileW.argtypes = [
-                wintypes.LPCWSTR,
-                wintypes.DWORD,
-                wintypes.DWORD,
-                wintypes.LPVOID,
-                wintypes.DWORD,
-                wintypes.DWORD,
-                wintypes.HANDLE
-            ]
-            CreateFileW.restype = wintypes.HANDLE
-            def can_access(PATH):
-                HANDLE = CreateFileW(
-                    PATH,
-                    GENERIC_READ,
-                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                    None,
-                    OPEN_EXISTING,
-                    FILE_FLAG_BACKUP_SEMANTICS,
-                    None
-                )
-                if HANDLE == wintypes.HANDLE(-1).value:
-                    return False
-                kernel32.CloseHandle(HANDLE)
-                return True
-            if not can_access(PATH):
-                return False
-        return True
-    except:
-        return False
-
-#THIS FUNCTION:
-#1.) REQUIRES A FOLDER PATH STRING
-#2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS ABSOLUTE FOLDER PATH AND ABSOLUTE FILE PATH LISTS, TOTAL AMOUNT OF ACCESSABLE FILE(S) INTEGER, AND THEIR BYTES TOTAL STRING
-def recursive_files_and_bytes_total(FOLDER_PATH):
-    if not isabs(FOLDER_PATH):
-        raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
-    elif not isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
-    try:
-        FOLDER_PATH = abspath(FOLDER_PATH)
-        ABSOLUTE_FOLDER_PATHS = []
-        ABSOLUTE_FILE_PATHS = []
-        FILES_TOTAL = 0
-        BYTES_TOTAL = 0
-        for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
-            FOLDER_NAMES = [FOLDER_NAME for FOLDER_NAME in FOLDER_NAMES]
-            FILE_NAMES = [FILE_NAME for FILE_NAME in FILE_NAMES if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')])]
-            for FOLDER_NAME in FOLDER_NAMES:
-                ABSOLUTE_FOLDER_PATH = abspath(join(ROOT, FOLDER_NAME))
-                ABSOLUTE_FOLDER_PATHS.append(ABSOLUTE_FOLDER_PATH)
-            for FILE_NAME in FILE_NAMES:
-                FILES_TOTAL += 1
-                ABSOLUTE_FILE_PATH = abspath(join(ROOT, FILE_NAME))
-                ABSOLUTE_FILE_PATHS.append(ABSOLUTE_FILE_PATH)
-                FILE_SIZE = getsize(ABSOLUTE_FILE_PATH)
-                BYTES_TOTAL += FILE_SIZE
-        return ABSOLUTE_FOLDER_PATHS, ABSOLUTE_FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
-    except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
-        
-#THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
+#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" WINDOW CLASS
 #2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDS ON THE OS BEING USED)
 #3.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter must be a "tkinter.Tk()" or "Tk.Toplevel()" class type.')
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" class type.')
     elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be a string type.')
     elif ICON_PNG_FILE_PATH and not isinstance(ICON_PNG_FILE_PATH, str):
@@ -200,11 +83,11 @@ def get_device_screen_size(ROOT_WINDOW):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
+#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" WINDOW CLASS
 #2.) CLEARS ALL WIDGETS, IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
 def clear_window(WINDOW):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "Tk.Toplevel() window class type.')
+        raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel() window class type.')
     try:
         WINDOW.update_idletasks()
         for WIDGET in ROOT_WINDOW.winfo_children():
@@ -213,11 +96,11 @@ def clear_window(WINDOW):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS AND WINDOW WIDTH AND HEIGHT INTEGERS
+#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" WINDOW CLASS AND WINDOW WIDTH AND HEIGHT INTEGERS
 #2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENSIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter must be a "tkinter.Tk()" or "Tk.Toplevel()" class type.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" class type.')
     elif not isinstance(WINDOW_WIDTH, int):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter must be an integer.')
     elif not isinstance(WINDOW_HEIGHT, int):
@@ -318,7 +201,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
-#2.) REQUIRES A "tkinter.Label()", "tkinter.Entry()" X2, AND "tkinter.Button()" WIDGETS, AS WELL AS, A MINIMUM PASSWORD LENGTH INTEGER
+#2.) REQUIRES "tkinter.Label()", "tkinter.Entry()" X2, AND "tkinter.Button()" WIDGETS, AS WELL AS, A MINIMUM PASSWORD LENGTH INTEGER
 #3) UPDATES WHAT THE SUPPLIED STATUS LABEL DISPLAYS DYNAMICALLY
 def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH, ON_KEY_UP=None):
     if not isinstance(STATUS_LABEL, Label):
@@ -456,7 +339,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "ENTRY_VARIABLE.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))"
-#2.) REQUIRES A "tkinter.Label()", "tkinter.Entry()", AND "tkinter.Button()" WIDGETS
+#2.) REQUIRES "tkinter.Label()", "tkinter.Entry()", AND "tkinter.Button()" WIDGETS
 #3.) UPDATES WHAT THE SUPPLIED PASSWORD STATUS LABEL DISPLAYS
 def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON, ON_KEY_UP=None):
     if not isinstance(STATUS_LABEL, Label):
@@ -607,3 +490,52 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
         return PATH
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "file_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+
+#THIS FUNCTION:
+#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
+#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
+#3.) ACCEPTS AN OPTIONAL WINDOW TITLE STRING
+#4.) RETURNS A LIST CONTAINING A "tkinter.Toplevel()" CLASS, "tkinter.Label()" WIDGET (FOR MESSAGES), "ttk.Progressbar()" WIDGET, AND A "tkinter.Label()" (FOR PERCENTAGE)
+def progressbar_window(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, WINDOW_TITLE=None):
+    if not isinstance(ROOT_WINDOW, Tk):
+        raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
+    elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
+        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
+    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
+    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
+        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be set if using an icon with this function on an OS, other than Mac.')
+    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon ico file path parameter must be an absolute path.')
+    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
+        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be an absolute path.')
+    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "progressbar_window()"\nThe icon ico file path parameter must be a path to an existing file.')
+    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be a path to an existing file.')
+    try:
+        WINDOW_TITLE = '' if not WINDOW_TITLE else WINDOW_TITLE
+        def close_window():
+            PROGRESSBAR_WINDOW.destroy()
+        PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
+        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
+            set_window_icon(PROGRESSBAR_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PROGRESSBAR_WINDOW.title(WINDOW_TITLE)
+        PROGRESSBAR_WINDOW.resizable(False, False)
+        PROGRESSBAR_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
+        PROGRESSBAR_STYLE = ttk.Style()
+        PROGRESSBAR_STYLE.theme_use('default')
+        PROGRESSBAR_STYLE.configure('Green.Horizontal.TProgressbar', thickness=38, background='#5CB85C', relief='raised')
+        ROW_1_FRAME = Frame(PROGRESSBAR_WINDOW)
+        ROW_1_FRAME.pack()
+        PROGRESSBAR_MESSAGE = tk.Label(ROW_1_FRAME, text=None, font=('Times New Roman', 18, 'bold'), wraplength=465)
+        PROGRESSBAR_MESSAGE.pack(padx=10, pady=(10, 0))
+        ROW_2_FRAME = Frame(PROGRESSBAR_WINDOW)
+        ROW_2_FRAME.pack()
+        PROGRESSBAR = ttk.Progressbar(ROW_2_FRAME, length=400, mode='determinate', style='Green.Horizontal.TProgressbar')
+        PROGRESSBAR.pack(padx=(10, 0), pady=10, side='left')
+        PROGRESSBAR_PERCENT = tk.Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
+        PROGRESSBAR_PERCENT.pack(padx=10, side='left')
+        return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT
+    except BaseException as ERROR:
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "progressbar_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
