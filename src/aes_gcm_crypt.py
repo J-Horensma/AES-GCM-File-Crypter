@@ -72,7 +72,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
                 iterations=KDF_ITERATIONS
             )
             ENCODED_PASSWORD = PASSWORD.encode() if not isinstance(PASSWORD, (bytes, bytearray)) else PASSWORD
-            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC().derive()" FUNCTION STORES THE RETURNED KEY BYTES OBJECT VALUE,
+            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION STORES THE RETURNED KEY BYTES OBJECT VALUE,
             #IN C-SIDE BUFFERS, NOT THE RAM
             #C-SIDE BUFFERS ARE MORE DIFFICULT TO INSPECT
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
