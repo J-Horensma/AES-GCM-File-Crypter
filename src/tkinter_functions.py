@@ -113,7 +113,7 @@ def has_permissions(PATH, PERMISSIONS):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS THE TOTAL AMOUNT OF ACCESSABLE FILES AND THEIR BYTES TOTAL
+#3.) RETURNS ABSOLUTE FOLDER PATH AND FILE PATH (LISTS), TOTAL AMOUNT OF ACCESSABLE FILES (INTEGER), AND THEIR BYTES TOTAL (STRING)
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
@@ -121,18 +121,25 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
+        ABSOLUTE_FOLDER_PATHS = []
+        ABSOLUTE_FILE_PATHS = []
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
-        for ROOT, FOLDERS, FILES in os.walk(FOLDER_PATH):
-            FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
-            for FILE in FILES:
+        for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
+            FOLDER_NAMES = [FOLDER_NAME for FOLDER_NAME in FOLDER_NAMES]
+            FILE_NAMES = [FILE_NAME for FILE_NAME in FILE_NAMES if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')])]
+            for FOLDER_NAME in FOLDER_NAMES:
+                ABSOLUTE_FOLDER_PATH = abspath(join(ROOT, FOLDER_NAME))
+                ABSOLUTE_FOLDER_PATHS.append(ABSOLUTE_FOLDER_PATH)
+            for FILE_NAME in FILE_NAMES:
                 FILES_TOTAL += 1
-                SCAN_PATH = join(ROOT, FILE)
-                FILE_SIZE = getsize(SCAN_PATH)
+                ABSOLUTE_FILE_PATH = abspath(join(ROOT, FILE_NAME))
+                ABSOLUTE_FILE_PATHS.append(ABSOLUTE_FILE_PATH)
+                FILE_SIZE = getsize(ABSOLUTE_FILE_PATH)
                 BYTES_TOTAL += FILE_SIZE
-        return FILES_TOTAL, BYTES_TOTAL
+        return ABSOLUTE_FOLDER_PATHS, ABSOLUTE_FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
                      
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
@@ -175,7 +182,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             WINDOW.iconphoto(True, ICON_IMAGE)
     except BaseException as ERROR:
         except BaseException as ERROR:
-            raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+            raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -189,7 +196,7 @@ def get_device_screen_size(ROOT_WINDOW):
         SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
         return [SCREEN_WIDTH, SCREEN_HEIGHT]
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS
@@ -202,7 +209,7 @@ def clear_window(WINDOW):
         for WIDGET in ROOT_WINDOW.winfo_children():
             WIDGET.destroy()
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" OR "Tk.Toplevel()" WINDOW CLASS, A WINDOW WIDTH INTEGER, AND A WINDOW HEIGHT INTEGER
@@ -220,7 +227,7 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
         WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "center_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "center_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
@@ -291,7 +298,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" WIDGETS
@@ -309,7 +316,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
             ENTRY_WIDGET.config(show='')
             VISIBILITY_BUTTON.config(text='Hide')
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "toggle_input_visibility()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "toggle_input_visibility()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
@@ -354,7 +361,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
             #DISABLE THE CONFIRM BUTTON IF ANY CHECKS FAIL
             CONFIRM_BUTTON.config(state='disabled')
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "update_create_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_create_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -448,7 +455,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         CREATE_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "create_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "create_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "ENTRY_VARIABLE.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))"
@@ -477,7 +484,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
             #ENABLE THE CONFIRM BUTTON
             CONFIRM_BUTTON.config(state='normal')
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "update_enter_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_enter_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
@@ -552,7 +559,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ENTER_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
 #1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING/S
@@ -606,4 +613,4 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
             PATH = None
         return PATH
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "file_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "file_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
