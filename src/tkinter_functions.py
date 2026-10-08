@@ -497,23 +497,7 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
 def progressbar_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
-    elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
-    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
-    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be set if using an icon with this function on an OS, other than Mac.')
-    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon ico file path parameter must be an absolute path.')
-    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be an absolute path.')
-    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "progressbar_window()"\nThe icon ico file path parameter must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
-        def prevent_close():
-            pass
         PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
         #HIDE THE TITLE BAR
         PROGRESSBAR_WINDOW.overrideredirect(True)
