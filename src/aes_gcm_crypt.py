@@ -186,11 +186,11 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         FOLDER_PATH = abspath(FOLDER_PATH)
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
-        for ROOT, FOLDER_NAME, FILE_NAME in walk(FOLDER_PATH):
+        for ROOT_PATH, FOLDER_NAME, FILE_NAME in walk(FOLDER_PATH):
             FILE_PATHS = [
                 (
-                abspath(join(ROOT, FILE_NAME)),
-                True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False
+                join(ROOT_PATH, FILE_NAME),
+                True if all([is_normal(join(ROOT_PATH, FILE_NAME)), has_permissions(join(ROOT_PATH, FILE_NAME), 'RW')]) else False
                 ) 
                 for FILE_NAME in FILE_NAMES
             ]
