@@ -320,7 +320,7 @@ def check_aes_gcm_headers(FILE):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) ACCEPTS OPTIONAL AN "tkinter.Label()" WIDGET (FOR ETA), "ttk.Progressbar()" WIDGET (FOR A PROGRESSBAR), AND ANOTHER "tkinter.Label()" WIDGET (FOR PERCENTAGE)
+#3.) ACCEPTS OPTIONAL "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PERCENTAGE)
 #4.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
 #5.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
 def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
@@ -398,9 +398,10 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
 
 #1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) AES-GCM ENCRYPTS THE FILE PATH (SECURELY, FOR ANY FILE TYPE)
-#4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
-def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
+#3.) ACCEPTS OPTIONAL "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PERCENTAGE)
+#4.) AES-GCM ENCRYPTS THE FILE PATH (SECURELY, FOR ANY FILE TYPE)
+#5.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
+def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a string type.')
@@ -410,12 +411,20 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter must be an integer type.')
+    elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
+    elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
+    elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
     elif not isabs(FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
+    elif any([TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using the optional tkinter progressbar, all 3 optional tkinter widgets must be supplied.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
