@@ -202,7 +202,8 @@ def convert_bytes(BYTES_NUMBER):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS AN ACCESSABLE FILE PATH(S) LIST, ACCESSABLE FILE(S) TOTAL INTEGER, AND A BYTES TOTAL INTEGER FOR ALL ACCESSABLE FILE(S)
+#3.) RETURNS A FILE PATHS LIST WITH TUPLE VALUES CONTAINING A FILE PATH STRING AND "True" OR "False" FOR FILE PATH ACCESSABILITY STATUS, 
+#AN ACCESSABLE FILES TOTAL INTEGER, AND AN ACCESSABLE FILES BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
@@ -212,12 +213,14 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         FOLDER_PATH = abspath(FOLDER_PATH)
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
-        for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
-            FILE_PATHS = [join(ROOT, FILE_NAME) for FILE_NAME in FILE_NAMES if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')])]
-            for FILE_NAME in FILE_NAMES:
+        for ROOT, FOLDER_NAME, FILE_NAME in walk(FOLDER_PATH):
+            FILE_PATHS = [
+                (join(ROOT, FILE_NAME), True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False) 
+                for FILE_NAME in FILE_NAMES
+            ]
+            for i, FILE_PATH in enumerate(FILE_PATHS):
                 FILES_TOTAL += 1
-                FILE_SIZE = getsize(ABSOLUTE_FILE_PATH)
-                BYTES_TOTAL += FILE_SIZE
+                BYTES_TOTAL += getsize(FILE_PATH[i][0])
         return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
