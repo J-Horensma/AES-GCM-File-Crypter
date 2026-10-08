@@ -351,16 +351,15 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        #WORKING HERE--->
         FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
-        for FILE_PATH in FILES_PATHS[0]:
-            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE)
-            if not ENCRYPT_RESULT[0]:
-                ERRORS += ENCRYPT_RESULT[1].splitlines()
+        for FILE_PATH in FILES_PATHS:
+            if FILE_PATH[1]:
+                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[0], KEY_SIZE, PASSWORD, BLOCK_SIZE, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE)
+                if not ENCRYPT_RESULT[0]: 
+                    ERRORS += ENCRYPT_RESULT[1].splitlines()
         if ERRORS:
             ERRORS = '\n'.join(ERRORS)
-            return [False, f'{ERRORS}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
-        return [True, f'AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
+        return [True if not ERRORS else False, f'AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
