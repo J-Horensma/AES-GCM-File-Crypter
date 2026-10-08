@@ -186,7 +186,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         FOLDER_PATH = abspath(FOLDER_PATH)
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
-        for ROOT_PATH, FOLDER_NAME, FILE_NAME in walk(FOLDER_PATH):
+        for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
             FILE_PATHS = [
                 (
                 join(ROOT_PATH, FILE_NAME),
@@ -333,11 +333,11 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe block size parameter must be an integer type.')
-    elif and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+    elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
-    elif and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+    elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
-    elif and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+    elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
     elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter must be an absolute path.')
@@ -351,13 +351,12 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        for ROOT, FOLDERS, FILES in walk(FOLDER_PATH):
-            FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
-            for FILE_NAME in FILES:
-                FILE_PATH = join(ROOT, FILE_NAME)
-                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE)
-                if not ENCRYPT_RESULT[0]:
-                    ERRORS += ENCRYPT_RESULT[1].splitlines()
+        #WORKING HERE--->
+        FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
+        for FILE_PATH in FILES_PATHS[0]:
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE)
+            if not ENCRYPT_RESULT[0]:
+                ERRORS += ENCRYPT_RESULT[1].splitlines()
         if ERRORS:
             ERRORS = '\n'.join(ERRORS)
             return [False, f'{ERRORS}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
