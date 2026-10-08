@@ -320,10 +320,10 @@ def check_aes_gcm_headers(FILE):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) ACCEPTS OPTIONAL "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PERCENTAGE)
+#3.) ACCEPTS OPTIONAL "tkinter.Toplevel()" (FOR PROGRESSBAR WINDOW), "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PROGRESSBAR PERCENTAGE)
 #4.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
 #5.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
-def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
+def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter must be a string type.')
@@ -333,6 +333,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe block size parameter must be an integer type.')
+    elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Tk()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
     elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
@@ -345,8 +347,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter must be a path to an existing folder.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
-    elif any([TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using the optional tkinter progressbar, all 3 optional tkinter widgets must be supplied.')
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using the tkinter progressbar, all 4 optional tkinter classes must be supplied.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
@@ -354,7 +356,7 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
         for FILE_PATH in FILES_PATHS:
             if FILE_PATH[1]:
-                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[0], KEY_SIZE, PASSWORD, BLOCK_SIZE, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE)
+                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[0], KEY_SIZE, PASSWORD, BLOCK_SIZE, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE)
                 if not ENCRYPT_RESULT[0]: 
                     ERRORS += ENCRYPT_RESULT[1].splitlines()
         if ERRORS:
@@ -398,10 +400,10 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
 
 #1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) ACCEPTS OPTIONAL "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PERCENTAGE)
+#3.) ACCEPTS OPTIONAL "tkinter.Toplevel()" (FOR PROGRESSBAR WINDOW), "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PERCENTAGE)
 #4.) AES-GCM ENCRYPTS THE FILE PATH (SECURELY, FOR ANY FILE TYPE)
 #5.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
-def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
+def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a string type.')
@@ -411,6 +413,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter must be an integer type.')
+    elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Tk()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
     elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
@@ -423,8 +427,8 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a path to an existing file.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
-    elif any([TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using the optional tkinter progressbar, all 3 optional tkinter widgets must be supplied.')
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using the tkinter progressbar, all 4 optional tkinter classes must be supplied.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
