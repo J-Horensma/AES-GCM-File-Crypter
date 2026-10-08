@@ -26,22 +26,23 @@ from platform import system
 from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entry, Button, filedialog
   
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" WINDOW CLASS
-#2.) REQUIRES ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDS ON THE OS BEING USED)
-#3.) SETS THE WINDOW ICON
+#1.) REQUIRES:
+    #A.) A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
+    #B.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDING ON THE OS)
+#2.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" class type.')
+        raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
     elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be a string type.')
     elif ICON_PNG_FILE_PATH and not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be a string type.')
     elif system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file path parameters, must both be set when calling this function, on Windows.')
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file path parameters must both be set when calling this function on Windows.')
     elif system() == 'Darwin' and not ICON_ICO_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be set when calling this function on Mac.')
     elif system() != 'Darwin' and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be set when calling this function, on an OS other than Mac.')
+        raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be set when calling this function on an OS other than Mac.')
     elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be an absolute path.')
     elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
@@ -69,7 +70,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
+#1.) REQUIRES A "tkinter.Tk()" CLASS
 #2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN AS A LIST
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
@@ -83,11 +84,11 @@ def get_device_screen_size(ROOT_WINDOW):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" WINDOW CLASS
+#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
 #2.) CLEARS ALL WIDGETS, IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
 def clear_window(WINDOW):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel() window class type.')
+        raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
     try:
         WINDOW.update_idletasks()
         for WIDGET in ROOT_WINDOW.winfo_children():
@@ -96,11 +97,13 @@ def clear_window(WINDOW):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" WINDOW CLASS AND WINDOW WIDTH AND HEIGHT INTEGERS
+#1.) REQUIRES:
+    #A.) A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
+    #B.) WINDOW WIDTH AND WINDOW HEIGHT INTEGERS
 #2.) CENTERS THE WINDOW WITH A WINDOW SIZE OF THE SUPPLIED DIMENSIONS
 def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" class type.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
     elif not isinstance(WINDOW_WIDTH, int):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter must be an integer.')
     elif not isinstance(WINDOW_HEIGHT, int):
@@ -114,14 +117,17 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "center_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS AND A LIST OF DROPDOWN MENU OPTIONS
-#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-#3.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT MESSAGE STRING(S) (DEFAULT IS "Select An Option")
-#4.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
-#5.) RETURNS THE USER-SELECTED OPTION AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+#1.) REQUIRES:
+    #A.) A "tkinter.Tk()" CLASS
+    #B.) A LIST OF DROPDOWN MENU OPTIONS
+#2.) OPTIONALLY ACCEPTS:
+    #A.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
+    #B.) PROMPT TITLE AND/OR PROMPT MESSAGE STRING(S) (DEFAULT IS "Select An Option")
+#3.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
+#4.) RETURNS THE USER-SELECTED OPTION AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif not isinstance(DROPDOWN_MENU_OPTIONS, list):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter must be a list type.')
     elif not isinstance(ICON_ICO_FILE_PATH, str):
@@ -133,11 +139,11 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
     elif not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt message parameter must be a string type.')
     elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function on Windows.')
     elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
     elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS, other than Mac.')
+        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS other than Mac.')
     elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter must be an absolute path.')
     elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
@@ -182,13 +188,13 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" WIDGETS
+#1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" CLASSES
 #2.) SHOWS/HIDES THE INPUT VALUE OF THE "tkinter.Entry()" WIDGET AND CHANGES THE TEXT OF THE SHOW/HIDE BUTTON
 def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
     if not isinstance(ENTRY_WIDGET, Entry):
-        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter must be a "tkinter.Entry()" class type.')
+        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe entry widget parameter must be a "tkinter.Entry()" type.')
     elif not isinstance(VISIBILITY_BUTTON, Button):
-        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe visibility button parameter must be a "tkinter.Button()" class type.')
+        raise TypeError('[TypeError]\nFunction: "toggle_input_visibility()"\nThe visibility button parameter must be a "tkinter.Button()" type.')
     try:
         if ENTRY_WIDGET.cget('show') == '':
             ENTRY_WIDGET.config(show='*')
@@ -200,18 +206,22 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "toggle_input_visibility()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
-#2.) REQUIRES "tkinter.Label()", "tkinter.Entry()" X2, AND "tkinter.Button()" WIDGETS, AS WELL AS, A MINIMUM PASSWORD LENGTH INTEGER
+#1.) CAN BE TRIGGERED ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
+#2.) REQUIRES:
+    #A.) A "tkinter.Label()" CLASS
+    #B.) 2x "tkinter.Entry()" CLASSES
+    #C.) A "tkinter.Button()" CLASS
+    #D.) A MINIMUM PASSWORD LENGTH INTEGER
 #3) UPDATES WHAT THE SUPPLIED STATUS LABEL DISPLAYS DYNAMICALLY
 def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH, ON_KEY_UP=None):
     if not isinstance(STATUS_LABEL, Label):
-        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe status label parameter must be a "tkinter.Label()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe status label parameter must be a "tkinter.Label()" type.')
     elif not isinstance(PASSWORD_ENTRY, Entry):
-        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe password entry parameter must be a "tkinter.Entry()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe password entry parameter must be a "tkinter.Entry()" type.')
     elif not isinstance(CONFIRM_PASSWORD_ENTRY, Entry):
-        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe confirm password entry parameter must be a "tkinter.Entry()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe confirm password entry parameter must be a "tkinter.Entry()" type.')
     elif not isinstance(CONFIRM_BUTTON, Button):
-        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe confirm button parameter must be a "tkinter.Button()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe confirm button parameter must be a "tkinter.Button()" type.')
     elif not isinstance(MINIMUM_PASSWORD_LENGTH, int):
         raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe minimum password length parameter must be an integer type.')
     try:
@@ -245,25 +255,26 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_create_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) ACCEPTS AN OPTIONAL MINIMUM PASSWORD LENGTH INTEGER (DEFAULT IS 16)
-#3.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-#4.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Create A Password")
-#5.) DISPLAYS A CREATE PASSWORD PROMPT
-#6.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+#1.) REQUIRES A "tkinter.Tk()" CLASS
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A MINIMUM PASSWORD LENGTH INTEGER (DEFAULT IS 16)
+    #B.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
+    #C.) A PROMPT TITLE STRING (DEFAULT IS "Create A Password")
+#3.) DISPLAYS A CREATE PASSWORD PROMPT
+#4.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif MINIMUM_PASSWORD_LENGTH and not isinstance(MINIMUM_PASSWORD_LENGTH, int):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe minimum password length parameter must be an integer type.')
     elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe prompt title parameter must be a string type.')
     elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
+        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico and icon png file path parameters must both be set if using an icon with this function on Windows.')
     elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
     elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS, other than Mac.')
+        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS other than Mac.')
     elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico file path parameter must be an absolute path.')
     elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
@@ -339,15 +350,18 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "ENTRY_VARIABLE.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))"
-#2.) REQUIRES "tkinter.Label()", "tkinter.Entry()", AND "tkinter.Button()" WIDGETS
+#2.) REQUIRES:
+    #A.) A "tkinter.Label()"
+    #B.) A "tkinter.Entry()"
+    #C.) A "tkinter.Button()"
 #3.) UPDATES WHAT THE SUPPLIED PASSWORD STATUS LABEL DISPLAYS
 def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON, ON_KEY_UP=None):
     if not isinstance(STATUS_LABEL, Label):
-        raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe status label parameter must be a "tkinter.Label()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe status label parameter must be a "tkinter.Label()" type.')
     elif not isinstance(PASSWORD_ENTRY, Entry):
-        raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe password entry parameter must be a "tkinter.Entry()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe password entry parameter must be a "tkinter.Entry()" type.')
     elif not isinstance(CONFIRM_BUTTON, Button):
-        raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe confirm button parameter must be a "tkinter.Button()" class type.')
+        raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe confirm button parameter must be a "tkinter.Button()" type.')
     try:
         PASSWORD_VALUE = PASSWORD_ENTRY.get()
         ASCII_CHECK =  all(CHARACTER in printable for CHARACTER in PASSWORD_VALUE)
@@ -365,22 +379,23 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_enter_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-#3.) ACCEPTS AN OPTIONAL PROMPT TITLE STRING (DEFAULT IS "Enter Password")
-#4.) DISPLAYS AN ENTER PASSWORD PROMPT
-#5.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+#1.) REQUIRES A "tkinter.Tk()" CLASS
+#2.) OPTIONALLY ACCEPTS:
+    #A.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
+    #B.) PROMPT TITLE STRING (DEFAULT IS "Enter Password")
+#3.) DISPLAYS AN ENTER PASSWORD PROMPT
+#4.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe prompt title parameter must be a string type.')
     elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function, on Windows.')
+        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico and icon png file path parameters must both be set if using an icon with this function on Windows.')
     elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
         raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
     elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS, other than Mac.')
+        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS other than Mac.')
     elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico file path parameter must be an absolute path.')
     elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
@@ -438,7 +453,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
-#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING(S)
+#1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
 #3.) RETURNS THE ABSOLUTE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
@@ -462,11 +477,12 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) ACCEPTS OPTIONAL PROMPT TITLE AND/OR PROMPT PATH STRING(S)
-#2.) ACCEPTS AN OPTIONAL FILE TYPES LIST
-#FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
-#3.) PROMPTS THE USER TO CHOOSE A FILE PATH
-#4.) RETURNS THE ABSOLUTE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+#1.) OPTIONALLY ACCEPTS:
+    #A.) PROMPT TITLE AND/OR PROMPT PATH STRING(S)
+    #B.) A FILE TYPES LIST
+    #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
+#2.) PROMPTS THE USER TO CHOOSE A FILE PATH
+#3.) RETURNS THE ABSOLUTE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter must be a string type.')
@@ -492,11 +508,15 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "file_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) RETURNS A LIST CONTAINING A "tkinter.Toplevel()" WINDOW CLASS, "tkinter.Label()" WIDGET (FOR MESSAGES), "ttk.Progressbar()" WIDGET, AND A "tkinter.Label()" (FOR PERCENTAGE)
+#1.) REQUIRES A "tkinter.Tk()" CLASS
+#2.) RETURNS A LIST CONTAINING: 
+    #A.) A "tkinter.Toplevel()" CLASS
+    #B.) A "tkinter.Label()" CLASS (FOR MESSAGES)
+    #C.) A "ttk.Progressbar()" CLASS (FOR PROGRESSBAR)
+    #D.) A "tkinter.Label()" (FOR PERCENTAGE)
 def progressbar_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     try:
         PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
         #HIDE THE TITLE BAR
