@@ -493,10 +493,8 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" ROOT WINDOW CLASS
-#2.) ACCEPTS OPTIONAL ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-#3.) ACCEPTS AN OPTIONAL WINDOW TITLE STRING
-#4.) RETURNS A LIST CONTAINING A "tkinter.Toplevel()" CLASS, "tkinter.Label()" WIDGET (FOR MESSAGES), "ttk.Progressbar()" WIDGET, AND A "tkinter.Label()" (FOR PERCENTAGE)
-def progressbar_window(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, WINDOW_TITLE=None):
+#2.) RETURNS A LIST CONTAINING A "tkinter.Toplevel()" WINDOW CLASS, "tkinter.Label()" WIDGET (FOR MESSAGES), "ttk.Progressbar()" WIDGET, AND A "tkinter.Label()" (FOR PERCENTAGE)
+def progressbar_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
     elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
@@ -514,15 +512,12 @@ def progressbar_window(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "progressbar_window()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
-        WINDOW_TITLE = '' if not WINDOW_TITLE else WINDOW_TITLE
         def prevent_close():
             pass
         PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            set_window_icon(PROGRESSBAR_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
-        PROGRESSBAR_WINDOW.title(WINDOW_TITLE)
+        #HIDE THE TITLE BAR
+        PROGRESSBAR_WINDOW.overrideredirect(True)
         PROGRESSBAR_WINDOW.resizable(False, False)
-        PROGRESSBAR_WINDOW.protocol('WM_DELETE_WINDOW', prevent_close)
         PROGRESSBAR_STYLE = ttk.Style()
         PROGRESSBAR_STYLE.theme_use('default')
         PROGRESSBAR_STYLE.configure('Green.Horizontal.TProgressbar', thickness=38, background='#5CB85C', relief='raised')
