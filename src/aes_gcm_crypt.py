@@ -215,12 +215,16 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         BYTES_TOTAL = 0
         for ROOT, FOLDER_NAME, FILE_NAME in walk(FOLDER_PATH):
             FILE_PATHS = [
-                (join(ROOT, FILE_NAME), True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False) 
+                (
+                join(ROOT, FILE_NAME),
+                True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False
+                ) 
                 for FILE_NAME in FILE_NAMES
             ]
             for i, FILE_PATH in enumerate(FILE_PATHS):
-                FILES_TOTAL += 1
-                BYTES_TOTAL += getsize(FILE_PATH[i][0])
+                if FILE_PATH[i][1]:
+                    FILES_TOTAL += 1
+                    BYTES_TOTAL += getsize(FILE_PATH[i][0])
         return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
