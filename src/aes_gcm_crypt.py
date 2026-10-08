@@ -228,7 +228,28 @@ def convert_bytes(BYTES_NUMBER):
         if BYTES_NUMBER >= (BINARY_INCREMENT ** 7) and BYTES_NUMBER < BINARY_INCREMENT ** 8:return f'{ZETTABYTES} ZB'
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_bytes()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
-        
+
+#THIS FUNCTION:
+#1.) REQUIRES A SECONDS NUMBER STRING OR INTEGER
+#2.) CONVERTS THE SUPPLIED SECONDS NUMBER
+#3.) RETURNS A CONVERTED SECONDS STRING
+def convert_seconds(SECONDS):
+    if not isinstance(BYTES_NUMBER, (str, int)):
+        raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds number parameter must be a string or integer type.')
+    try:
+        SECONDS = int(SECONDS)
+        YEARS = f'{SECONDS // 31536000}y:' if (SECONDS // 31536000) > 0 else ''; REMAINDER_SECONDS = SECONDS % 31536000
+        MONTHS = f'{REMAINDER_SECONDS // 2628000}M:' if (REMAINDER_SECONDS // 2628000) > 0 else ''; REMAINDER_SECONDS %= 2628000
+        WEEKS = f'{REMAINDER_SECONDS // 604800}w:' if (REMAINDER_SECONDS // 604800) > 0 else ''; REMAINDER_SECONDS %= 604800
+        DAYS = f'{REMAINDER_SECONDS // 86400}d:' if (REMAINDER_SECONDS // 86400) > 0 else ''; REMAINDER_SECONDS %= 86400
+        HOURS = f'{REMAINDER_SECONDS // 3600}h:' if (REMAINDER_SECONDS // 3600) > 0 else ''; REMAINDER_SECONDS %= 3600
+        MINUTES = f'{REMAINDER_SECONDS // 60}m:' if (REMAINDER_SECONDS // 60) > 0 else ''; REMAINDER_SECONDS %= 60
+        SECONDS = f'{REMAINDER_SECONDS % 60}s'
+        CONVERTED_SECONDS = f'{YEARS}{MONTHS}{WEEKS}{DAYS}{HOURS}{MINUTES}{SECONDS}'
+        return CONVERTED_SECONDS
+    except BaseException as ERROR:
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_bytes()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+    
 #THIS FUNCTION:
 #1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS, AS A LIST, OR "None", WITH ERROR INFORMATION
