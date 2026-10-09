@@ -23,7 +23,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 from time import time, sleep
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
-from os.path import isabs, abspath, join, isdir, isfile
+from os.path import isabs, abspath, join, isdir, isfile, getsize
 from platform import system
 from stat import S_ISDIR, S_ISREG
 from pathlib import Path
