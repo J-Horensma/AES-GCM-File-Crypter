@@ -513,7 +513,7 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, BYTES_T
                     #THE REQUIRED VARIABLES ARE SET
                     if START_TIME:
                         PROCESSED_BYTES += len(PLAINTEXT_CHUNK)
-                        BUMP_PERCENTAGE = (PROCESSED_BYTES) / BYTES_TOTAL) * 100
+                        BUMP_PERCENTAGE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
                         ELAPSED_SECONDS = time() - START_TIME
                         BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
                         REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
