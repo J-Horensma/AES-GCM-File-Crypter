@@ -518,7 +518,7 @@ def progressbar_window(ROOT_WINDOW):
         raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     try:
         PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
-        #HIDE THE TITLE BAR
+        #HIDE THE WINDOW TITLE BAR
         PROGRESSBAR_WINDOW.overrideredirect(True)
         PROGRESSBAR_WINDOW.resizable(False, False)
         PROGRESSBAR_STYLE = ttk.Style()
@@ -532,8 +532,8 @@ def progressbar_window(ROOT_WINDOW):
         ROW_2_FRAME.pack()
         PROGRESSBAR = ttk.Progressbar(ROW_2_FRAME, length=400, mode='determinate', style='Green.Horizontal.TProgressbar')
         PROGRESSBAR.pack(padx=(10, 0), pady=10, side='left')
-        PROGRESSBAR_PERCENT = Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
-        PROGRESSBAR_PERCENT.pack(padx=10, side='left')
-        return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT
+        PROGRESSBAR_PERCENTAGE = Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
+        PROGRESSBAR_PERCENTAGE.pack(padx=10, side='left')
+        return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "progressbar_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
