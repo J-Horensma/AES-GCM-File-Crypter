@@ -90,11 +90,7 @@ def main():
         ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
         ACTIVITY_LOG.see('end')
-        PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
-        PROGRESS_BAR.pack(fill='both')
         def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
-            PROGRESS_BAR.stop()
-            PROGRESS_BAR.pack_forget()
             enable_buttons()
             ACTIVITY = ENCRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
@@ -104,7 +100,6 @@ def main():
             PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
-            PROGRESS_BAR.start()
             PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
             ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
@@ -167,11 +162,7 @@ def main():
         ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the file: "{FILE_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
         ACTIVITY_LOG.see('end')
-        PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
-        PROGRESS_BAR.pack(fill='both')
         def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
-            PROGRESS_BAR.stop()
-            PROGRESS_BAR.pack_forget()
             enable_buttons()
             ACTIVITY = ENCRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
@@ -181,7 +172,6 @@ def main():
             PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
-            PROGRESS_BAR.start()
             PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
             ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
