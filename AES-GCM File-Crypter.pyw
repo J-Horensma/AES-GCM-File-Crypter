@@ -107,8 +107,8 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT = progressbar_window(ROOT_WINDOW)
-            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT)
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
@@ -184,8 +184,8 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT = progressbar_window(ROOT_WINDOW)
-            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT)
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
