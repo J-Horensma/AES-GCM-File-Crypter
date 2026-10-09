@@ -770,4 +770,3 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             return [False, f'INCORRECT_PASSWORD!']
         except BaseException as ERROR:
             return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_variable()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
-s
