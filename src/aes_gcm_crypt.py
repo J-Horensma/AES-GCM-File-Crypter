@@ -371,14 +371,15 @@ def aes_gcm_encrypt_folder(
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
-        BYTES_TOTAL = None
-        START_TIME = None
-        PROCESSED_FOLDER_BYTES_TOTAL = None
         if all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
             FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
+        else:
+            FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
+            BYTES_TOTAL = None
+            START_TIME = None
+            PROCESSED_FOLDER_BYTES_TOTAL = None
         for FILE_PATH in FILE_PATHS:
             if FILE_PATH[1]:
                 ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[0], KEY_SIZE, PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
@@ -433,14 +434,15 @@ def aes_gcm_decrypt_folder(
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
-        BYTES_TOTAL = None
-        START_TIME = None
-        PROCESSED_FOLDER_BYTES_TOTAL = None
         if all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
             FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
+        else:
+            FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
+            BYTES_TOTAL = None
+            START_TIME = None
+            PROCESSED_FOLDER_BYTES_TOTAL = None
         for FILE_PATH in FILE_PATHS:
             if FILE_PATH[1]:
                 DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH[0], PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
@@ -722,8 +724,8 @@ def aes_gcm_decrypt_file(
                     #THE REQUIRED VARIABLES ARE SET
                     if START_TIME:
                         if PROCESSED_FOLDER_BYTES_TOTAL is not None:
-                            PROCESSED_FOLDER_BYTES_TOTAL += len(PLAINTEXT_CHUNK)
-                        PROCESSED_BYTES += len(PLAINTEXT_CHUNK)
+                            PROCESSED_FOLDER_BYTES_TOTAL += len(ENCRYPTED_CHUNK)
+                        PROCESSED_BYTES += len(ENCRYPTED_CHUNK)
                         BUMP_PERCENTAGE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
                         ELAPSED_SECONDS = time() - START_TIME
                         BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
