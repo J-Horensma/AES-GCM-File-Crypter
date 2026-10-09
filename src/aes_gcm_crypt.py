@@ -34,28 +34,32 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.exceptions import InvalidTag
 
 #THIS FUNCTION:
-#1.) REQUIRES A KEY SIZE INTEGER AND A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) ACCEPTS AN OPTIONAL SALT BYTES
+#1.) REQUIRES: 
+    #A.) A KEY SIZE INTEGER
+    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A 16 BYTE SALT BYTES
+    #B.) KDF ITERATIONS INTEGER
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
-#4.) ACCEPTS AN OPTIONAL KDF ITERATIONS INTEGER
-#5.) IF A KDF ITERATIONS INTEGER OVER 600_000 IS NOT SUPPLIED,
-#THE DEFAULT IS SET TO 600_000
-#6.) A PASSWORD HASH IS GENERATED, AS A KEY FOR AES CRYPTOGRAPHY
-#7.) RETURNS THE KEY AND SALT BYTES, AS A LIST
+#4.) IF A KDF ITERATIONS INTEGER 600_000 OR HIGHER IS NOT SUPPLIED, IT IS SET TO 600_000
+#5.) A KDF-KEY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
+#6.) RETURNS:
+    #A.) KEY BYTES
+    #B.) SALT BYTES
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
-    if KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type of 128, 192, or 256.')
-    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+    if not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type.')
-    elif SALT_BYTES and len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
     elif KDF_ITERATIONS and not isinstance(KDF_ITERATIONS, int):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer type.')
+    elif KEY_SIZE not in KEY_SIZE_LIST:
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
+    elif SALT_BYTES and len(SALT_BYTES) != 16:
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
     elif KDF_ITERATIONS and KDF_ITERATIONS < 600_000:
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer of 600000 or more.')
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer consisting of 600000 or more.')
     else:
         try:
             KDF_ITERATIONS = 600_000 if KDF_ITERATIONS is None else KDF_ITERATIONS
@@ -115,8 +119,10 @@ def is_normal(PATH):
         return False
 
 #THIS FUNCTION:
-#1.) REQUIRES A PATH STRING AND A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
-#2.) CHECKS IF THE SUPPLIED PATH, HAS THE REQUESTED PERMISSION(S)
+#1.) REQUIRES: 
+    #A.) A PATH STRING
+    #B.) A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
+#2.) CHECKS IF THE SUPPLIED PATH HAS THE REQUESTED PERMISSION(S)
 #3.) RETURNS "True" OR "False"
 def has_permissions(PATH, PERMISSIONS):
     try:
@@ -175,8 +181,10 @@ def has_permissions(PATH, PERMISSIONS):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS A FILE PATHS LIST WITH TUPLE VALUES CONTAINING A FILE PATH STRING AND "True" OR "False" FOR FILE PATH ACCESSABILITY STATUS, 
-#AN ACCESSABLE FILES TOTAL INTEGER, AND AN ACCESSABLE FILES BYTES TOTAL INTEGER
+#3.) RETURNS:
+    #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING A FILE PATH STRING AND "True" OR "False" FOR FILE PATH ACCESSABILITY STATUS
+    #B.) AN ACCESSABLE FILES TOTAL INTEGER
+    #C.) AN ACCESSABLE FILES, BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
@@ -252,7 +260,7 @@ def convert_seconds(SECONDS):
     
 #THIS FUNCTION:
 #1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
-#2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS, AS A LIST, OR "None", WITH ERROR INFORMATION
+#2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS AS A LIST OR "None", WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE):
     if not isinstance(FILE, IOBase) or 'r' not in FILE.mode or 'b' not in FILE.mode:
         raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter must be a file object, in binary read mode.')
@@ -318,11 +326,20 @@ def check_aes_gcm_headers(FILE):
             raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "check_aes_gcm_headers()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
         
 #THIS FUNCTION:
-#1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) ACCEPTS OPTIONAL "tkinter.Toplevel()" (FOR PROGRESSBAR WINDOW), "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PROGRESSBAR PERCENTAGE)
-#4.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
-#5.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
+#1.) REQUIRES:
+    #A.) A FOLDER PATH STRING
+    #B.) KEY SIZE INTEGER
+    #C.) PASSWORD STRING, BYTES, OR BYTEARRAY
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A BLOCK SIZE INTEGER
+    #B.) A "tkinter.Toplevel()" CLASS (FOR PROGRESSBAR WINDOW)
+    #C.) A "tkinter.Label()" CLASS (FOR ETA)
+    #D.) A "ttk.Progressbar()" CLASS (FOR PROGRESSBAR)
+    #E.) A "tkinter.Label()" CLASS (FOR PROGRESSBAR PERCENTAGE)
+#3.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
+#4.) RETURNS:
+    #A.) "True" (SUCCESS) or "False" (ERROR)
+    #B.) ANY INFO
 def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
@@ -366,9 +383,14 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
-#1.) REQUIRES A FOLDER PATH STRING, KEY SIZE INTEGER, AND PASSWORD STRING, BYTES, OR BYTEARRAY
+#1.) REQUIRES:
+    #A.) A FOLDER PATH STRING
+    #B.) KEY SIZE INTEGER
+    #C.) PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD IS CORRECT)
-#3.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
+#3.) RETURNS:
+    #A.) "True" (SUCCESS) or "False" (ERROR)
+    #B.) ANY INFO
 def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter must be a string type.')
@@ -398,12 +420,21 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     except BaseException as ERROR:
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
-#1.) REQUIRES A FILE PATH STRING, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
-#3.) ACCEPTS AN OPTIONAL BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_encrypt_file()" FUNCTION)
-#4.) ACCEPTS OPTIONAL "tkinter.Toplevel()" (FOR PROGRESSBAR WINDOW), "tkinter.Label()" (FOR ETA), "ttk.Progressbar()" (FOR PROGRESSBAR), AND "tkinter.Label()" (FOR PERCENTAGE)
-#5.) AES-GCM ENCRYPTS THE FILE PATH (SECURELY, FOR ANY FILE TYPE)
-#6.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
+#1.) REQUIRES:
+    #A.) A FILE PATH STRING
+    #B.) A KEY SIZE INTEGER
+    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+#2.) OPTIONALLY ACCEPTS: 
+    #A.) A BLOCK SIZE INTEGER
+    #B.) A BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_encrypt_folder()" FUNCTION)
+    #C.) A "tkinter.Toplevel()" CLASS (FOR PROGRESSBAR WINDOW)
+    #D.) A "tkinter.Label()" CLASS (FOR ETA)
+    #E.) A "ttk.Progressbar()" CLASS (FOR PROGRESSBAR)
+    #F.) A "tkinter.Label()" CLASS (FOR PERCENTAGE)
+#3.) AES-GCM ENCRYPTS THE FILE (SECURELY, FOR ANY FILE TYPE)
+#4.) RETURNS:
+    #A.) "True" (SUCCESS) or "False" (ERROR)
+    #B.) ANY INFO
 def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, BYTES_TOTAL=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
@@ -519,10 +550,14 @@ def aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, BYTES_T
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
-#1.) REQUIRES A FILE PATH STRING AND A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) ACCEPTS AN OPTIONAL BLOCK SIZE INTEGER
+#1.) REQUIRES: 
+    #A.) A FILE PATH STRING
+    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+#2.) OPTIONALLY ACCEPTS A BLOCK SIZE INTEGER
 #3.) AES-GCM DECRYPTS THE SUPPLIED FILE PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
-#4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM
+#4.) RETURNS:
+    #A.) "True" (SUCCESS) or "False" (ERROR)
+    #B.) ANY INFO
 def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter must be a string type.')
@@ -621,10 +656,18 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
 
 #THIS FUNCTION:
-#1.) REQUIRES A PLAINTEXT STRING OR BYTES TYPE VARIABLE, KEY SIZE INTEGER, AND A PASSWORD STRING, BYTES, OR BYTEARRAY
+#1.) REQUIRES: 
+    #A.) A PLAINTEXT STRING OR BYTES
+    #B.) A KEY SIZE INTEGER
+    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) CREATES A 16 BYTE SALT AND 12 BYTE NONCE
 #3.) AES-GCM ENCRYPTS THE VARIABLE
-#4.) RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM, THEN SALT, NONCE, AND TAG BYTES (IF SUCCESS)
+#4.) RETURNS:
+    #A.) "True" (SUCCESS) or "False" (ERROR)
+    #IF SUCCESS:
+        #B.) SALT BYTES 
+        #C.) NONCE BYTES
+        #D.) TAG BYTES
 def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PLAINTEXT_VARIABLE, (str, bytes)):
@@ -649,10 +692,19 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
             return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_variable()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}']
 
 #THIS FUNCTION:
-#1.) REQUIRES AN ENCRYPTED VARIABLE BYTES, KEY SIZE INTEGER, PASSWORD STRING, BYTES, OR BYTEARRAY, SALT, NONCE, AND TAG BYTES
-#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
-#IN COMBINATION WITH THE PASSWORD, USING THE "get_aes_key_and_salt()" FUNCTION
-#3.) DECRYPTS AND RETURNS A LIST WITH "True" (SUCCESS) or "False" (ERROR), AS THE FIRST ITEM, THEN DECRYPTED PLAINTEXT (IF SUCCESS)
+#1.) REQUIRES:
+    #A.) ENCRYPTED BYTES VARIABLE
+    #B.) KEY SIZE INTEGER
+    #C.) PASSWORD STRING, BYTES, OR BYTEARRAY
+    #D.) SALT BYTES
+    #E.) NONCE BYTES
+    #F.) TAG BYTES
+#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, IN COMBINATION WITH THE PASSWORD, USING THE "get_aes_key_and_salt()" FUNCTION
+#3.) DECRYPTS THE SUPPLIED ENCRYPTED VARIABLE
+#4.) RETURNS:
+    #A.) "True" (SUCCESS) or "False" (ERROR) 
+    #IF SUCCESS:
+        #B.) DECRYPTED PLAINTEXT
 def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NONCE_BYTES, TAG_BYTES):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(ENCRYPTED_BYTES, bytes):
