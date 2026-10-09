@@ -71,7 +71,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
-#2.) RETURNS THE WIDTH AND HEIGHT OF THE DEVICE SCREEN AS A LIST
+#2.) RETURNS WIDTH AND HEIGHT INTEGERS OF THE DEVICE SCREEN
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "get_device_screen_size()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
@@ -455,7 +455,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
-#3.) RETURNS THE ABSOLUTE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+#3.) RETURNS THE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter must be a string type.')
@@ -482,7 +482,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
     #B.) A FILE TYPES LIST
     #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
 #2.) PROMPTS THE USER TO CHOOSE A FILE PATH
-#3.) RETURNS THE ABSOLUTE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+#3.) RETURNS THE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
     if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter must be a string type.')
