@@ -66,8 +66,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
             WINDOW.iconphoto(True, ICON_IMAGE)
     except BaseException as ERROR:
-        except BaseException as ERROR:
-            raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
