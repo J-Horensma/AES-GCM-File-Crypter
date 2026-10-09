@@ -27,7 +27,8 @@ from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
     from .src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
-        create_password_prompt, enter_password_prompt, folder_path_prompt, file_path_prompt
+        create_password_prompt, enter_password_prompt, folder_path_prompt, 
+        file_path_prompt, progressbar_window
     )
     from .src.aes_gcm_crypt import (
         aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
@@ -36,7 +37,8 @@ try:
 except ImportError:
     from src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt,
-        create_password_prompt, enter_password_prompt, folder_path_prompt, file_path_prompt
+        create_password_prompt, enter_password_prompt, folder_path_prompt, 
+        file_path_prompt, progressbar_window
     )
     from src.aes_gcm_crypt import (
         aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
@@ -101,10 +103,12 @@ def main():
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
+            PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD)
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT = progressbar_window(ROOT_WINDOW)
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
@@ -176,10 +180,12 @@ def main():
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
+            PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
             PROGRESS_BAR.start()
-            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD)
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT = progressbar_window(ROOT_WINDOW)
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
         Thread(target=start_process, daemon=True).start()
 
