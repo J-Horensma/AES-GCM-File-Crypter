@@ -341,7 +341,9 @@ def check_aes_gcm_headers(FILE):
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
-def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
+def aes_gcm_encrypt_folder(
+        FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_WINDOW=None, 
+        TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe folder path parameter must be a string type.')
@@ -369,9 +371,12 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
+        FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
+        BYTES_TOTAL = None
         START_TIME = None
+        PROCESSED_FOLDER_BYTES_TOTAL = None
         if all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+            FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
         for FILE_PATH in FILE_PATHS:
@@ -379,7 +384,8 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
                 ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[0], KEY_SIZE, PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
                 if not ENCRYPT_RESULT[0]: 
                     ERRORS += ENCRYPT_RESULT[1].splitlines()
-                PROCESSED_FOLDER_BYTES_TOTAL = ENCRYPT_RESULT[2]
+                if PROCESSED_FOLDER_BYTES_TOTAL is not None:
+                    PROCESSED_FOLDER_BYTES_TOTAL = ENCRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS)
         return [True if not ERRORS else False, f'AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
@@ -390,37 +396,61 @@ def aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, TKI
 #1.) REQUIRES:
     #A.) A FOLDER PATH STRING
     #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) OPTIONALLY ACCEPTS A BLOCK_SIZE INTEGER (DEFAULT IS 65536)
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A BLOCK SIZE INTEGER (DEFAULT IS 65536)
+    #B.) A "tkinter.Toplevel()" CLASS (FOR PROGRESSBAR WINDOW)
+    #C.) A "tkinter.Label()" CLASS (FOR ETA)
+    #D.) A "ttk.Progressbar()" CLASS (FOR PROGRESSBAR)
+    #E.) A "tkinter.Label()" CLASS (FOR PROGRESSBAR PERCENTAGE)
 #3.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD IS CORRECT)
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
-def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
+def aes_gcm_decrypt_folder(
+        FOLDER_PATH, PASSWORD, BLOCK_SIZE=None, TKINTER_PROGRESSBAR_WINDOW=None, 
+        TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None):
     if not isinstance(FOLDER_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter must be a string type.')
     elif not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe block size parameter must be an integer type.')
+    elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
+    elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
+    elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
+    elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
     elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "aes_gcm_decrypt_folder()"\nThe folder path parameter must be a path to an existing folder.')
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         ERRORS = []
-        for ROOT, FOLDERS, FILES in walk(FOLDER_PATH):
-            FILES = [FILE for FILE in FILES if all([is_normal(join(ROOT, FILE)), has_permissions(join(ROOT, FILE), 'RW')])]
-            for FILE_NAME in FILES:
-                FILE_PATH = join(ROOT, FILE_NAME)
-                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE)
-                if not DECRYPT_RESULT[0]:
+        FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
+        BYTES_TOTAL = None
+        START_TIME = None
+        PROCESSED_FOLDER_BYTES_TOTAL = None
+        if all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+            FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
+            START_TIME = time()
+            PROCESSED_FOLDER_BYTES_TOTAL = 0
+        for FILE_PATH in FILE_PATHS:
+            if FILE_PATH[1]:
+                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH[0], PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
+                if not DECRYPT_RESULT[0]: 
                     ERRORS += DECRYPT_RESULT[1].splitlines()
+                if PROCESSED_FOLDER_BYTES_TOTAL is not None:
+                    PROCESSED_FOLDER_BYTES_TOTAL = DECRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS)
-            return [False, f'{ERRORS}\nFOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
-        return [True, f'FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
+        return [True if not ERRORS else False, f'AES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
@@ -443,9 +473,9 @@ def aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, BLOCK_SIZE=None):
     #B.) ANY INFO
     #C.) A PROCESSED FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_encrypt_folder()" FUNCTION)
 def aes_gcm_encrypt_file(
-    FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, 
-    BYTES_TOTAL=None, START_TIME=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, 
-    TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None, PROCESSED_FOLDER_BYTES_TOTAL=None):
+        FILE_PATH, KEY_SIZE, PASSWORD, BLOCK_SIZE=None, 
+        BYTES_TOTAL=None, START_TIME=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, 
+        TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None, PROCESSED_FOLDER_BYTES_TOTAL=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a string type.')
@@ -476,7 +506,7 @@ def aes_gcm_encrypt_file(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     elif any(VALUE is not None for VALUE in [BYTES_TOTAL, START_TIME, PROCESSED_FOLDER_BYTES_TOTAL]) and not all(VALUE is not None for VALUE in [BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL]):
-            raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with the "aes_gcm_encrypt_folder()" function,\nthe bytes total integer, start time float, all 4 optional tkinter classes, and the processed folder bytes total integer must be supplied.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with the "aes_gcm_encrypt_folder()" function,\nthe bytes total integer, start time float, all 4 optional tkinter classes, and the processed folder bytes total integer must be supplied.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
@@ -576,9 +606,9 @@ def aes_gcm_encrypt_file(
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'AES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
-        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
-        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except BaseException as ERROR:
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
@@ -589,28 +619,62 @@ def aes_gcm_encrypt_file(
 #1.) REQUIRES: 
     #A.) A FILE PATH STRING
     #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) OPTIONALLY ACCEPTS A BLOCK SIZE INTEGER (DEFAULT IS 65536)
+#2.) OPTIONALLY ACCEPTS: 
+    #A.) A BLOCK SIZE INTEGER (DEFAULT IS 65536)
+    #B.) A BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_decrypt_folder()" FUNCTION)
+    #C.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_decrypt_folder()" FUNCTION)
+    #D.) A "tkinter.Toplevel()" CLASS (FOR PROGRESSBAR WINDOW)
+    #E.) A "tkinter.Label()" CLASS (FOR ETA)
+    #F.) A "ttk.Progressbar()" CLASS (FOR PROGRESSBAR)
+    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE)
+    #H.) A PROCESSED FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_decrypt_folder()" FUNCTION)
 #3.) AES-GCM DECRYPTS THE SUPPLIED FILE PATH (IF THE SUPPLIED PASSWORD, IS CORRECT)
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
-def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
+    #C.) A PROCESSED FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_decrypt_folder()" FUNCTION)
+def aes_gcm_decrypt_file(
+        FILE_PATH, PASSWORD, BLOCK_SIZE=None, BYTES_TOTAL=None, 
+        START_TIME=None, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, 
+        TKINTER_PROGRESSBAR_PERCENTAGE=None, PROCESSED_FOLDER_BYTES_TOTAL=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter must be a string type.')
     elif not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe block size parameter must be an integer type.')
+    elif BYTES_TOTAL and not isinstance(BYTES_TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe bytes total parameter must be an integer type.')
+    elif START_TIME and not isinstance(START_TIME, float):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe start time parameter must be a float type.')
+    elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
+    elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
+    elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
+    elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
+    elif PROCESSED_FOLDER_BYTES_TOTAL and not isinstance(PROCESSED_FOLDER_BYTES_TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe processed folder bytes total parameter must be an integer type.')
     elif not isabs(FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter must be a path to an existing file.')
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
+    elif any(VALUE is not None for VALUE in [BYTES_TOTAL, START_TIME, PROCESSED_FOLDER_BYTES_TOTAL]) and not all(VALUE is not None for VALUE in [BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL]):
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with the "aes_gcm_decrypt_folder()" function,\nthe bytes total integer, start time float, all 4 optional tkinter classes, and the processed folder bytes total integer must be supplied.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}']
+        elif PROCESSED_FOLDER_BYTES_TOTAL is not None:
+            PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
+        else:
+            PROCESSED_BYTES = 0
         #OPEN THE FILE TO DECRYPT, IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
@@ -630,6 +694,11 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
             INFILE.seek(TOTAL_HEADERS_SIZE)
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
+                #IF RUNNING A TKINTER PROGRESSBAR FROM THIS FUNCTION,
+                #THE REQUIRED VARIABLES ARE SET
+                if START_TIME is None and all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+                    START_TIME = time()
+                    BYTES_TOTAL = getsize(FILE_PATH)
                 #STREAM-DECRYPT THE ENCRYPTED DATA, IN CHUNKS (TO ALLOW DECRYPTION OF ALL FILE TYPES)
                 while True:
                     #READ THE BIG ENDIAN ENCODED SIZE DATA
@@ -645,10 +714,24 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
                         return [False, f'CHUNK_SIZE_DATA_CORRUPTED!\nFile path: {FILE_PATH}']
                     #READ THE AES-GCM ENCRYPTED CHUNK
                     ENCRYPTED_CHUNK = INFILE.read(CHUNK_SIZE)
-                    #CHECK IF THE ENCRYPTED CHUNK, IS CORRUPTED
+                    #CHECK IF THE ENCRYPTED CHUNK IS CORRUPTED
                     if len(ENCRYPTED_CHUNK) != CHUNK_SIZE:
                         remove(FILE_PATH + '.tmp')
                         return [False, f'CHUNK_DATA_CORRUPTED!\nFile path: {FILE_PATH}']
+                    #IF RUNNING A TKINTER PROGRESSBAR FROM THIS FUNCTION OR THE "aes_gcm_decrypt_folder()" FUNCTION,
+                    #THE REQUIRED VARIABLES ARE SET
+                    if START_TIME:
+                        if PROCESSED_FOLDER_BYTES_TOTAL is not None:
+                            PROCESSED_FOLDER_BYTES_TOTAL += len(PLAINTEXT_CHUNK)
+                        PROCESSED_BYTES += len(PLAINTEXT_CHUNK)
+                        BUMP_PERCENTAGE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
+                        ELAPSED_SECONDS = time() - START_TIME
+                        BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
+                        REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
+                        ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
+                        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
+                        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=BUMP_PERCENTAGE: TKINTER_PROGRESSBAR.config(value=v))
+                        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(BUMP_PERCENTAGE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
                     PLAINTEXT_CHUNK = DECRYPTOR.update(ENCRYPTED_CHUNK)
                     #DELETE EACH ENCRYPTED DATA CHUNK, AFTER DECRYPTION, TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE RAM
                     del ENCRYPTED_CHUNK
@@ -677,14 +760,14 @@ def aes_gcm_decrypt_file(FILE_PATH, PASSWORD, BLOCK_SIZE=None):
             fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
-        return [True, f'FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}']
+        return [True, f'AES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except InvalidTag:
         remove(FILE_PATH + '.tmp')
-        return [False, f'INCORRECT_PASSWORD!\nFile path: {FILE_PATH}']
+        return [False, f'INCORRECT_PASSWORD!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
-            return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
+            return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
-        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}']
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except BaseException as ERROR:
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
