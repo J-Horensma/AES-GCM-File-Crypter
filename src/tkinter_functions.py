@@ -526,13 +526,13 @@ def progressbar_window(ROOT_WINDOW):
         PROGRESSBAR_STYLE.configure('Green.Horizontal.TProgressbar', thickness=38, background='#5CB85C', relief='raised')
         ROW_1_FRAME = Frame(PROGRESSBAR_WINDOW)
         ROW_1_FRAME.pack()
-        PROGRESSBAR_MESSAGE = tk.Label(ROW_1_FRAME, text=None, font=('Times New Roman', 18, 'bold'), wraplength=465)
+        PROGRESSBAR_MESSAGE = Label(ROW_1_FRAME, text=None, font=('Times New Roman', 18, 'bold'), wraplength=465)
         PROGRESSBAR_MESSAGE.pack(padx=10, pady=(10, 0))
         ROW_2_FRAME = Frame(PROGRESSBAR_WINDOW)
         ROW_2_FRAME.pack()
         PROGRESSBAR = ttk.Progressbar(ROW_2_FRAME, length=400, mode='determinate', style='Green.Horizontal.TProgressbar')
         PROGRESSBAR.pack(padx=(10, 0), pady=10, side='left')
-        PROGRESSBAR_PERCENT = tk.Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
+        PROGRESSBAR_PERCENT = Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
         PROGRESSBAR_PERCENT.pack(padx=10, side='left')
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENT
     except BaseException as ERROR:
