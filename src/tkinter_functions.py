@@ -119,40 +119,20 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
 #1.) REQUIRES:
     #A.) A "tkinter.Tk()" CLASS
     #B.) A LIST OF DROPDOWN MENU OPTIONS
-#2.) OPTIONALLY ACCEPTS:
-    #A.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-    #B.) PROMPT TITLE AND/OR PROMPT MESSAGE STRING(S) (DEFAULT IS "Select An Option")
+#2.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT MESSAGE STRING(S) (DEFAULT IS "Select An Option")
 #3.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
 #4.) RETURNS THE USER-SELECTED OPTION AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
-def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
+def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif not isinstance(DROPDOWN_MENU_OPTIONS, list):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter must be a list type.')
-    elif not isinstance(ICON_ICO_FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter must be a string type.')
-    elif not isinstance(ICON_PNG_FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter must be a string type.')
     elif not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt title parameter must be a string type.')
     elif not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt message parameter must be a string type.')
-    elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico and icon png file path parameters, must both be set if using an icon with this function on Windows.')
-    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
-    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS other than Mac.')
-    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter must be an absolute path.')
-    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter must be an absolute path.')
-    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon ico file path parameter must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "dropdown_menu_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
-        PROMPT_TITLE = 'Select An Option' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_TITLE = 'Select An Option:' if PROMPT_TITLE is None else PROMPT_TITLE
         PROMPT_MESSAGE = 'Select An Option:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
         SELECTED_DROPDOWN_MENU_VALUE = None
         def close_window():
@@ -162,8 +142,6 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
             SELECTED_DROPDOWN_MENU_VALUE = DROPDOWN_MENU.get()
             DROPDOWN_MENU_WINDOW.destroy()
         DROPDOWN_MENU_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            set_window_icon(DROPDOWN_MENU_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         DROPDOWN_MENU_WINDOW.title(PROMPT_TITLE)
         DROPDOWN_MENU_WINDOW.resizable(False, False)
         #TRIGGER A CLOSE FUNCTION WHEN THE "X" BUTTON IS CLICKED
@@ -263,31 +241,16 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
 #1.) REQUIRES A "tkinter.Tk()" CLASS
 #2.) OPTIONALLY ACCEPTS:
     #A.) A MINIMUM PASSWORD LENGTH INTEGER (DEFAULT IS 16)
-    #B.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-    #C.) A PROMPT TITLE STRING (DEFAULT IS "Create A Password")
+    #B.) A PROMPT TITLE STRING (DEFAULT IS "Create A Password")
 #3.) DISPLAYS A CREATE PASSWORD PROMPT
 #4.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
-def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
+def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif MINIMUM_PASSWORD_LENGTH and not isinstance(MINIMUM_PASSWORD_LENGTH, int):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe minimum password length parameter must be an integer type.')
     elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe prompt title parameter must be a string type.')
-    elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico and icon png file path parameters must both be set if using an icon with this function on Windows.')
-    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
-    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS other than Mac.')
-    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon ico file path parameter must be an absolute path.')
-    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be an absolute path.')
-    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "create_password_prompt()"\nThe icon ico file path parameter must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "create_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
         MINIMUM_PASSWORD_LENGTH = 16 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
@@ -308,8 +271,6 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            set_window_icon(CREATE_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         CREATE_PASSWORD_WINDOW.title(PROMPT_TITLE)
         CREATE_PASSWORD_WINDOW.resizable(False, False)
         CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
@@ -344,7 +305,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         STATUS_LABEL = Label(ROW_5_FRAME, text=None, font=('Times New Roman', 14, 'bold'), wraplength=400)
         STATUS_LABEL.pack()
         ROW_6_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-        ROW_6_FRAME.pack(padx=10, pady=10, fill='x')
+        ROW_6_FRAME.pack(fill='x', padx=10, pady=10)
         CANCEL_BUTTON = Button(ROW_6_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_6_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
@@ -448,30 +409,6 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         return PASSWORD_VALUE
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
-      
-#THIS FUNCTION:
-#1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
-#2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
-#3.) RETURNS THE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
-def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
-    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
-        raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter must be a string type.')
-    elif PROMPT_PATH and not isabs(PROMPT_PATH):
-        raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be an absolute path.')
-    elif PROMPT_PATH and not isdir(PROMPT_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be a path to an existing folder.')
-    try:
-        PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
-        PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
-        PATH = filedialog.askdirectory(
-            title=PROMPT_TITLE,
-            initialdir=PROMPT_PATH
-        )
-        if not PATH:
-            PATH = None
-        return PATH
-    except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
@@ -539,23 +476,24 @@ def progressbar_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     try:
+        def close_window():
+            pass
         PROGRESSBAR_WINDOW = Toplevel(ROOT_WINDOW)
-        #HIDE THE WINDOW TITLE BAR
-        PROGRESSBAR_WINDOW.overrideredirect(True)
         PROGRESSBAR_WINDOW.resizable(False, False)
+        PROGRESSBAR_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         PROGRESSBAR_STYLE = ttk.Style()
         PROGRESSBAR_STYLE.theme_use('default')
         PROGRESSBAR_STYLE.configure('Green.Horizontal.TProgressbar', thickness=38, background='#5CB85C', relief='raised')
         ROW_1_FRAME = Frame(PROGRESSBAR_WINDOW)
-        ROW_1_FRAME.pack()
+        ROW_1_FRAME.pack(padx=10, pady=10)
         PROGRESSBAR_MESSAGE = Label(ROW_1_FRAME, text=None, font=('Times New Roman', 18, 'bold'), wraplength=465)
-        PROGRESSBAR_MESSAGE.pack(padx=10, pady=(10, 0))
+        PROGRESSBAR_MESSAGE.pack()
         ROW_2_FRAME = Frame(PROGRESSBAR_WINDOW)
-        ROW_2_FRAME.pack()
-        PROGRESSBAR = ttk.Progressbar(ROW_2_FRAME, length=400, mode='determinate', style='Green.Horizontal.TProgressbar')
-        PROGRESSBAR.pack(padx=(10, 0), pady=10, side='left')
+        ROW_2_FRAME.pack(padx=10, pady=(0,10))
+        PROGRESSBAR = ttk.Progressbar(ROW_2_FRAME, mode='determinate', length=400, style='Green.Horizontal.TProgressbar')
+        PROGRESSBAR.pack(side='left')
         PROGRESSBAR_PERCENTAGE = Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
-        PROGRESSBAR_PERCENTAGE.pack(padx=10, side='left')
+        PROGRESSBAR_PERCENTAGE.pack(side='left')
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "progressbar_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
