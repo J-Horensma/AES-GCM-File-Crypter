@@ -56,25 +56,25 @@ def cli():
             from .src.aes_gcm_crypt import aes_gcm_encrypt_folder
             print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(ENCRYPT_RESULT[1])
+            print(ENCRYPT_RESULT[1].strip())
             return
         elif ARGUMENTS.COMMAND == 'decrypt_folder':
             from .src.aes_gcm_crypt import aes_gcm_decrypt_folder
             print(f'Decrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(DECRYPT_RESULT[1])
+            print(DECRYPT_RESULT[1].strip())
             return
         elif ARGUMENTS.COMMAND == 'encrypt_file':
             from .src.aes_gcm_crypt import aes_gcm_encrypt_file
             print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(ENCRYPT_RESULT[1])
+            print(ENCRYPT_RESULT[1].strip())
             return
         elif ARGUMENTS.COMMAND == 'decrypt_file':
             from .src.aes_gcm_crypt import aes_gcm_decrypt_file
             print(f'Decrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(DECRYPT_RESULT[1])
+            print(DECRYPT_RESULT[1].strip())
             return
     except BaseException as ERROR:
         print(ERROR)
