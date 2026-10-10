@@ -90,7 +90,7 @@ def clear_window(WINDOW):
         raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
     try:
         WINDOW.update_idletasks()
-        for WIDGET in ROOT_WINDOW.winfo_children():
+        for WIDGET in WINDOW.winfo_children():
             WIDGET.destroy()
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
