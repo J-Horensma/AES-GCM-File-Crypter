@@ -404,7 +404,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
     elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
-        PROMPT_TITLE = 'Enter Password' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_TITLE = 'Enter The Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
             #DELETE THE PASSWORD ENTRY FROM THE RAM
@@ -425,23 +425,27 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ENTER_PASSWORD_WINDOW.grab_set()
         ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-        ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
-        Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
-        PASSWORD_VISIBILITY_VARIABLE = StringVar()
-        PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
-        PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-        PASSWORD_ENTRY.focus_force()
-        PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
-        PASSWORD_VISIBILITY_BUTTON.pack(side='left')
-        #SET A PASSWORD CHECK STATUS LABEL
-        STATUS_LABEL = Label(ENTER_PASSWORD_WINDOW, font=('Times New Roman', 14, 'bold'), fg='grey')
-        STATUS_LABEL.pack(pady=(5, 10))
+        ROW_1_FRAME.pack(padx=10, pady=10)
+        Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack()
         ROW_2_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-        ROW_2_FRAME.pack(pady=10, fill='x')
-        CANCEL_BUTTON = Button(ROW_2_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
-        CANCEL_BUTTON.pack(side='left', padx=10)
-        CONFIRM_BUTTON = Button(ROW_2_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
-        CONFIRM_BUTTON.pack(side='right', padx=10)
+        ROW_2_FRAME.pack(padx=10, pady=10)
+        PASSWORD_VISIBILITY_VARIABLE = StringVar()
+        PASSWORD_ENTRY = Entry(ROW_2_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
+        PASSWORD_ENTRY.pack(side='left')
+        PASSWORD_ENTRY.focus_force()
+        PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
+        PASSWORD_VISIBILITY_BUTTON.pack(side='left')
+        ROW_3_FRAME = Frame(ENTER_PASSWORD_WINDOW)
+        ROW_3_FRAME.pack(padx=10, pady=10)
+        #SET A PASSWORD CHECK STATUS LABEL
+        STATUS_LABEL = Label(ROW_3_FRAME, font=('Times New Roman', 14, 'bold'), fg='grey')
+        STATUS_LABEL.pack()
+        ROW_4_FRAME = Frame(ENTER_PASSWORD_WINDOW)
+        ROW_4_FRAME.pack(pady=10, padx=10, fill='x')
+        CANCEL_BUTTON = Button(ROW_4_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
+        CANCEL_BUTTON.pack(side='left')
+        CONFIRM_BUTTON = Button(ROW_4_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
+        CONFIRM_BUTTON.pack(side='right')
         #UPDATE THE STATUS LABEL ON-KEY UP
         PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))
         #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
@@ -450,6 +454,30 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         return PASSWORD_VALUE
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+    
+#THIS FUNCTION:
+#1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
+#2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
+#3.) RETURNS THE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
+def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
+    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+        raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter must be a string type.')
+    elif PROMPT_PATH and not isabs(PROMPT_PATH):
+        raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be an absolute path.')
+    elif PROMPT_PATH and not isdir(PROMPT_PATH):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be a path to an existing folder.')
+    try:
+        PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_PATH = expanduser('~') if PROMPT_PATH is None else PROMPT_PATH
+        PATH = filedialog.askdirectory(
+            title=PROMPT_TITLE,
+            initialdir=PROMPT_PATH
+        )
+        if not PATH:
+            PATH = None
+        return PATH
+    except BaseException as ERROR:
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
