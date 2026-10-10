@@ -184,7 +184,9 @@ def has_permissions(PATH, PERMISSIONS):
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
 #3.) RETURNS:
-    #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING A FILE PATH STRING AND "True" OR "False" FOR FILE PATH ACCESSABILITY STATUS
+    #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING: 
+        #i.)"True" OR "False" FOR THE FILE PATH ACCESSABILITY STATUS
+        #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
     #C.) AN ACCESSABLE FILES, BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
@@ -199,15 +201,15 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
             FILE_PATHS = [
                 (
-                join(ROOT, FILE_NAME),
-                True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False
+                True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False,
+                join(ROOT, FILE_NAME)
                 ) 
                 for FILE_NAME in FILE_NAMES
             ]
             for FILE_PATH in FILE_PATHS:
-                if FILE_PATH[1]:
+                if FILE_PATH[0]:
                     FILES_TOTAL += 1
-                    BYTES_TOTAL += getsize(FILE_PATH[0])
+                    BYTES_TOTAL += getsize(FILE_PATH[1])
         return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
@@ -381,15 +383,15 @@ def aes_gcm_encrypt_folder(
             START_TIME = None
             PROCESSED_FOLDER_BYTES_TOTAL = None
         for FILE_PATH in FILE_PATHS:
-            if FILE_PATH[1]:
-                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[0], KEY_SIZE, PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
-                if not ENCRYPT_RESULT[0]: 
+            if FILE_PATH[0]:
+                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[1], KEY_SIZE, PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
+                if not ENCRYPT_RESULT[0]:
                     ERRORS += ENCRYPT_RESULT[1].splitlines()
                 if PROCESSED_FOLDER_BYTES_TOTAL is not None:
                     PROCESSED_FOLDER_BYTES_TOTAL = ENCRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS)
-        return [True if not ERRORS else False, f'AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
+        return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
@@ -444,15 +446,15 @@ def aes_gcm_decrypt_folder(
             START_TIME = None
             PROCESSED_FOLDER_BYTES_TOTAL = None
         for FILE_PATH in FILE_PATHS:
-            if FILE_PATH[1]:
-                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH[0], PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
+            if FILE_PATH[0]:
+                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH[1], PASSWORD, BLOCK_SIZE, BYTES_TOTAL, START_TIME, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
                 if not DECRYPT_RESULT[0]: 
                     ERRORS += DECRYPT_RESULT[1].splitlines()
                 if PROCESSED_FOLDER_BYTES_TOTAL is not None:
                     PROCESSED_FOLDER_BYTES_TOTAL = DECRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS)
-        return [True if not ERRORS else False, f'AES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
+        return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
@@ -524,7 +526,7 @@ def aes_gcm_encrypt_file(
         ENCRYPTOR = CIPHER.encryptor()
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
-            return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}']
+            return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         elif PROCESSED_FOLDER_BYTES_TOTAL is not None:
             PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
         else:
@@ -533,9 +535,9 @@ def aes_gcm_encrypt_file(
             #CHECK IF THE FILE IS EMPTY OR ALREADY AES-GCM ENCRYPTED
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
             if AES_GCM_HEADERS_CHECK[1] == 'FILE_EMPTY':
-                return [False, f'FILE_EMPTY!\nFile path: {FILE_PATH}']
+                return [False, f'FILE_EMPTY!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             elif AES_GCM_HEADERS_CHECK[0]:
-                return [False, f'ALREADY_AES-GCM_ENCRYPTED!\nFile path: {FILE_PATH}']
+                return [False, f'ALREADY_AES-GCM_ENCRYPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             #CREATE AND OPEN A TEMPORARY FILE, TO WRITE TO, IN WRITE BYTES MODE
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
                 RESERVED_HEADERS_LENGTH_LIST = [7, 3, 12, 16, 16]
@@ -615,7 +617,7 @@ def aes_gcm_encrypt_file(
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
-        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
+        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
@@ -672,7 +674,7 @@ def aes_gcm_decrypt_file(
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
-            return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}']
+            return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         elif PROCESSED_FOLDER_BYTES_TOTAL is not None:
             PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
         else:
@@ -682,7 +684,7 @@ def aes_gcm_decrypt_file(
             #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
             if not AES_GCM_HEADERS_CHECK[0]:
-                return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}']
+                return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             ALGORITHM_AND_MODE, KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES, TOTAL_HEADERS_SIZE = AES_GCM_HEADERS_CHECK
             #DERIVE A KEY THAT MATCHES THE ORIGINAL KEY, USING THE USER-ENTERED PASSWORD AND THE SALT BYTES STORED, 
             #IN THE FILE'S SALT BYTES HEADER
@@ -713,13 +715,13 @@ def aes_gcm_decrypt_file(
                     #CHECK IF THE CHUNK SIZE INTEGER, IS CORRUPTED
                     if CHUNK_SIZE <= 0:
                         remove(FILE_PATH + '.tmp')
-                        return [False, f'CHUNK_SIZE_DATA_CORRUPTED!\nFile path: {FILE_PATH}']
+                        return [False, f'CHUNK_SIZE_DATA_CORRUPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
                     #READ THE AES-GCM ENCRYPTED CHUNK
                     ENCRYPTED_CHUNK = INFILE.read(CHUNK_SIZE)
                     #CHECK IF THE ENCRYPTED CHUNK IS CORRUPTED
                     if len(ENCRYPTED_CHUNK) != CHUNK_SIZE:
                         remove(FILE_PATH + '.tmp')
-                        return [False, f'CHUNK_DATA_CORRUPTED!\nFile path: {FILE_PATH}']
+                        return [False, f'CHUNK_DATA_CORRUPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
                     #IF RUNNING A TKINTER PROGRESSBAR FROM THIS FUNCTION OR THE "aes_gcm_decrypt_folder()" FUNCTION,
                     #THE REQUIRED VARIABLES ARE SET
                     if START_TIME:
@@ -774,7 +776,7 @@ def aes_gcm_decrypt_file(
         if isfile(FILE_PATH + '.tmp'):
             remove(FILE_PATH + '.tmp')
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
-        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}']
+        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
