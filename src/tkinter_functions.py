@@ -391,30 +391,14 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
-#2.) OPTIONALLY ACCEPTS:
-    #A.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S)
-    #B.) PROMPT TITLE STRING (DEFAULT IS "Enter Password")
+#2.) OPTIONALLY ACCEPTS A PROMPT TITLE STRING (DEFAULT IS "Enter Password")
 #3.) DISPLAYS AN ENTER PASSWORD PROMPT
 #4.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
-def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None, PROMPT_TITLE=None):
+def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe prompt title parameter must be a string type.')
-    elif system() == 'Windows' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico and icon png file path parameters must both be set if using an icon with this function on Windows.')
-    elif system() == 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_ICO_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico file path parameter must be set if using an icon with this function on Mac.')
-    elif system() != 'Darwin' and any([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and not ICON_PNG_FILE_PATH:
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be set if using an icon with this function on an OS other than Mac.')
-    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon ico file path parameter must be an absolute path.')
-    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
-        raise ValueError('[ValueError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be an absolute path.')
-    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "enter_password_prompt()"\nThe icon ico file path parameter must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
-        raise FileNotFoundError('[FileNotFoundError]\nFunction: "enter_password_prompt()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
         PROMPT_TITLE = 'Enter The Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
@@ -430,15 +414,13 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
-        if ICON_ICO_FILE_PATH or ICON_PNG_FILE_PATH:
-            set_window_icon(ENTER_PASSWORD_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
         ENTER_PASSWORD_WINDOW.title(PROMPT_TITLE)
         ENTER_PASSWORD_WINDOW.resizable(False, False)
         ENTER_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         ENTER_PASSWORD_WINDOW.grab_set()
         ROW_1_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_1_FRAME.pack(padx=10, pady=10)
-        Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack()
+        Label(ROW_1_FRAME, text='Enter The Password', font=('Times New Roman', 18, 'bold')).pack()
         ROW_2_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_2_FRAME.pack(padx=10, pady=(0, 10))
         PASSWORD_VISIBILITY_VARIABLE = StringVar()
