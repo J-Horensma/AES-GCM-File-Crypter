@@ -365,9 +365,9 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         PASSWORD_VALUE = PASSWORD_ENTRY.get()
         ASCII_CHECK =  all(CHARACTER in printable for CHARACTER in PASSWORD_VALUE)
         if not PASSWORD_VALUE:
-            STATUS_LABEL.config(text='Cannot be empty!', fg='red')
+            STATUS_LABEL.config(text='The password cannot be empty!', fg='red')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='Contains invalid characters!', fg='red')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='red')
         else:
             STATUS_LABEL.config(text='')
         if not PASSWORD_VALUE or not ASCII_CHECK:
@@ -438,7 +438,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ROW_3_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_3_FRAME.pack(padx=10, pady=10)
         #SET A PASSWORD CHECK STATUS LABEL
-        STATUS_LABEL = Label(ROW_3_FRAME, font=('Times New Roman', 14, 'bold'), fg='grey')
+        STATUS_LABEL = Label(ROW_3_FRAME, font=('Times New Roman', 14, 'bold'), fg='grey', wraplength=400)
         STATUS_LABEL.pack()
         ROW_4_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_4_FRAME.pack(pady=10, padx=10, fill='x')
@@ -454,7 +454,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         return PASSWORD_VALUE
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
-    
+      
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
