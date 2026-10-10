@@ -473,7 +473,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
             PATH = None
         return PATH
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else UnknownError}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS:
