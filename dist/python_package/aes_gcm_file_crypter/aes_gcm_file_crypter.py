@@ -26,8 +26,8 @@ from platform import system
 from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
     from .src.tkinter_functions import (
-        set_window_icon, center_window, dropdown_menu_prompt,
-        create_password_prompt, enter_password_prompt, folder_path_prompt, file_path_prompt
+        set_window_icon, center_window, dropdown_menu_prompt, create_password_prompt, 
+        enter_password_prompt, folder_path_prompt, file_path_prompt, progressbar_window
     )
     from .src.aes_gcm_crypt import (
         aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
@@ -35,8 +35,8 @@ try:
     )
 except ImportError:
     from src.tkinter_functions import (
-        set_window_icon, center_window, dropdown_menu_prompt,
-        create_password_prompt, enter_password_prompt, folder_path_prompt, file_path_prompt
+        set_window_icon, center_window, dropdown_menu_prompt, create_password_prompt, 
+        enter_password_prompt, folder_path_prompt, file_path_prompt, progressbar_window
     )
     from src.aes_gcm_crypt import (
         aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
@@ -45,10 +45,10 @@ except ImportError:
 
 def main():
     if system() != 'Windows':
+        from signal import signal, SIGTSTP
         def handle_ctrl_z(signum, frame):
             print('"Ctrl + z" was pressed, closing AES-GCM File-Crypter...')
             ROOT_WINDOW.quit()
-        from signal import signal, SIGTSTP
         signal(SIGTSTP, handle_ctrl_z)
         
     def disable_buttons():
@@ -68,15 +68,15 @@ def main():
         FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
-        DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select A Key Size'
+        DROPDOWN_MENU_OPTIONS = ['AES-GCM-256 (Most secure)', 'AES-GCM-192', 'AES-GCM-128 (Least drive-space used)']
+        PROMPT_TITLE = 'Select A Key Size:'
         PROMPT_MESSAGE = 'Select A Key Size:'
-        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
+        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         MINIMUM_PASSWORD_LENGTH = 16
-        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH)
         if PASSWORD is None:
             return
         else:
@@ -90,22 +90,19 @@ def main():
         ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
         ACTIVITY_LOG.see('end')
-        PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
-        PROGRESS_BAR.pack(fill='both')
-        def finish_process(ENCRYPT_RESULT):
-            PROGRESS_BAR.stop()
-            PROGRESS_BAR.pack_forget()
+        def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
             enable_buttons()
             ACTIVITY = ENCRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
+            PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
-            PROGRESS_BAR.start()
-            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
+            ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_folder_thread():    
@@ -113,29 +110,26 @@ def main():
         FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
-        PASSWORD = enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = enter_password_prompt(ROOT_WINDOW)
         if PASSWORD is None:
             return
         ACTIVITY_LOG.config(state='normal')
         ACTIVITY_LOG.insert('insert', f'Decrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
         ACTIVITY_LOG.see('end')
-        PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
-        PROGRESS_BAR.pack(fill='both')
-        def finish_process(DECRYPT_RESULT):
-            PROGRESS_BAR.stop()
-            PROGRESS_BAR.pack_forget()
+        def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
             enable_buttons()
             ACTIVITY = DECRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
+            PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
-            PROGRESS_BAR.start()
-            DECRYPT_RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT))
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
+            DECRYPT_RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
+            ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_encrypt_file_thread():
@@ -143,15 +137,15 @@ def main():
         FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
-        DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select A Key Size'
+        DROPDOWN_MENU_OPTIONS = ['AES-GCM-256 (Most secure)', 'AES-GCM-192', 'AES-GCM-128 (Least drive-space used)']
+        PROMPT_TITLE = 'Select A Key Size:'
         PROMPT_MESSAGE = 'Select A Key Size:'
-        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
+        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         MINIMUM_PASSWORD_LENGTH = 16
-        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH)
         if PASSWORD is None:
             return
         else:
@@ -165,22 +159,19 @@ def main():
         ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the file: "{FILE_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
         ACTIVITY_LOG.see('end')
-        PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
-        PROGRESS_BAR.pack(fill='both')
-        def finish_process(ENCRYPT_RESULT):
-            PROGRESS_BAR.stop()
-            PROGRESS_BAR.pack_forget()
+        def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
             enable_buttons()
             ACTIVITY = ENCRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
+            PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
-            PROGRESS_BAR.start()
-            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT))
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
+            ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_file_thread():
@@ -188,29 +179,26 @@ def main():
         FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
-        PASSWORD = enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = enter_password_prompt(ROOT_WINDOW)
         if PASSWORD is None:
             return
         ACTIVITY_LOG.config(state='normal')
         ACTIVITY_LOG.insert('insert', f'Decrypting the file: "{FILE_PATH}",\nplease wait...\n')
         ACTIVITY_LOG.config(state='disabled')
         ACTIVITY_LOG.see('end')
-        PROGRESS_BAR = ttk.Progressbar(ROOT_WINDOW, mode='indeterminate')
-        PROGRESS_BAR.pack(fill='both')
-        def finish_process(DECRYPT_RESULT):
-            PROGRESS_BAR.stop()
-            PROGRESS_BAR.pack_forget()
+        def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
             enable_buttons()
             ACTIVITY = DECRYPT_RESULT[1]
             ACTIVITY_LOG.config(state='normal')
             ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
+            PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
         def start_process():
             disable_buttons()
-            PROGRESS_BAR.start()
-            DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD)
-            ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT))
+            PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
+            DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD, None, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
+            ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     ROOT_WINDOW = Tk()
@@ -275,5 +263,5 @@ if __package__ in (None, ''):
     main()
 else:
     #SKIP CALLING THE "main()" FUNCTION IF THIS FILE IS IMPORTED AS A PYTHON PACKAGE,
-    #SO THE "main()" FUNCTION DOES NOT RE-LAUNCH WHEN THE APPLICATION IS CLOSED
+    #SO THE "main()" FUNCTION DOES NOT GET CALLED A SECOND TIME WHEN THE APPLICATION IS CLOSED
     pass
