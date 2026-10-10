@@ -234,17 +234,17 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         IS_PASSWORD_EMPTY = True if not PASSWORD_VALUE else False
         IS_CONFIRM_PASSWORD_EMPTY = True if not CONFIRM_PASSWORD_VALUE else False
         if IS_PASSWORD_EMPTY and IS_CONFIRM_PASSWORD_EMPTY:
-            STATUS_LABEL.config(text='Cannot be empty!', fg='red')
+            STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='Contains invalid characters!', fg='red')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
         elif not LENGTH_CHECK:
-            STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} characters', fg='red')
+            STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} required characters', fg='#2196F3')
         elif any([PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]) and any([IS_PASSWORD_EMPTY, IS_CONFIRM_PASSWORD_EMPTY]):
-            STATUS_LABEL.config(text='Fill both fields', fg='grey')
+            STATUS_LABEL.config(text='Both fields must be filled!', fg='#FFC107')
         elif not MATCH_CHECK:
-            STATUS_LABEL.config(text='Do not match!', fg='red')
+            STATUS_LABEL.config(text='The passwords do not match!', fg='#F44336')
         if all([ASCII_CHECK, LENGTH_CHECK, MATCH_CHECK]):
-            STATUS_LABEL.config(text='Acceptable and matching', fg='green')
+            STATUS_LABEL.config(text='Acceptable', fg='#4CAF50')
             #ENABLE THE CONFIRM BUTTON IF ALL CHECKS PASS
             CONFIRM_BUTTON.config(state='normal')
         else:
@@ -309,34 +309,40 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, ICON_ICO_F
         CREATE_PASSWORD_WINDOW.protocol('WM_DELETE_WINDOW', close_window)
         CREATE_PASSWORD_WINDOW.grab_set()
         ROW_1_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-        ROW_1_FRAME.pack(padx=10, pady=5, anchor='center')
-        Label(ROW_1_FRAME, text='Create A Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
+        ROW_1_FRAME.pack(padx=10, pady=10)
+        Label(ROW_1_FRAME, text='Create A Password', font=('Times New Roman', 18, 'bold')).pack()
+        ROW_2_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_2_FRAME.pack(padx=10, pady=(0, 10))
         PASSWORD_VISIBILITY_VARIABLE = StringVar()
-        PASSWORD_ENTRY = Entry(ROW_1_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
-        PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
+        PASSWORD_ENTRY = Entry(ROW_2_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
+        PASSWORD_ENTRY.pack(side='left')
         #SET FOCUS ON THE PASSWORD ENTRY
         PASSWORD_ENTRY.focus_force()
         #SET THE PASSWORD VISIBILITY BUTTON
-        PASSWORD_VISIBILITY_BUTTON = Button(ROW_1_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
+        PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
-        ROW_2_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-        ROW_2_FRAME.pack(padx=10, pady=5, anchor='center')
-        Label(ROW_2_FRAME, text='Confirm Password', font=('Times New Roman', 18, 'bold')).pack(padx=10, pady=10)
-        CONFIRM_PASSWORD_VISIBILITY_VARIABLE = StringVar()
-        CONFIRM_PASSWORD_ENTRY = Entry(ROW_2_FRAME, textvariable=CONFIRM_PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
-        CONFIRM_PASSWORD_ENTRY.pack(side='left', padx=(0, 10))
-        #SET CONFIRM PASSWORD VISIBILITY BUTTON
-        CONFIRM_PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(CONFIRM_PASSWORD_ENTRY, CONFIRM_PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
-        CONFIRM_PASSWORD_VISIBILITY_BUTTON.pack(side='left')
-        #SET A PASSWORD CHECK STATUS LABEL
-        STATUS_LABEL = Label(CREATE_PASSWORD_WINDOW, text=None, anchor='s', font=('Times New Roman', 14, 'bold'))
-        STATUS_LABEL.pack(pady=(5, 10))
         ROW_3_FRAME = Frame(CREATE_PASSWORD_WINDOW)
-        ROW_3_FRAME.pack(pady=10, fill='x')
-        CANCEL_BUTTON = Button(ROW_3_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
-        CANCEL_BUTTON.pack(side='left', padx=10)
-        CONFIRM_BUTTON = Button(ROW_3_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
-        CONFIRM_BUTTON.pack(side='right', padx=10)
+        ROW_3_FRAME.pack(padx=10, pady=10)
+        Label(ROW_3_FRAME, text='Confirm Password', font=('Times New Roman', 18, 'bold')).pack()
+        ROW_4_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_4_FRAME.pack(padx=10, pady=(0, 10))
+        CONFIRM_PASSWORD_VISIBILITY_VARIABLE = StringVar()
+        CONFIRM_PASSWORD_ENTRY = Entry(ROW_4_FRAME, textvariable=CONFIRM_PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
+        CONFIRM_PASSWORD_ENTRY.pack(side='left')
+        #SET CONFIRM PASSWORD VISIBILITY BUTTON
+        CONFIRM_PASSWORD_VISIBILITY_BUTTON = Button(ROW_4_FRAME, text='Show', command=lambda: toggle_input_visibility(CONFIRM_PASSWORD_ENTRY, CONFIRM_PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
+        CONFIRM_PASSWORD_VISIBILITY_BUTTON.pack(side='left')
+        ROW_5_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_5_FRAME.pack(padx=10, pady=(0, 10))
+        #SET A PASSWORD CHECK STATUS LABEL
+        STATUS_LABEL = Label(ROW_5_FRAME, text=None, font=('Times New Roman', 14, 'bold'), wraplength=400)
+        STATUS_LABEL.pack()
+        ROW_6_FRAME = Frame(CREATE_PASSWORD_WINDOW)
+        ROW_6_FRAME.pack(padx=10, pady=10, fill='x')
+        CANCEL_BUTTON = Button(ROW_6_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
+        CANCEL_BUTTON.pack(side='left')
+        CONFIRM_BUTTON = Button(ROW_6_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
+        CONFIRM_BUTTON.pack(side='right')
         #UPDATE THE STATUS LABEL ON-KEY UP
         PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
         CONFIRM_PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
@@ -365,9 +371,9 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         PASSWORD_VALUE = PASSWORD_ENTRY.get()
         ASCII_CHECK =  all(CHARACTER in printable for CHARACTER in PASSWORD_VALUE)
         if not PASSWORD_VALUE:
-            STATUS_LABEL.config(text='The password cannot be empty!', fg='red')
+            STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='red')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
         else:
             STATUS_LABEL.config(text='')
         if not PASSWORD_VALUE or not ASCII_CHECK:
@@ -428,7 +434,7 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         ROW_1_FRAME.pack(padx=10, pady=10)
         Label(ROW_1_FRAME, text='Enter Password', font=('Times New Roman', 18, 'bold')).pack()
         ROW_2_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-        ROW_2_FRAME.pack(padx=10, pady=10)
+        ROW_2_FRAME.pack(padx=10, pady=(0, 10))
         PASSWORD_VISIBILITY_VARIABLE = StringVar()
         PASSWORD_ENTRY = Entry(ROW_2_FRAME, textvariable=PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
         PASSWORD_ENTRY.pack(side='left')
@@ -436,12 +442,12 @@ def enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PA
         PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_3_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-        ROW_3_FRAME.pack(padx=10, pady=10)
+        ROW_3_FRAME.pack(padx=10, pady=(0, 10))
         #SET A PASSWORD CHECK STATUS LABEL
         STATUS_LABEL = Label(ROW_3_FRAME, font=('Times New Roman', 14, 'bold'), fg='grey', wraplength=400)
         STATUS_LABEL.pack()
         ROW_4_FRAME = Frame(ENTER_PASSWORD_WINDOW)
-        ROW_4_FRAME.pack(pady=10, padx=10, fill='x')
+        ROW_4_FRAME.pack(padx=10, pady=(0, 10), fill='x')
         CANCEL_BUTTON = Button(ROW_4_FRAME, text='Cancel', command=close_window, font=('Times New Roman', 18, 'bold'))
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_4_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
