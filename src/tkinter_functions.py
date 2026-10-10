@@ -184,7 +184,8 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH=
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_3_FRAME, text='Confirm', font=('Times New Roman', 18, 'bold'), command=process_selected_value)
         CONFIRM_BUTTON.pack(side='right')
-        DROPDOWN_MENU_WINDOW.bind('<Return>', lambda event: CONFIRM_BUTTON.invoke())
+        CONFIRM_BUTTON.focus_force()
+        DROPDOWN_MENU_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE RETURNING
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
