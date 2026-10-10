@@ -68,15 +68,15 @@ def main():
         FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
-        DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
-        PROMPT_TITLE = 'Select A Key Size'
+        DROPDOWN_MENU_OPTIONS = ['AES-GCM-256 (Most secure)', 'AES-GCM-192', 'AES-GCM-128 (Least drive-space used)']
+        PROMPT_TITLE = 'Select A Key Size:'
         PROMPT_MESSAGE = 'Select A Key Size:'
-        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
+        SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE, PROMPT_MESSAGE)
         if not SELECTED_ENCRYPTION:
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         MINIMUM_PASSWORD_LENGTH = 16
-        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH)
         if PASSWORD is None:
             return
         else:
@@ -110,7 +110,7 @@ def main():
         FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
         if not FOLDER_PATH:
             return
-        PASSWORD = enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = enter_password_prompt(ROOT_WINDOW)
         if PASSWORD is None:
             return
         ACTIVITY_LOG.config(state='normal')
@@ -137,7 +137,7 @@ def main():
         FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
-        DROPDOWN_MENU_OPTIONS = ['AES-GCM-128 (Least drive-space used)', 'AES-GCM-192', 'AES-GCM-256 (Most secure)']
+        DROPDOWN_MENU_OPTIONS = ['AES-GCM-256 (Most secure)', 'AES-GCM-192', 'AES-GCM-128 (Least drive-space used)']
         PROMPT_TITLE = 'Select A Key Size'
         PROMPT_MESSAGE = 'Select A Key Size:'
         SELECTED_ENCRYPTION = dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH, PROMPT_TITLE, PROMPT_MESSAGE)
@@ -145,7 +145,7 @@ def main():
             return
         KEY_SIZE = int(SELECTED_ENCRYPTION[8:12])
         MINIMUM_PASSWORD_LENGTH = 16
-        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH)
         if PASSWORD is None:
             return
         else:
@@ -179,7 +179,7 @@ def main():
         FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
         if not FILE_PATH:
             return
-        PASSWORD = enter_password_prompt(ROOT_WINDOW, ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH)
+        PASSWORD = enter_password_prompt(ROOT_WINDOW)
         if PASSWORD is None:
             return
         ACTIVITY_LOG.config(state='normal')
