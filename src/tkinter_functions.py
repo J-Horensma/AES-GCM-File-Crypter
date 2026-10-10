@@ -565,4 +565,3 @@ def progressbar_window(ROOT_WINDOW):
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
     except BaseException as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "progressbar_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
-      s
