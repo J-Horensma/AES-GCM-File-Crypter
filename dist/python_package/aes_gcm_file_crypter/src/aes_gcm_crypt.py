@@ -242,12 +242,12 @@ def convert_bytes(BYTES_NUMBER):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_bytes()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A SECONDS NUMBER INTEGER OR FLOAT
-#2.) CONVERTS THE SUPPLIED SECONDS NUMBER
+#1.) REQUIRES A SECONDS INTEGER OR FLOAT
+#2.) CONVERTS THE SUPPLIED SECONDS
 #3.) RETURNS A CONVERTED SECONDS STRING
 def convert_seconds(SECONDS):
     if not isinstance(SECONDS, (int, float)):
-        raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds number parameter must be an integer or float type.')
+        raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds parameter must be an integer or float type.')
     try:
         YEARS = f'{round((SECONDS // 31536000))}y:' if (SECONDS // 31536000) > 0 else ''; REMAINDER_SECONDS = SECONDS % 31536000
         MONTHS = f'{round((REMAINDER_SECONDS // 2628000))}M:' if (REMAINDER_SECONDS // 2628000) > 0 else ''; REMAINDER_SECONDS %= 2628000
