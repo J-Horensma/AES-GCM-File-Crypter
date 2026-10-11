@@ -259,7 +259,7 @@ def convert_seconds(SECONDS):
         CONVERTED_SECONDS = f'{YEARS}{MONTHS}{WEEKS}{DAYS}{HOURS}{MINUTES}{SECONDS}'
         return CONVERTED_SECONDS
     except BaseException as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_bytes()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_seconds()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
 #1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
