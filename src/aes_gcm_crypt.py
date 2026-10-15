@@ -87,6 +87,36 @@ def file_processing_exception_cleanup(FILE_PATH, ERROR):
     if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
 
 #THIS FUNCTION:
+#1.) REQUIRES A FILE PATH STRING
+#2.) OPTIONALLY ACCEPTS A BLOCK SIZE INTEGER
+#3.) OVERWRITES THE FILE'S CONTENTS ON THE DISK WITH RANDOM BYTES AND
+#REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM
+def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
+    try:
+        FILE_PATH = abspath(FILE_PATH)
+        BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
+        with open(FILE_PATH, 'r+b') as OVERWRITE_FILE:
+            while True:
+                #LOAD EACH PLAINTEXT CHUNK OF THE FILE BEING WIPED, AS A BYTEARRAY, 
+                #SO THE PLAINTEXT CHUNK VARIABLE BUFFER CAN BE ZEROED, AFTER PROCESSING, 
+                #TO REDUCE PLAINTEXT DATA REMAINING, IN THE RAM
+                PLAINTEXT_CHUNK = bytearray(OVERWRITE_FILE.read(BLOCK_SIZE))
+                if not PLAINTEXT_CHUNK:
+                    break
+                OVERWRITE_FILE.seek(-len(PLAINTEXT_CHUNK), 1)
+                #RANDOM BYTES OVERWRITE EACH PLAINTEXT CHUNK OF THE FILE
+                OVERWRITE_FILE.write(token_bytes(len(PLAINTEXT_CHUNK)))
+                #OVERWRITE THE PLAINTEXT CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
+                #TO ZEROED BYTES, TO PREVENT REMAINING PLAINTEXT FILE CONTENTS, IN THE RAM
+                PLAINTEXT_CHUNK[:] = b'\x00' * len(PLAINTEXT_CHUNK)
+                #REMOVE THE PLAINTEXT CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
+                del PLAINTEXT_CHUNK
+            OVERWRITE_FILE.flush()
+            fsync(OVERWRITE_FILE.fileno())
+    except Exception as ERROR:
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "wipe_file_contents()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+
+#THIS FUNCTION:
 #1.) REQUIRES: 
     #A.) A KEY SIZE INTEGER
     #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
@@ -690,13 +720,17 @@ def aes_gcm_encrypt_file(
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
-                    ENCRYPTED_CHUNK = ENCRYPTOR.update(PLAINTEXT_CHUNK)
-                    #DELETE EACH PLAINTEXT DATA CHUNK VARIABLE, AFTER ENCRYPTION, 
-                    #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE RAM
+                    ENCRYPTED_CHUNK = bytearray(ENCRYPTOR.update(PLAINTEXT_CHUNK))
+                    #OVERWRITE THE PLAINTEXT CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
+                    #TO ZEROED BYTES, TO PREVENT REMAINING PLAINTEXT FILE CONTENTS, IN THE RAM
+                    PLAINTEXT_CHUNK[:] = b'\x00' * len(PLAINTEXT_CHUNK)
+                    #REMOVE THE PLAINTEXT CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
                     del PLAINTEXT_CHUNK
                     OUTFILE.write(pack('>I', len(ENCRYPTED_CHUNK)) + ENCRYPTED_CHUNK)
-                    #DELETE EACH ENCRYPTED DATA CHUNK VARIABLE, AFTER WRITING TO THE TEMPORARY FILE, 
-                    #TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE RAM
+                    #OVERWRITE THE ENCRYPTED CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
+                    #TO ZEROED BYTES, TO PREVENT REMAINING ENCRYPTED FILE CONTENTS, IN THE RAM
+                    ENCRYPTED_CHUNK[:] = b'\x00' * len(ENCRYPTED_CHUNK)
+                    #REMOVE THE ENCRYPTED CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
                     del ENCRYPTED_CHUNK
                 #CLOSE THE ENCRYPTION STREAM
                 ENCRYPTOR.finalize()
@@ -714,19 +748,8 @@ def aes_gcm_encrypt_file(
                 #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
                 del NONCE_BYTES, TAG_BYTES, SALT_BYTES
         #OVERWRITE THE ORIGINAL FILE'S PLAINTEXT CONTENTS WITH RANDOM BYTES,
-        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT DATA FROM THE DRIVE
-        with open(FILE_PATH, 'r+b') as RANDOM_BYTES_OVERWRITE_FILE:
-            while True:
-                PLAINTEXT_CHUNK = RANDOM_BYTES_OVERWRITE_FILE.read(BLOCK_SIZE)
-                if not PLAINTEXT_CHUNK:
-                    break
-                RANDOM_BYTES_OVERWRITE_FILE.seek(-len(PLAINTEXT_CHUNK), 1)
-                RANDOM_BYTES_OVERWRITE_FILE.write(token_bytes(len(PLAINTEXT_CHUNK)))
-                #DELETE EACH PLAINTEXT DATA CHUNK, AFTER EACH RANDOM BYTES OVERWRITE, 
-                #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE RAM
-                del PLAINTEXT_CHUNK
-            RANDOM_BYTES_OVERWRITE_FILE.flush()
-            fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
+        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT FILE CONTENT DATA FROM THE DRIVE
+        wipe_file_contents(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'\nAES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
@@ -849,7 +872,7 @@ def aes_gcm_decrypt_file(
                         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
                         return [False, f'\nCHUNK_SIZE_DATA_CORRUPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
                     #READ THE AES-GCM ENCRYPTED CHUNK
-                    ENCRYPTED_CHUNK = INFILE.read(CHUNK_SIZE)
+                    ENCRYPTED_CHUNK = bytearray(INFILE.read(CHUNK_SIZE))
                     #CHECK IF THE ENCRYPTED CHUNK IS CORRUPTED
                     if len(ENCRYPTED_CHUNK) != CHUNK_SIZE:
                         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
@@ -873,12 +896,17 @@ def aes_gcm_decrypt_file(
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
-                    PLAINTEXT_CHUNK = DECRYPTOR.update(ENCRYPTED_CHUNK)
-                    #DELETE EACH ENCRYPTED DATA CHUNK, AFTER DECRYPTION, TO PREVENT ANY ENCRYPTED DATA FROM BEING STORED, IN THE RAM
+                    PLAINTEXT_CHUNK = bytearray(DECRYPTOR.update(ENCRYPTED_CHUNK))
+                    #OVERWRITE THE ENCRYPTED CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
+                    #TO ZEROED BYTES, TO PREVENT REMAINING ENCRYPTED FILE CONTENTS, IN THE RAM
+                    ENCRYPTED_CHUNK[:] = b'\x00' * len(ENCRYPTED_CHUNK)
+                    #REMOVE THE ENCRYPTED CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
                     del ENCRYPTED_CHUNK
                     OUTFILE.write(PLAINTEXT_CHUNK)
-                    #DELETE EACH PLAINTEXT DATA CHUNK, AFTER WRITING THE CHUNK TO THE ".tmp" FILE, 
-                    #TO PREVENT ANY PLAINTEXT DATA FROM BEING STORED, IN THE RAM
+                    #OVERWRITE THE PLAINTEXT CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
+                    #TO ZEROED BYTES, TO PREVENT REMAINING PLAINTEXT FILE CONTENTS, IN THE RAM
+                    PLAINTEXT_CHUNK[:] = b'\x00' * len(PLAINTEXT_CHUNK)
+                    #REMOVE THE PLAINTEXT CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
                     del PLAINTEXT_CHUNK
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 FINAL_BYTES = DECRYPTOR.finalize()
@@ -886,19 +914,8 @@ def aes_gcm_decrypt_file(
                     OUTFILE.write(FINAL_BYTES)
                 del FINAL_BYTES
         #OVERWRITE THE ORIGINAL FILE'S ENCRYPTED CONTENTS WITH RANDOM BYTES,
-        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY ENCRYPTED DATA, FROM THE DRIVE
-        with open(FILE_PATH, 'r+b') as RANDOM_BYTES_OVERWRITE_FILE:
-            while True:
-                ENCRYPTED_CHUNK = RANDOM_BYTES_OVERWRITE_FILE.read(BLOCK_SIZE)
-                if not ENCRYPTED_CHUNK:
-                    break
-                RANDOM_BYTES_OVERWRITE_FILE.seek(-len(ENCRYPTED_CHUNK), 1)
-                RANDOM_BYTES_OVERWRITE_FILE.write(token_bytes(len(ENCRYPTED_CHUNK)))
-                #DELETE EACH AES-GCM ENCRYPTED DATA CHUNK, AFTER EACH RANDOM BYTES OVERWRITE OF THE FILE CHUNK, 
-                #TO PREVENT ANY AES-GCM ENCRYPTED DATA FROM BEING STORED, IN THE RAM
-                del ENCRYPTED_CHUNK
-            RANDOM_BYTES_OVERWRITE_FILE.flush()
-            fsync(RANDOM_BYTES_OVERWRITE_FILE.fileno())
+        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY ENCRYPTED FILE CONTENT DATA FROM THE DRIVE
+        wipe_file_contents(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'\nAES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
