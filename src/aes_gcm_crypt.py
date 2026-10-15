@@ -164,15 +164,16 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             #IN C-SIDE BUFFERS, NOT THE RAM
             #C-SIDE BUFFERS ARE MORE DIFFICULT TO INSPECT
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
+            #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
+            #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
+            #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
             if isinstance(PASSWORD, bytearray):
-                #WIPE THE BYTES FROM THE PASSWORD VARIABLE
-                for i in range(len(PASSWORD)):
-                    PASSWORD[i] = 0
-            #DELETE THE PASSWORD VARIABLE ONCE A KEY IS DERIVED TO PREVENT ANY PLAINTEXT PASSWORD DATA FROM BEING STORED, IN THE RAM
+                PASSWORD[:] = b'\x00' * len(PASSWORD)
+            #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
             del PASSWORD
             return [KEY_BYTES, SALT_BYTES]
-        except BaseException as ERROR:
-            raise BaseException(f'\n[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        except Exception as ERROR:
+            raise Type(ERROR)(f'\n[{Type(ERROR)}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
@@ -296,8 +297,8 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
                     FILES_TOTAL += 1
                     BYTES_TOTAL += getsize(FILE_PATH[1])
         return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
-    except BaseException as ERROR:
-        raise BaseException(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+    except Exception as ERROR:
+        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A BYTES NUMBER STRING OR INTEGER
@@ -324,8 +325,8 @@ def convert_bytes(BYTES_NUMBER):
         if BYTES_NUMBER >= (BINARY_INCREMENT ** 6) and BYTES_NUMBER < BINARY_INCREMENT ** 7:return f'{EXABYTES} EB'
         ZETTABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 7), 2)
         if BYTES_NUMBER >= (BINARY_INCREMENT ** 7) and BYTES_NUMBER < BINARY_INCREMENT ** 8:return f'{ZETTABYTES} ZB'
-    except BaseException as ERROR:
-        raise BaseException(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_bytes()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+    except Exception as ERROR:
+        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "convert_bytes()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A SECONDS INTEGER OR FLOAT
@@ -345,13 +346,14 @@ def convert_seconds(SECONDS):
         SECONDS = f'{round((REMAINDER_SECONDS % 60))}s'
         CONVERTED_SECONDS = f'{YEARS}{MONTHS}{WEEKS}{DAYS}{HOURS}{MINUTES}{SECONDS}'
         return CONVERTED_SECONDS
-    except BaseException as ERROR:
-        raise BaseException(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "convert_seconds()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+    except Exception as ERROR:
+        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "convert_seconds()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A PROCESSED INTEGER
-    #B.) A TOTAL INTEGER
+    #B.) A START TIME FLOAT
+    #C.) A TOTAL INTEGER
 #2.) HIDES THE TERMINAL CURSOR AND DISPLAYS A PROGRESS BAR
 @error_safe_python_progressbar_decorator
 def python_progressbar(TOTAL, START_TIME, PROCESSED):
@@ -369,8 +371,8 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
         PROGRESSBAR = '█' * PROGRESSBAR_FILLED + '-' * (PROGRESSBAR_WIDTH - PROGRESSBAR_FILLED)
         stdout.write(f'\r[{PROGRESSBAR}] {PERCENT_COMPLETE:1.0f}% ETA: {convert_seconds(ETA_SECONDS)}')
         stdout.flush()
-    except BaseException as ERROR:
-        raise BaseException(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "python_progressbar()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+    except Exception as ERROR:
+        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "python_progressbar()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
     finally:
         if PERCENT_COMPLETE >= 100:
             stdout.write('\n')
@@ -441,8 +443,8 @@ def check_aes_gcm_headers(FILE):
             if TOTAL_HEADERS_SIZE != 74:
                 FILE.seek(0); return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
             FILE.seek(0); return [ALGORITHM_AND_MODE_HEADER.decode(), int(KEY_SIZE_HEADER.decode()), NONCE_BYTES_HEADER, TAG_BYTES_HEADER, SALT_BYTES_HEADER, TOTAL_HEADERS_SIZE]
-        except BaseException as ERROR:
-            raise BaseException(f'\n[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "check_aes_gcm_headers()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        except Exception as ERROR:
+            raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "check_aes_gcm_headers()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
         
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -516,6 +518,13 @@ def aes_gcm_encrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = ENCRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
+        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
+        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
+        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
+        if isinstance(PASSWORD, bytearray):
+            PASSWORD[:] = b'\x00' * len(PASSWORD)
+        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
+        del PASSWORD
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
@@ -589,6 +598,13 @@ def aes_gcm_decrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = DECRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
+        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
+        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
+        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
+        if isinstance(PASSWORD, bytearray):
+            PASSWORD[:] = b'\x00' * len(PASSWORD)
+        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
+        del PASSWORD
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except BaseException as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
@@ -747,6 +763,13 @@ def aes_gcm_encrypt_file(
                 del HEADERS_LIST, HEADER
                 #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
                 del NONCE_BYTES, TAG_BYTES, SALT_BYTES
+        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
+        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
+        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
+        if isinstance(PASSWORD, bytearray):
+            PASSWORD[:] = b'\x00' * len(PASSWORD)
+        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
+        del PASSWORD
         #OVERWRITE THE ORIGINAL FILE'S PLAINTEXT CONTENTS WITH RANDOM BYTES,
         #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT FILE CONTENT DATA FROM THE DRIVE
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
@@ -913,6 +936,13 @@ def aes_gcm_decrypt_file(
                 if FINAL_BYTES:
                     OUTFILE.write(FINAL_BYTES)
                 del FINAL_BYTES
+        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
+        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
+        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
+        if isinstance(PASSWORD, bytearray):
+            PASSWORD[:] = b'\x00' * len(PASSWORD)
+        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
+        del PASSWORD
         #OVERWRITE THE ORIGINAL FILE'S ENCRYPTED CONTENTS WITH RANDOM BYTES,
         #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY ENCRYPTED FILE CONTENT DATA FROM THE DRIVE
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
