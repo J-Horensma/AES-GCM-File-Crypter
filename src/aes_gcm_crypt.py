@@ -698,7 +698,7 @@ def aes_gcm_encrypt_file(
                         BYTES_TOTAL = getsize(FILE_PATH)
                 #STREAM-ENCRYPT THE PLAINTEXT DATA, IN CHUNKS (TO ALLOW ENCRYPTION OF ALL FILE TYPES)
                 while True:
-                    PLAINTEXT_CHUNK = INFILE.read(BLOCK_SIZE)
+                    PLAINTEXT_CHUNK = bytearray(INFILE.read(BLOCK_SIZE))
                     if not PLAINTEXT_CHUNK:
                         break
                     elif START_TIME is not None:
