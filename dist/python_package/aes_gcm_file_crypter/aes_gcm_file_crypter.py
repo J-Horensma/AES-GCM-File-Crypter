@@ -65,7 +65,7 @@ def main():
 
     def aes_gcm_encrypt_folder_thread():
         PROMPT_TITLE = 'Choose A Folder To Encrypt'
-        FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
+        FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
         if not FOLDER_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-256 (Most secure)', 'AES-GCM-192', 'AES-GCM-128 (Least drive-space used)']
@@ -101,13 +101,13 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
-            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_folder_thread():    
         PROMPT_TITLE = 'Choose A Folder To Decrypt'
-        FOLDER_PATH = abspath(folder_path_prompt(PROMPT_TITLE))
+        FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
         if not FOLDER_PATH:
             return
         PASSWORD = enter_password_prompt(ROOT_WINDOW)
@@ -128,13 +128,13 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
-            DECRYPT_RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
+            DECRYPT_RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
             ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_encrypt_file_thread():
         PROMPT_TITLE='Choose A File To Encrypt'
-        FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
+        FILE_PATH = file_path_prompt(PROMPT_TITLE)
         if not FILE_PATH:
             return
         DROPDOWN_MENU_OPTIONS = ['AES-GCM-256 (Most secure)', 'AES-GCM-192', 'AES-GCM-128 (Least drive-space used)']
@@ -170,13 +170,13 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
-            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
+            ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
             ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
     def aes_gcm_decrypt_file_thread():
         PROMPT_TITLE='Choose A File To Decrypt'
-        FILE_PATH = abspath(file_path_prompt(PROMPT_TITLE))
+        FILE_PATH = file_path_prompt(PROMPT_TITLE)
         if not FILE_PATH:
             return
         PASSWORD = enter_password_prompt(ROOT_WINDOW)
@@ -197,7 +197,7 @@ def main():
         def start_process():
             disable_buttons()
             PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
-            DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD, None, None, None, None, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
+            DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD, None, None, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
             ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
         Thread(target=start_process, daemon=True).start()
 
@@ -254,8 +254,8 @@ def main():
     except KeyboardInterrupt:
         print('"Ctrl + c" was pressed, closing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
-    except BaseException as ERROR:
-        print(f'{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nClosing AES-GCM File-Crypter...')
+    except Exception as ERROR:
+        print(f'{type(ERROR)}\nClosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
 #CALL THE "main()" FUNCTION IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
