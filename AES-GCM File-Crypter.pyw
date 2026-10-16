@@ -254,8 +254,8 @@ def main():
     except KeyboardInterrupt:
         print('"Ctrl + c" was pressed, closing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
-    except BaseException as ERROR:
-        print(f'{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nClosing AES-GCM File-Crypter...')
+    except Exception as ERROR:
+        print(f'{type(ERROR)}\nClosing AES-GCM File-Crypter...')
         ROOT_WINDOW.quit()
 
 #CALL THE "main()" FUNCTION IF THIS FILE IS NOT IMPORTED AS A PYTHON PACKAGE
