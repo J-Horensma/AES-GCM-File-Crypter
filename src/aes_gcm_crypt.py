@@ -65,11 +65,15 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         _PROGRESSBAR_STATE.active = True
         try:
             return FUNCTION(*args, **kwargs)
-        except BaseException as ERROR:
+        except Exception as ERROR:
             stdout.write(f'{ERROR}')
             stdout.write(ansi.SHOW_TERMINAL_CURSOR)
             stdout.flush()
         finally:
+            #WHEN THE OUTERMOST FUNCTION FINISHES,
+            #TURN OFF THE PROGRESS BAR AND SHOW THE TERMINAL
+            #CURSOR AGAIN
+             _PROGRESSBAR_STATE.active = False
             stdout.write(ansi.SHOW_TERMINAL_CURSOR)
             stdout.flush()
     return wrapper
@@ -173,7 +177,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             del PASSWORD
             return [KEY_BYTES, SALT_BYTES]
         except Exception as ERROR:
-            raise Type(ERROR)(f'\n[{Type(ERROR)}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+            raise type(ERROR)(f'\n[{type(ERROR)}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
@@ -298,7 +302,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
                     BYTES_TOTAL += getsize(FILE_PATH[1])
         return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
     except Exception as ERROR:
-        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A BYTES NUMBER STRING OR INTEGER
@@ -326,7 +330,7 @@ def convert_bytes(BYTES_NUMBER):
         ZETTABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 7), 2)
         if BYTES_NUMBER >= (BINARY_INCREMENT ** 7) and BYTES_NUMBER < BINARY_INCREMENT ** 8:return f'{ZETTABYTES} ZB'
     except Exception as ERROR:
-        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "convert_bytes()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "convert_bytes()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A SECONDS INTEGER OR FLOAT
@@ -347,7 +351,7 @@ def convert_seconds(SECONDS):
         CONVERTED_SECONDS = f'{YEARS}{MONTHS}{WEEKS}{DAYS}{HOURS}{MINUTES}{SECONDS}'
         return CONVERTED_SECONDS
     except Exception as ERROR:
-        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "convert_seconds()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "convert_seconds()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -526,7 +530,7 @@ def aes_gcm_encrypt_folder(
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
-    except BaseException as ERROR:
+    except Exception as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
@@ -606,7 +610,7 @@ def aes_gcm_decrypt_folder(
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
-    except BaseException as ERROR:
+    except Exception as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
         return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
@@ -777,12 +781,12 @@ def aes_gcm_encrypt_file(
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'\nAES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
-        file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
+        file_processing_exception_cleanup(FILE_PATH, ERROR)
         return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
-        file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
+        file_processing_exception_cleanup(FILE_PATH, ERROR)
         return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-    except BaseException as ERROR:
+    except Exception as ERROR:
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.')
         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
         return [False, f'\n[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
@@ -958,7 +962,7 @@ def aes_gcm_decrypt_file(
     except PermissionError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
         return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-    except BaseException as ERROR:
+    except Exception as ERROR:
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
         return [False, f'\n[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
