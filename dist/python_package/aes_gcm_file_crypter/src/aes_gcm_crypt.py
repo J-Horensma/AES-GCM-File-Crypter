@@ -84,6 +84,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
             _PROGRESSBAR_STATE.active = False
             if stdout is not None:
                 ansi.show_terminal_cursor()
+    return wrapper
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -96,8 +97,6 @@ def error_safe_python_progressbar_decorator(FUNCTION):
 def file_processing_exception_cleanup(FILE_PATH, ERROR):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe file path parameter must be a string type.')
-    elif not isinstance(ERROR, str):
-        raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe error parameter must be a string type.')
     if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
     if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
 
@@ -112,7 +111,7 @@ def file_processing_exception_cleanup(FILE_PATH, ERROR):
 def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe file path parameter must be a string type.')
-    elif not isinstance(FILE_PATH, int):
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe block size parameter must be an integer type.')
     try:
         FILE_PATH = abspath(FILE_PATH)
