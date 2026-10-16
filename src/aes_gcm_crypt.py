@@ -84,6 +84,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
             _PROGRESSBAR_STATE.active = False
             if stdout is not None:
                 ansi.show_terminal_cursor()
+    return wrapper
 
 #THIS FUNCTION:
 #1.) REQUIRES:
