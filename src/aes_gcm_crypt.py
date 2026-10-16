@@ -70,10 +70,10 @@ def error_safe_python_progressbar_decorator(FUNCTION):
             stdout.write(ansi.SHOW_TERMINAL_CURSOR)
             stdout.flush()
         finally:
-            #WHEN THE OUTERMOST FUNCTION FINISHES,
-            #TURN OFF THE PROGRESS BAR AND SHOW THE TERMINAL
-            #CURSOR AGAIN
-             _PROGRESSBAR_STATE.active = False
+            #WHEN THE PYTHON PROGRESSBAR IS RUNNING AND THE OUTERMOST FUNCTION FINISHES,
+            #TURN OFF THE PROGRESSBAR AND SHOW THE TERMINAL CURSOR AGAIN
+            if getattr(_PROGRESSBAR_STATE, 'active', False):
+                _PROGRESSBAR_STATE.active = False
             stdout.write(ansi.SHOW_TERMINAL_CURSOR)
             stdout.flush()
     return wrapper
@@ -164,9 +164,8 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
                 iterations=KDF_ITERATIONS
             )
             ENCODED_PASSWORD = PASSWORD.encode() if not isinstance(PASSWORD, (bytes, bytearray)) else PASSWORD
-            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION STORES THE RETURNED KEY BYTES OBJECT VALUE,
-            #IN C-SIDE BUFFERS, NOT THE RAM
-            #C-SIDE BUFFERS ARE MORE DIFFICULT TO INSPECT
+            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION,
+            #STORES THE RETURNED KEY BYTES OBJECT VALUE, IN C-SIDE BUFFERS, NOT THE RAM (MORE DIFFICULT TO INSPECT)
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
             #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
             #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
