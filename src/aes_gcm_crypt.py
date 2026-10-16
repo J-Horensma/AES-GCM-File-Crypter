@@ -66,16 +66,17 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         try:
             return FUNCTION(*args, **kwargs)
         except Exception as ERROR:
-            stdout.write(f'{ERROR}')
-            stdout.write(ansi.SHOW_TERMINAL_CURSOR)
-            stdout.flush()
+            if stdout is not None:
+                stdout.write(f'{ERROR}')
+                stdout.write(ansi.SHOW_TERMINAL_CURSOR)
+                stdout.flush()
         finally:
             #WHEN THE PYTHON PROGRESSBAR IS RUNNING AND THE OUTERMOST FUNCTION FINISHES,
-            #TURN OFF THE PROGRESSBAR AND SHOW THE TERMINAL CURSOR AGAIN
-            if getattr(_PROGRESSBAR_STATE, 'active', False):
-                _PROGRESSBAR_STATE.active = False
-            stdout.write(ansi.SHOW_TERMINAL_CURSOR)
-            stdout.flush()
+            #TURN OFF THE PYTHON PROGRESSBAR AND SHOW THE TERMINAL CURSOR AGAIN
+            _PROGRESSBAR_STATE.active = False
+            if stdout is not None:
+                stdout.write(ansi.SHOW_TERMINAL_CURSOR)
+                stdout.flush()
     return wrapper
 
 #THIS FUNCTION:
