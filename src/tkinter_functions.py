@@ -66,7 +66,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
             WINDOW.iconphoto(True, ICON_IMAGE)
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "set_window_icon()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
@@ -93,7 +93,7 @@ def clear_window(WINDOW):
         for WIDGET in WINDOW.winfo_children():
             WIDGET.destroy()
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "clear_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -113,7 +113,7 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
         WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "center_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "center_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -168,7 +168,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" CLASSES
@@ -186,7 +186,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
             ENTRY_WIDGET.config(show='')
             VISIBILITY_BUTTON.config(text='Hide')
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "toggle_input_visibility()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "toggle_input_visibility()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
@@ -235,7 +235,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
             #DISABLE THE CONFIRM BUTTON IF ANY CHECKS FAIL
             CONFIRM_BUTTON.config(state='disabled')
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_create_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "update_create_password_input_status()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
@@ -318,7 +318,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         CREATE_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "create_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "create_password_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "ENTRY_VARIABLE.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))"
@@ -348,7 +348,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         else:
             CONFIRM_BUTTON.config(state='normal')
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_enter_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "update_enter_password_input_status()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
@@ -408,7 +408,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         ENTER_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "enter_password_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
@@ -432,7 +432,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
             PATH = None
         return PATH
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "folder_path_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS:
@@ -463,7 +463,7 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
             PATH = None
         return PATH
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "file_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "file_path_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
@@ -496,4 +496,4 @@ def progressbar_window(ROOT_WINDOW):
         PROGRESSBAR_PERCENTAGE.pack(side='left')
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "progressbar_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "progressbar_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
