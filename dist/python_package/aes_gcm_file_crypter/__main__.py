@@ -1,8 +1,16 @@
+from sys import exit
 from os.path import abspath
+from platform import system
 import argparse
 from . import __version__
 
 def cli():
+    if system() != 'Windows':
+        from signal import signal, SIGTSTP
+        def handle_ctrl_z(signum, frame):
+            print('"Ctrl + z" was pressed, closing AES-GCM File-Crypter...')
+            exit()
+        signal(SIGTSTP, handle_ctrl_z)
     PARSER = argparse.ArgumentParser(
         prog='aes_gcm_file_crypter'
     )
@@ -55,33 +63,31 @@ def cli():
         if ARGUMENTS.COMMAND == 'encrypt_folder':
             from .src.aes_gcm_crypt import aes_gcm_encrypt_folder
             print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
-            ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(ENCRYPT_RESULT[1].strip())
-            return
+            ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
+            return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_folder':
             from .src.aes_gcm_crypt import aes_gcm_decrypt_folder
             print(f'Decrypting the folder: "{ARGUMENTS.folder_path}",\nplease wait...')
-            DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(DECRYPT_RESULT[1].strip())
-            return
+            DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
+            return DECRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'encrypt_file':
             from .src.aes_gcm_crypt import aes_gcm_encrypt_file
             print(f'AES-GCM-{ARGUMENTS.key_size} encrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(ENCRYPT_RESULT[1].strip())
-            return
+            return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_file':
             from .src.aes_gcm_crypt import aes_gcm_decrypt_file
             print(f'Decrypting the file: "{ARGUMENTS.file_path}",\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
-            print(DECRYPT_RESULT[1].strip())
-            return
-    except BaseException as ERROR:
-        print(ERROR)
-        return
+            return DECRYPT_RESULT[1].strip()
+    except KeyboardInterrupt:
+        return '\n"Ctrl + c" was pressed, closing AES-GCM File-Crypter...'
+    except Exception as ERROR:
+        return '\n{ERROR}, closing AES-GCM File-Crypter...'
 
     from .aes_gcm_file_crypter import main
     main()
 
 if __name__ == '__main__':
     cli()
+    exit()
