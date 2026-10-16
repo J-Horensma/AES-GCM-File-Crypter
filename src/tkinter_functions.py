@@ -81,7 +81,7 @@ def get_device_screen_size(ROOT_WINDOW):
         SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
         return [SCREEN_WIDTH, SCREEN_HEIGHT]
     except Exception as ERROR:
-        raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "get_device_screen_size()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
