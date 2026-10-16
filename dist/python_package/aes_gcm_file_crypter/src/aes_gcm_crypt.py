@@ -376,7 +376,7 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
         stdout.write(f'\r[{PROGRESSBAR}] {PERCENT_COMPLETE:1.0f}% ETA: {convert_seconds(ETA_SECONDS)}')
         stdout.flush()
     except Exception as ERROR:
-        raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "python_progressbar()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "python_progressbar()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
     finally:
         if PERCENT_COMPLETE >= 100:
             stdout.write('\n')
@@ -448,7 +448,7 @@ def check_aes_gcm_headers(FILE):
                 FILE.seek(0); return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
             FILE.seek(0); return [ALGORITHM_AND_MODE_HEADER.decode(), int(KEY_SIZE_HEADER.decode()), NONCE_BYTES_HEADER, TAG_BYTES_HEADER, SALT_BYTES_HEADER, TOTAL_HEADERS_SIZE]
         except Exception as ERROR:
-            raise Type(ERROR)(f'[{Type(ERROR)}]\nFunction: "check_aes_gcm_headers()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+            raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "check_aes_gcm_headers()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
         
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -529,6 +529,9 @@ def aes_gcm_encrypt_folder(
             PASSWORD[:] = b'\x00' * len(PASSWORD)
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
+        if getattr(_PROGRESSBAR_STATE, 'active', False):
+            stdout.write('\n')
+            ansi.SHOW_TERMINAL_CURSOR
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
@@ -609,6 +612,9 @@ def aes_gcm_decrypt_folder(
             PASSWORD[:] = b'\x00' * len(PASSWORD)
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
+        if getattr(_PROGRESSBAR_STATE, 'active', False):
+            stdout.write('\n')
+            ansi.SHOW_TERMINAL_CURSOR
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
@@ -779,6 +785,9 @@ def aes_gcm_encrypt_file(
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
+        if PROCESSED_FOLDER_BYTES_TOTAL is None and getattr(_PROGRESSBAR_STATE, 'active', False):
+            stdout.write('\n')
+            ansi.SHOW_TERMINAL_CURSOR
         return [True, f'\nAES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
@@ -952,6 +961,9 @@ def aes_gcm_decrypt_file(
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
+        if PROCESSED_FOLDER_BYTES_TOTAL is None and getattr(_PROGRESSBAR_STATE, 'active', False):
+            stdout.write('\n')
+            ansi.SHOW_TERMINAL_CURSOR
         return [True, f'\nAES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except InvalidTag:
         if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
