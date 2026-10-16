@@ -83,7 +83,7 @@ def cli():
     except KeyboardInterrupt:
         return '\n"Ctrl + c" was pressed, closing AES-GCM File-Crypter...'
     except Exception as ERROR:
-        return '\n{ERROR}, closing AES-GCM File-Crypter...'
+        return f'\n{ERROR}, closing AES-GCM File-Crypter...'
 
     from .aes_gcm_file_crypter import main
     main()
