@@ -65,7 +65,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
         else:
             ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
             WINDOW.iconphoto(True, ICON_IMAGE)
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "set_window_icon()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -79,7 +79,7 @@ def get_device_screen_size(ROOT_WINDOW):
         SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
         SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
         return [SCREEN_WIDTH, SCREEN_HEIGHT]
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -92,7 +92,7 @@ def clear_window(WINDOW):
         WINDOW.update_idletasks()
         for WIDGET in WINDOW.winfo_children():
             WIDGET.destroy()
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "clear_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -112,7 +112,7 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
         X = (WINDOW.winfo_screenwidth() - WINDOW_WIDTH) // 2
         Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
         WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "center_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -167,7 +167,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         #WAIT UNTIL THE WINDOW IS DESTROYED, BEFORE RETURNING
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -185,7 +185,7 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
         else:
             ENTRY_WIDGET.config(show='')
             VISIBILITY_BUTTON.config(text='Hide')
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "toggle_input_visibility()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -234,7 +234,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         else:
             #DISABLE THE CONFIRM BUTTON IF ANY CHECKS FAIL
             CONFIRM_BUTTON.config(state='disabled')
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_create_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -317,7 +317,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         CREATE_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         CREATE_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "create_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -347,7 +347,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
             CONFIRM_BUTTON.config(state='disabled')
         else:
             CONFIRM_BUTTON.config(state='normal')
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "update_enter_password_input_status()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -407,7 +407,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         ENTER_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "enter_password_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
     
 #THIS FUNCTION:
@@ -431,7 +431,7 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
         if not PATH:
             PATH = None
         return PATH
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "folder_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -462,7 +462,7 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
         if not PATH:
             PATH = None
         return PATH
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "file_path_prompt()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
@@ -495,5 +495,5 @@ def progressbar_window(ROOT_WINDOW):
         PROGRESSBAR_PERCENTAGE = Label(ROW_2_FRAME, text=None, font=('Times New Roman', 18, 'bold'))
         PROGRESSBAR_PERCENTAGE.pack(side='left')
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
-    except BaseException as ERROR:
+    except Exception as ERROR:
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "progressbar_window()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
