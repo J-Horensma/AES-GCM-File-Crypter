@@ -93,7 +93,6 @@ def error_safe_python_progressbar_decorator(FUNCTION):
 #2.) REMOVES ANY EXISTING TEMP FILE FOR THAT FILE, IN THE SAME PATH
 #3.) RE-RAISES THE ERROR TO BE CAUGHT BY THE "error_safe_python_progressbar_decorator" WRAPPER
 #IF THE PYTHON PROGRESSBAR IS RUNNING
-@error_safe_python_progressbar_decorator
 def file_processing_exception_cleanup(FILE_PATH, ERROR):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe file path parameter must be a string type.')
@@ -107,7 +106,6 @@ def file_processing_exception_cleanup(FILE_PATH, ERROR):
     #A.) A BLOCK SIZE INTEGER
 #3.) OVERWRITES THE FILE'S CONTENTS ON THE DISK WITH RANDOM BYTES AND
 #REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM, WHILE DOING SO
-@error_safe_python_progressbar_decorator
 def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe file path parameter must be a string type.')
@@ -150,7 +148,6 @@ def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
 #6.) RETURNS A LIST CONTAINING:
     #A.) KEY BYTES
     #B.) SALT BYTES
-@error_safe_python_progressbar_decorator
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PASSWORD, (str, bytes, bytearray)):
@@ -199,7 +196,6 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
 #1.) REQUIRES A PATH STRING
 #2.) CHECKS IF THE PATH IS A NORMAL PATH
 #3.) RETURNS "True" OR "False"
-@error_safe_python_progressbar_decorator
 def is_normal(PATH):
     try:
         PATH = abspath(PATH)
@@ -230,7 +226,6 @@ def is_normal(PATH):
     #B.) A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
 #2.) CHECKS IF THE SUPPLIED PATH HAS THE REQUESTED PERMISSION(S)
 #3.) RETURNS "True" OR "False"
-@error_safe_python_progressbar_decorator
 def has_permissions(PATH, PERMISSIONS):
     try:
         PATH = abspath(PATH)
@@ -294,7 +289,6 @@ def has_permissions(PATH, PERMISSIONS):
         #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
     #C.) AN ACCESSABLE FILES BYTES TOTAL INTEGER
-@error_safe_python_progressbar_decorator
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
@@ -325,7 +319,6 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
     #A.) A BYTES NUMBER STRING OR INTEGER
 #2.) CONVERTS THE SUPPLIED BYTES NUMBER
 #3.) RETURNS THE CONVERTED BYTES AS A STRING
-@error_safe_python_progressbar_decorator
 def convert_bytes(BYTES_NUMBER):
     if not isinstance(BYTES_NUMBER, (str, int)):
         raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be a string or integer type.')
@@ -354,7 +347,6 @@ def convert_bytes(BYTES_NUMBER):
     #A.) A SECONDS INTEGER OR FLOAT
 #2.) CONVERTS THE SUPPLIED SECONDS
 #3.) RETURNS A CONVERTED SECONDS STRING
-@error_safe_python_progressbar_decorator
 def convert_seconds(SECONDS):
     if not isinstance(SECONDS, (int, float)):
         raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds parameter must be an integer or float type.')
@@ -377,13 +369,12 @@ def convert_seconds(SECONDS):
     #B.) A START TIME FLOAT
     #C.) A PROCESSED INTEGER
 #2.) DISPLAYS A PROGRESSBAR, IN THE TERMINAL, WITH THE SUPPLIED VALUES
-@error_safe_python_progressbar_decorator
 def python_progressbar(TOTAL, START_TIME, PROCESSED):
     if not isinstance(TOTAL, int):
         raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe total parameter must be an integer type.')
-    elif not isinstance(TOTAL, float):
+    elif not isinstance(START_TIME, float):
         raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe start time parameter must be a float type.')
-    elif not isinstance(TOTAL, int):
+    elif not isinstance(PROCESSED, int):
         raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe processed parameter must be an integer type.')
     PERCENT_COMPLETE = 0
     try:
@@ -411,7 +402,6 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
     #A.) A FILE OBJECT OPENED, IN BINARY READ MODE
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE
 #3.) RETURNS THE HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
-@error_safe_python_progressbar_decorator
 def check_aes_gcm_headers(FILE):
     if not isinstance(FILE, IOBase) or 'r' not in FILE.mode or 'b' not in FILE.mode:
         raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter must be a file object, in binary read mode.')
