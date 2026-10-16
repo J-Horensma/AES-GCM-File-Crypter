@@ -153,7 +153,7 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         Label(ROW_1_FRAME, text=PROMPT_MESSAGE, font=('Times New Roman', 18, 'bold'), wraplength=400).pack()
         ROW_2_FRAME = Frame(DROPDOWN_MENU_WINDOW)
         ROW_2_FRAME.pack(fill='x', padx=10, pady=(0, 10))
-        DROPDOWN_MENU = ttk.Combobox( ROW_2_FRAME, values=DROPDOWN_MENU_OPTIONS, state='readonly', font=('Times New Roman', 26, 'bold'))
+        DROPDOWN_MENU = ttk.Combobox( ROW_2_FRAME, values=DROPDOWN_MENU_OPTIONS, state='readonly', font=('Times New Roman', 18, 'bold'))
         DROPDOWN_MENU.pack()
         DROPDOWN_MENU.current(0)
         ROW_3_FRAME = Frame(DROPDOWN_MENU_WINDOW)
