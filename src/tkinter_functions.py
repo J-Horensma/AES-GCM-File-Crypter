@@ -69,7 +69,8 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "set_window_icon()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" CLASS
+#1.) REQUIRES: 
+    #A.) A "tkinter.Tk()" CLASS
 #2.) RETURNS WIDTH AND HEIGHT INTEGERS OF THE DEVICE SCREEN
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
@@ -83,7 +84,8 @@ def get_device_screen_size(ROOT_WINDOW):
         raise Exception(f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "get_device_screen_size()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
+#1.) REQUIRES:
+    #A.) A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
 #2.) CLEARS ALL WIDGETS, IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
 def clear_window(WINDOW):
     if not isinstance(WINDOW, (Tk, Toplevel)):
@@ -119,7 +121,9 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
 #1.) REQUIRES:
     #A.) A "tkinter.Tk()" CLASS
     #B.) A LIST OF DROPDOWN MENU OPTIONS
-#2.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT MESSAGE STRING(S) (DEFAULT IS "Select An Option")
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A PROMPT TITLE STRING (DEFAULT IS "Select An Option")
+    #B.) A PROMPT MESSAGE STRING (DEFAULT IS "Select An Option")
 #3.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
 #4.) RETURNS THE USER-SELECTED OPTION AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
@@ -171,7 +175,9 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES "tkinter.Entry()" AND "tkinter.Button()" CLASSES
+#1.) REQUIRES:
+    #A.) A "tkinter.Entry()" CLASS
+    #B.) A "tkinter.Button()" CLASS
 #2.) SHOWS/HIDES THE INPUT VALUE OF THE "tkinter.Entry()" WIDGET AND CHANGES THE TEXT OF THE SHOW/HIDE BUTTON
 def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
     if not isinstance(ENTRY_WIDGET, Entry):
@@ -195,8 +201,8 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
     #B.) 2x "tkinter.Entry()" CLASSES
     #C.) A "tkinter.Button()" CLASS
     #D.) A MINIMUM PASSWORD LENGTH INTEGER
-#3) UPDATES WHAT THE SUPPLIED STATUS LABEL DISPLAYS DYNAMICALLY
-def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH, ON_KEY_UP=None):
+#3.) UPDATES WHAT THE SUPPLIED STATUS LABEL DISPLAYS DYNAMICALLY
+def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH):
     if not isinstance(STATUS_LABEL, Label):
         raise TypeError('[TypeError]\nFunction: "update_create_password_input_status()"\nThe status label parameter must be a "tkinter.Label()" type.')
     elif not isinstance(PASSWORD_ENTRY, Entry):
@@ -212,8 +218,8 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         CONFIRM_PASSWORD_VALUE = CONFIRM_PASSWORD_ENTRY.get()
         def is_ascii_only(VALUE):
             return all(CHARACTER in printable for CHARACTER in VALUE)
-        ASCII_CHECK =  all([is_ascii_only(VALUE) for VALUE in [PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]])
-        LENGTH_CHECK = len(PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH
+        ASCII_CHECK = all([is_ascii_only(VALUE) for VALUE in [PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]])
+        MINIMUM_LENGTH_CHECK = len(PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE) >= MINIMUM_PASSWORD_LENGTH
         MATCH_CHECK = PASSWORD_VALUE == CONFIRM_PASSWORD_VALUE
         IS_PASSWORD_EMPTY = True if not PASSWORD_VALUE else False
         IS_CONFIRM_PASSWORD_EMPTY = True if not CONFIRM_PASSWORD_VALUE else False
@@ -221,13 +227,15 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
             STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
             STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
-        elif not LENGTH_CHECK:
+        elif not MINIMUM_LENGTH_CHECK:
             STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} required characters', fg='#2196F3')
         elif any([PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]) and any([IS_PASSWORD_EMPTY, IS_CONFIRM_PASSWORD_EMPTY]):
             STATUS_LABEL.config(text='Both fields must be filled!', fg='#FFC107')
         elif not MATCH_CHECK:
             STATUS_LABEL.config(text='The passwords do not match!', fg='#F44336')
-        if all([ASCII_CHECK, LENGTH_CHECK, MATCH_CHECK]):
+        else:
+            STATUS_LABEL.config(text='')
+        if all([ASCII_CHECK, MINIMUM_LENGTH_CHECK, MATCH_CHECK]):
             STATUS_LABEL.config(text='Acceptable', fg='#4CAF50')
             #ENABLE THE CONFIRM BUTTON IF ALL CHECKS PASS
             CONFIRM_BUTTON.config(state='normal')
@@ -238,7 +246,8 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "update_create_password_input_status()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A "tkinter.Tk()" CLASS
+#1.) REQUIRES:
+    #A.) A "tkinter.Tk()" CLASS
 #2.) OPTIONALLY ACCEPTS:
     #A.) A MINIMUM PASSWORD LENGTH INTEGER (DEFAULT IS 16)
     #B.) A PROMPT TITLE STRING (DEFAULT IS "Create A Password")
@@ -327,7 +336,7 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
     #B.) A "tkinter.Entry()"
     #C.) A "tkinter.Button()"
 #3.) UPDATES WHAT THE SUPPLIED PASSWORD STATUS LABEL DISPLAYS
-def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON, ON_KEY_UP=None):
+def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON):
     if not isinstance(STATUS_LABEL, Label):
         raise TypeError('[TypeError]\nFunction: "update_enter_password_input_status()"\nThe status label parameter must be a "tkinter.Label()" type.')
     elif not isinstance(PASSWORD_ENTRY, Entry):
@@ -343,7 +352,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
             STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
         else:
             STATUS_LABEL.config(text='')
-        if not PASSWORD_VALUE or not ASCII_CHECK:
+        if not PASSWORD_VALUE and ASCII_CHECK:
             CONFIRM_BUTTON.config(state='disabled')
         else:
             CONFIRM_BUTTON.config(state='normal')
@@ -468,10 +477,10 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
 #2.) RETURNS A LIST CONTAINING: 
-    #A.) A "tkinter.Toplevel()" CLASS
+    #A.) A "tkinter.Toplevel()" CLASS (FOR THE WINDOW)
     #B.) A "tkinter.Label()" CLASS (FOR MESSAGES)
     #C.) A "ttk.Progressbar()" CLASS (FOR PROGRESSBAR)
-    #D.) A "tkinter.Label()" (FOR PERCENTAGE)
+    #D.) A "tkinter.Label()" CLASS (FOR PERCENTAGE)
 def progressbar_window(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "progressbar_window()"\nThe root window parameter must be a "tkinter.Tk()" type.')
