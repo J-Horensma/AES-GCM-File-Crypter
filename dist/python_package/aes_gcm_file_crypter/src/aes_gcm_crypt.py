@@ -48,13 +48,21 @@ if system() == 'Windows':
 class ansi():
     HIDE_TERMINAL_CURSOR = '\033[?25l'
     SHOW_TERMINAL_CURSOR = '\033[?25h'
+    @staticmethod
+    def hide_terminal_cursor():
+        stdout.write(ansi.HIDE_TERMINAL_CURSOR)
+        stdout.flush()
+    @staticmethod
+    def show_terminal_cursor():
+        stdout.write(ansi.SHOW_TERMINAL_CURSOR)
+        stdout.flush()
 
 #THIS FUNCTION:
 #1.) IS A DECORATOR TO WRAP THE FUNCTIONS OF THIS LIBRARY
 #AND CATCH THEIR EXCEPTIONS, SO A NEWLINE CAN BE ADDED, 
 #BEFORE ERROR OUTPUT, AND THE TERMINAL CURSOR IS MADE VISIBLE AGAIN
 #2.) WRAPS ANY FUNCTION WITH "@error_safe_python_progressbar_decorator" PLACED ABOVE IT
-#3.) CATCHES ANY RAISED ERRORS, THAT ARE NOT CAUGHT OR ARE RE-RAISED
+#3.) CATCHES ANY RAISED ERRORS THAT ARE NOT CAUGHT OR ARE RE-RAISED
 _PROGRESSBAR_STATE = local()
 def error_safe_python_progressbar_decorator(FUNCTION):
     @wraps(FUNCTION)
@@ -66,18 +74,16 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         try:
             return FUNCTION(*args, **kwargs)
         except Exception as ERROR:
+            _PROGRESSBAR_STATE.active = False
             if stdout is not None:
                 stdout.write(f'{ERROR}')
-                stdout.write(ansi.SHOW_TERMINAL_CURSOR)
-                stdout.flush()
+                ansi.show_terminal_cursor()
         finally:
             #WHEN THE PYTHON PROGRESSBAR IS RUNNING AND THE OUTERMOST FUNCTION FINISHES,
             #TURN OFF THE PYTHON PROGRESSBAR AND SHOW THE TERMINAL CURSOR AGAIN
             _PROGRESSBAR_STATE.active = False
             if stdout is not None:
-                stdout.write(ansi.SHOW_TERMINAL_CURSOR)
-                stdout.flush()
-    return wrapper
+                ansi.show_terminal_cursor()
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -88,15 +94,26 @@ def error_safe_python_progressbar_decorator(FUNCTION):
 #IF THE PYTHON PROGRESSBAR IS RUNNING
 @error_safe_python_progressbar_decorator
 def file_processing_exception_cleanup(FILE_PATH, ERROR):
+    if not isinstance(FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe file path parameter must be a string type.')
+    elif not isinstance(ERROR, str):
+        raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe error parameter must be a string type.')
     if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
     if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
 
 #THIS FUNCTION:
-#1.) REQUIRES A FILE PATH STRING
-#2.) OPTIONALLY ACCEPTS A BLOCK SIZE INTEGER
+#1.) REQUIRES:
+    #A.) A FILE PATH STRING
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A BLOCK SIZE INTEGER
 #3.) OVERWRITES THE FILE'S CONTENTS ON THE DISK WITH RANDOM BYTES AND
-#REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM
+#REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM, WHILE DOING SO
+@error_safe_python_progressbar_decorator
 def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
+    if not isinstance(FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe file path parameter must be a string type.')
+    elif not isinstance(FILE_PATH, int):
+        raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe block size parameter must be an integer type.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
@@ -131,7 +148,7 @@ def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
 #4.) IF A KDF ITERATIONS INTEGER 600_000 OR HIGHER IS NOT SUPPLIED, ONE IS SET TO 600_000
 #5.) A KDF-KEY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
-#6.) RETURNS:
+#6.) RETURNS A LIST CONTAINING:
     #A.) KEY BYTES
     #B.) SALT BYTES
 @error_safe_python_progressbar_decorator
@@ -272,12 +289,12 @@ def has_permissions(PATH, PERMISSIONS):
 #THIS FUNCTION:
 #1.) REQUIRES A FOLDER PATH STRING
 #2.) RECURSIVELY SCANS THE PATH
-#3.) RETURNS:
+#3.) RETURNS A LIST CONTAINING:
     #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING: 
         #i.)"True" OR "False" FOR THE FILE PATH ACCESSABILITY STATUS
         #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
-    #C.) AN ACCESSABLE FILES, BYTES TOTAL INTEGER
+    #C.) AN ACCESSABLE FILES BYTES TOTAL INTEGER
 @error_safe_python_progressbar_decorator
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not isabs(FOLDER_PATH):
@@ -305,7 +322,8 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "recursive_files_and_bytes_total()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A BYTES NUMBER STRING OR INTEGER
+#1.) REQUIRES:
+    #A.) A BYTES NUMBER STRING OR INTEGER
 #2.) CONVERTS THE SUPPLIED BYTES NUMBER
 #3.) RETURNS THE CONVERTED BYTES AS A STRING
 @error_safe_python_progressbar_decorator
@@ -333,7 +351,8 @@ def convert_bytes(BYTES_NUMBER):
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "convert_bytes()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
-#1.) REQUIRES A SECONDS INTEGER OR FLOAT
+#1.) REQUIRES:
+    #A.) A SECONDS INTEGER OR FLOAT
 #2.) CONVERTS THE SUPPLIED SECONDS
 #3.) RETURNS A CONVERTED SECONDS STRING
 @error_safe_python_progressbar_decorator
@@ -355,12 +374,18 @@ def convert_seconds(SECONDS):
 
 #THIS FUNCTION:
 #1.) REQUIRES:
-    #A.) A PROCESSED INTEGER
+    #A.) A TOTAL INTEGER
     #B.) A START TIME FLOAT
-    #C.) A TOTAL INTEGER
-#2.) HIDES THE TERMINAL CURSOR AND DISPLAYS A PROGRESS BAR
+    #C.) A PROCESSED INTEGER
+#2.) DISPLAYS A PROGRESSBAR, IN THE TERMINAL, WITH THE SUPPLIED VALUES
 @error_safe_python_progressbar_decorator
 def python_progressbar(TOTAL, START_TIME, PROCESSED):
+    if not isinstance(TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe total parameter must be an integer type.')
+    elif not isinstance(TOTAL, float):
+        raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe start time parameter must be a float type.')
+    elif not isinstance(TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe processed parameter must be an integer type.')
     PERCENT_COMPLETE = 0
     try:
         #CALCULATE PROGRESS
@@ -380,11 +405,13 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
     finally:
         if PERCENT_COMPLETE >= 100:
             stdout.write('\n')
-            ansi.SHOW_TERMINAL_CURSOR
+            ansi.show_terminal_cursor()
 
 #THIS FUNCTION:
-#1.) REQUIRES A FILE OBJECT OPENED, IN BINARY READ MODE
-#2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE, AND RETURNS THE HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
+#1.) REQUIRES:
+    #A.) A FILE OBJECT OPENED, IN BINARY READ MODE
+#2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE
+#3.) RETURNS THE HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
 @error_safe_python_progressbar_decorator
 def check_aes_gcm_headers(FILE):
     if not isinstance(FILE, IOBase) or 'r' not in FILE.mode or 'b' not in FILE.mode:
@@ -464,7 +491,7 @@ def check_aes_gcm_headers(FILE):
     #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW, PROGRESSBAR)
     #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE, IN THE GUI PROGRESSBAR WINDOW)
 #3.) RECURSIVELY AES-GCM ENCRYPTS ALL FILES, WITHIN THE FOLDER PATH (SECURELY, FOR ANY FILE TYPE)
-#4.) RETURNS:
+#4.) RETURNS A LIST CONTAINING:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
 @error_safe_python_progressbar_decorator
@@ -531,11 +558,11 @@ def aes_gcm_encrypt_folder(
         del PASSWORD
         if getattr(_PROGRESSBAR_STATE, 'active', False):
             stdout.write('\n')
-            ansi.SHOW_TERMINAL_CURSOR
+            ansi.show_terminal_cursor()
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
-        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
+        return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -550,7 +577,7 @@ def aes_gcm_encrypt_folder(
     #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW, PROGRESSBAR)
     #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE, IN THE GUI PROGRESSBAR WINDOW)
 #3.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD IS CORRECT)
-#4.) RETURNS:
+#4.) RETURNS A LIST CONTAINING:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
 @error_safe_python_progressbar_decorator
@@ -613,12 +640,13 @@ def aes_gcm_decrypt_folder(
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
         if getattr(_PROGRESSBAR_STATE, 'active', False):
+            _PROGRESSBAR_STATE.active = False
             stdout.write('\n')
-            ansi.SHOW_TERMINAL_CURSOR
+            ansi.show_terminal_cursor()
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
         if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
-        return [False, f'[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
+        return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -637,10 +665,10 @@ def aes_gcm_decrypt_folder(
     #I.) A "tkinter.Label()" CLASS (FOR PERCENTAGE, IN THE GUI PROGRESSBAR WINDOW)
     #J.) A PROCESSED FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
 #3.) AES-GCM ENCRYPTS THE FILE (SECURELY, FOR ANY FILE TYPE)
-#4.) RETURNS:
+#4.) RETURNS A LIST CONTAINING:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
-    #C.) A PROCESSED FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PROGRESSBAR, OF THE "aes_gcm_encrypt_folder()" FUNCTION)
+    #C.) A PROCESSED FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN A PROGRESSBAR, OF THE "aes_gcm_encrypt_folder()" FUNCTION)
 @error_safe_python_progressbar_decorator
 def aes_gcm_encrypt_file(
         FILE_PATH, KEY_SIZE, PASSWORD, KDF_ITERATIONS=None, 
@@ -683,17 +711,16 @@ def aes_gcm_encrypt_file(
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         if PYTHON_PROGRESSBAR and not PROCESSED_FOLDER_BYTES_TOTAL:
-            stdout.write(ansi.HIDE_TERMINAL_CURSOR)
-            stdout.flush()
+            ansi.hide_terminal_cursor()
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
         #USING THE "get_aes_key_and_salt()" FUNCTION, KEY SIZE (128, 192, OR 256), 
-        #AND THE USER-ENTERED PASSWORD STRING
+        #AND THE USER-ENTERED PASSWORD STRING, BYTES, OR BYTEARRAY
         KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, None, KDF_ITERATIONS)
         #CREATE A 12-BYTE NONCE
         NONCE_BYTES = token_bytes(12)
-        #USE THE KEY AND NONCE BYTES, TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
+        #USE THE KEY AND NONCE BYTES TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
         CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
         #START THE ENCRYPTION STREAMER
         ENCRYPTOR = CIPHER.encryptor()
@@ -719,7 +746,7 @@ def aes_gcm_encrypt_file(
                     #AND THE HEADER BYTES, USING NULL-BYTES
                     OUTFILE.write(pack('>I', RESERVED_HEADER_LENGTH) + (b'\x00' * RESERVED_HEADER_LENGTH))
                 if all(VALUE is None for VALUE in [BYTES_TOTAL, START_TIME, PROCESSED_FOLDER_BYTES_TOTAL]):
-                    if PYTHON_PROGRESSBAR or all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+                    if START_TIME is None and any([PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
                         START_TIME = time()
                         BYTES_TOTAL = getsize(FILE_PATH)
                 #STREAM-ENCRYPT THE PLAINTEXT DATA, IN CHUNKS (TO ALLOW ENCRYPTION OF ALL FILE TYPES)
@@ -758,7 +785,7 @@ def aes_gcm_encrypt_file(
                     ENCRYPTED_CHUNK[:] = b'\x00' * len(ENCRYPTED_CHUNK)
                     #REMOVE THE ENCRYPTED CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
                     del ENCRYPTED_CHUNK
-                #CLOSE THE ENCRYPTION STREAM
+                #CLOSE THE ENCRYPTION STREAMER
                 ENCRYPTOR.finalize()
                 TAG_BYTES = ENCRYPTOR.tag
                 #RESET THE FILE POINTER AND OVERWRITE THE RESERVED HEADER SPACE,
@@ -787,7 +814,7 @@ def aes_gcm_encrypt_file(
         replace(FILE_PATH + '.tmp', FILE_PATH)
         if PROCESSED_FOLDER_BYTES_TOTAL is None and getattr(_PROGRESSBAR_STATE, 'active', False):
             stdout.write('\n')
-            ansi.SHOW_TERMINAL_CURSOR
+            ansi.show_terminal_cursor()
         return [True, f'\nAES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
@@ -796,9 +823,9 @@ def aes_gcm_encrypt_file(
         file_processing_exception_cleanup(FILE_PATH, ERROR)
         return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except Exception as ERROR:
-        ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.')
+        ERROR_TEXT = str(ERROR).strip() + '\nTry using a smaller block size.' if ERROR is not None and str(ERROR).strip() and BLOCK_SIZE > 65536 else ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'
         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
-        return [False, f'\n[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'\n[{type(ERROR)}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
@@ -860,8 +887,7 @@ def aes_gcm_decrypt_file(
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         if PYTHON_PROGRESSBAR:
-            stdout.write(ansi.HIDE_TERMINAL_CURSOR)
-            stdout.flush()
+            ansi.hide_terminal_cursor()
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'\nPERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
@@ -880,7 +906,7 @@ def aes_gcm_decrypt_file(
             #DERIVE A KEY THAT MATCHES THE ORIGINAL KEY, USING THE USER-ENTERED PASSWORD AND THE SALT BYTES STORED, 
             #IN THE FILE'S SALT BYTES HEADER
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES, KDF_ITERATIONS)[0]
-            #USE THE KEY, NONCE, AND TAG BYTES, TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
+            #USE THE KEY, NONCE, AND TAG BYTES TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
             #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
             del NONCE_BYTES, TAG_BYTES, SALT_BYTES
@@ -891,7 +917,7 @@ def aes_gcm_decrypt_file(
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
                 #IF RUNNING A TKINTER PROGRESSBAR FROM THIS FUNCTION,
                 #THE REQUIRED VARIABLES ARE SET
-                if START_TIME is None and any([PYTHON_PROGRESSBAR, all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE])]):
+                if START_TIME is None and any([PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
                     START_TIME = time()
                     BYTES_TOTAL = getsize(FILE_PATH)
                 #STREAM-DECRYPT THE ENCRYPTED DATA, IN CHUNKS (TO ALLOW DECRYPTION OF ALL FILE TYPES)
@@ -963,7 +989,7 @@ def aes_gcm_decrypt_file(
         replace(FILE_PATH + '.tmp', FILE_PATH)
         if PROCESSED_FOLDER_BYTES_TOTAL is None and getattr(_PROGRESSBAR_STATE, 'active', False):
             stdout.write('\n')
-            ansi.SHOW_TERMINAL_CURSOR
+            ansi.show_terminal_cursor()
         return [True, f'\nAES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except InvalidTag:
         if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
@@ -977,7 +1003,7 @@ def aes_gcm_decrypt_file(
     except Exception as ERROR:
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
-        return [False, f'\n[{ERROR.__class__.__name__ if str(ERROR).strip() else 'UnknownError'}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'\n[{type(ERROR)}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
