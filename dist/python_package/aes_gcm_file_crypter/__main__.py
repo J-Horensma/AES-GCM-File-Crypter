@@ -89,5 +89,7 @@ def cli():
     main()
 
 if __name__ == '__main__':
-    cli()
+    CLI_RESULT = cli()
+    if CLI_RESULT:
+        print(CLI_RESULT)
     exit()
