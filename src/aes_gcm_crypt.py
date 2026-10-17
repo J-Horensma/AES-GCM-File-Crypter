@@ -61,28 +61,38 @@ class ansi():
 #1.) IS A DECORATOR TO WRAP THE FUNCTIONS OF THIS LIBRARY
 #AND CATCH THEIR EXCEPTIONS, SO A NEWLINE CAN BE ADDED, 
 #BEFORE ERROR OUTPUT, AND THE TERMINAL CURSOR IS MADE VISIBLE AGAIN
-#2.) WRAPS ANY FUNCTION WITH "@error_safe_python_progressbar_decorator" PLACED ABOVE IT
+#2.) WRAPS ANY FUNCTION WITH "@error_safe_python_progressbar_decorator" PLACED ABOVE IT 
+#AND INITIATES THE FINALLY BLOCK AFTER THAT FUNCTION RETURNS
 #3.) CATCHES ANY RAISED ERRORS THAT ARE NOT CAUGHT OR ARE RE-RAISED
-_PROGRESSBAR_STATE = local()
+_PYTHON_PROGRESSBAR_STATE = local()
 def error_safe_python_progressbar_decorator(FUNCTION):
     @wraps(FUNCTION)
     def wrapper(*args, **kwargs):
-        global _PROGRESSBAR_STATE
-        if getattr(_PROGRESSBAR_STATE, 'active', False):
+        global _PYTHON_PROGRESSBAR_STATE
+        #IF THE PYTHON PROGRESSBAR IS ACTIVE AND THE OUTERMOST CALLING DECORATED FUNCTION
+        #HAS NOT RETURNED (WHICH IS CAUGHT BY THE FINALLY BLOCK), RETURN
+        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
             return FUNCTION(*args, **kwargs)
-        _PROGRESSBAR_STATE.active = True
+        _PYTHON_PROGRESSBAR_STATE.active = True
         try:
             return FUNCTION(*args, **kwargs)
         except Exception as ERROR:
-            _PROGRESSBAR_STATE.active = False
+            #IF THE PYTHON PROGRESSBAR IS ACTIVE AND AN EXCEPTION OCCURS, WITHIN A DECORATED FUNCTION,
+            #TURN OFF THE PYTHON PROGRESSBAR, WRITE A NEWLINE TO STDOUT, 
+            #WRITE THE ERROR TO STDOUT, AND SHOW THE TERMINAL CURSOR AGAIN
+            _PYTHON_PROGRESSBAR_STATE.active = False
             if stdout is not None:
+                stdout.write('\n')
+                stdout.flush()
                 stdout.write(f'{ERROR}')
                 ansi.show_terminal_cursor()
         finally:
-            #WHEN THE PYTHON PROGRESSBAR IS RUNNING AND THE OUTERMOST FUNCTION FINISHES,
-            #TURN OFF THE PYTHON PROGRESSBAR AND SHOW THE TERMINAL CURSOR AGAIN
-            _PROGRESSBAR_STATE.active = False
+            #WHEN THE PYTHON PROGRESSBAR IS ACTIVE AND THE OUTERMOST CALLING DECORATED FUNCTION FINISHES,
+            #TURN OFF THE PYTHON PROGRESSBAR, WRITE A NEWLINE TO STDOUT,  AND SHOW THE TERMINAL CURSOR AGAIN
+            _PYTHON_PROGRESSBAR_STATE.active = False
             if stdout is not None:
+                stdout.write('\n')
+                stdout.flush()
                 ansi.show_terminal_cursor()
     return wrapper
 
@@ -97,7 +107,7 @@ def file_processing_exception_cleanup(FILE_PATH, ERROR):
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe file path parameter must be a string type.')
     if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
-    if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
+    if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise ERROR
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -190,7 +200,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             del PASSWORD
             return [KEY_BYTES, SALT_BYTES]
         except Exception as ERROR:
-            raise type(ERROR)(f'\n[{type(ERROR)}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+            raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "get_aes_key_and_salt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
@@ -392,10 +402,6 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
         stdout.flush()
     except Exception as ERROR:
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "python_progressbar()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
-    finally:
-        if PERCENT_COMPLETE >= 100:
-            stdout.write('\n')
-            ansi.show_terminal_cursor()
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -545,12 +551,9 @@ def aes_gcm_encrypt_folder(
             PASSWORD[:] = b'\x00' * len(PASSWORD)
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
-        if getattr(_PROGRESSBAR_STATE, 'active', False):
-            stdout.write('\n')
-            ansi.show_terminal_cursor()
-        return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
+        return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
-        if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
+        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise ERROR
         return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_encrypt_folder()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
@@ -628,13 +631,9 @@ def aes_gcm_decrypt_folder(
             PASSWORD[:] = b'\x00' * len(PASSWORD)
         #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
         del PASSWORD
-        if getattr(_PROGRESSBAR_STATE, 'active', False):
-            _PROGRESSBAR_STATE.active = False
-            stdout.write('\n')
-            ansi.show_terminal_cursor()
-        return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}\nAES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
+        return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
-        if getattr(_PROGRESSBAR_STATE, 'active', False): raise ERROR
+        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise ERROR
         return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_decrypt_folder()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}\nFolder path: {FOLDER_PATH}']
 
 #THIS FUNCTION:
@@ -724,9 +723,9 @@ def aes_gcm_encrypt_file(
             #CHECK IF THE FILE IS EMPTY OR ALREADY AES-GCM ENCRYPTED
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
             if AES_GCM_HEADERS_CHECK[1] == 'FILE_EMPTY':
-                return [False, f'\nFILE_EMPTY!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+                return [False, f'FILE_EMPTY!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             elif AES_GCM_HEADERS_CHECK[0]:
-                return [False, f'\nALREADY_AES-GCM_ENCRYPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+                return [False, f'ALREADY_AES-GCM_ENCRYPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             #CREATE AND OPEN A TEMPORARY FILE, TO WRITE TO, IN WRITE BYTES MODE
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
                 RESERVED_HEADERS_LENGTH_LIST = [7, 3, 12, 16, 16]
@@ -801,20 +800,17 @@ def aes_gcm_encrypt_file(
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
-        if PROCESSED_FOLDER_BYTES_TOTAL is None and getattr(_PROGRESSBAR_STATE, 'active', False):
-            stdout.write('\n')
-            ansi.show_terminal_cursor()
-        return [True, f'\nAES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [True, f'AES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
-        return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
-        return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except Exception as ERROR:
         ERROR_TEXT = str(ERROR).strip() + '\nTry using a smaller block size.' if ERROR is not None and str(ERROR).strip() and BLOCK_SIZE > 65536 else ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'
         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
-        return [False, f'\n[{type(ERROR)}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
@@ -879,13 +875,13 @@ def aes_gcm_decrypt_file(
             ansi.hide_terminal_cursor()
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
-            return [False, f'\nPERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+            return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         #OPEN THE FILE TO DECRYPT, IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
             if not AES_GCM_HEADERS_CHECK[0]:
-                return [False, f'\n{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+                return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             ALGORITHM_AND_MODE, KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES, TOTAL_HEADERS_SIZE = AES_GCM_HEADERS_CHECK
             if PROCESSED_FOLDER_BYTES_TOTAL is not None:
                 PROCESSED_FOLDER_BYTES_TOTAL += TOTAL_HEADERS_SIZE
@@ -976,23 +972,20 @@ def aes_gcm_decrypt_file(
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
-        if PROCESSED_FOLDER_BYTES_TOTAL is None and getattr(_PROGRESSBAR_STATE, 'active', False):
-            stdout.write('\n')
-            ansi.show_terminal_cursor()
-        return [True, f'\nAES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [True, f'AES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except InvalidTag:
         if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
-        return [False, f'\nINCORRECT_PASSWORD!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'INCORRECT_PASSWORD!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
-        return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
         file_processing_exception_cleanup(FILE_PATH, ERROR)
-        return [False, f'\nPERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except Exception as ERROR:
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
         file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
-        return [False, f'\n[{type(ERROR)}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
