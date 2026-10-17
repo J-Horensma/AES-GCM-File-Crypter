@@ -81,9 +81,9 @@ def cli():
             DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return DECRYPT_RESULT[1].strip()
     except KeyboardInterrupt:
-        return '\n"Ctrl + c" was pressed, closing AES-GCM File-Crypter...'
+        return '"Ctrl + c" was pressed, closing AES-GCM File-Crypter...'
     except Exception as ERROR:
-        return f'\n{ERROR}, closing AES-GCM File-Crypter...'
+        return f'{ERROR}, closing AES-GCM File-Crypter...'
 
     from .aes_gcm_file_crypter import main
     main()
