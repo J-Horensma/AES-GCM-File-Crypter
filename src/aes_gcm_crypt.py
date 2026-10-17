@@ -956,10 +956,7 @@ def aes_gcm_decrypt_file(
                     #REMOVE THE PLAINTEXT CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
                     del PLAINTEXT_CHUNK
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
-                FINAL_BYTES = DECRYPTOR.finalize()
-                if FINAL_BYTES:
-                    OUTFILE.write(FINAL_BYTES)
-                del FINAL_BYTES
+                DECRYPTOR.finalize()
         #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
         #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
         #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
