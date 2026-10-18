@@ -21,7 +21,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 '''
 
 from threading import Thread
-from os.path import abspath, join, dirname
+from os.path import abspath, join, dirname, getsize
 from platform import system
 from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
 try:
@@ -30,7 +30,7 @@ try:
         enter_password_prompt, folder_path_prompt, file_path_prompt, progressbar_window
     )
     from .src.aes_gcm_crypt import (
-        aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
+        recursive_files_and_bytes_total, convert_bytes, aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
         aes_gcm_encrypt_file, aes_gcm_decrypt_file
     )
 except ImportError:
@@ -39,7 +39,7 @@ except ImportError:
         enter_password_prompt, folder_path_prompt, file_path_prompt, progressbar_window
     )
     from src.aes_gcm_crypt import (
-        aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
+        recursive_files_and_bytes_total, convert_bytes, aes_gcm_encrypt_folder, aes_gcm_decrypt_folder,
         aes_gcm_encrypt_file, aes_gcm_decrypt_file
     )
 
@@ -88,7 +88,8 @@ def main():
                 if not CONFIRMATION:
                     return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
+            CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total()[2])
+            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
@@ -115,7 +116,8 @@ def main():
             if PASSWORD is None:
                 return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'Decrypting the folder: "{FOLDER_PATH}",\nplease wait...\n')
+            CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total()[2])
+            ACTIVITY_LOG.insert('insert', f'Decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
@@ -157,7 +159,7 @@ def main():
                 if not CONFIRMATION:
                     return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting the file: "{FILE_PATH}",\nplease wait...\n')
+            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting a total of {getsize(FILE_PATH)}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
@@ -184,7 +186,7 @@ def main():
             if PASSWORD is None:
                 return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'Decrypting the file: "{FILE_PATH}",\nplease wait...\n')
+            ACTIVITY_LOG.insert('insert', f'Decrypting a total of {getsize(FILE_PATH)}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
