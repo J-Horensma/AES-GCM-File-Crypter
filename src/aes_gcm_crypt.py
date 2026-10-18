@@ -915,7 +915,7 @@ def aes_gcm_decrypt_file(
                         break
                     #READ THE CHUNK SIZE INTEGER
                     (CHUNK_SIZE,) = unpack('>I', SIZE_DATA)
-                    #CHECK IF THE CHUNK SIZE INTEGER, IS CORRUPTED
+                    #CHECK IF THE CHUNK SIZE INTEGER IS CORRUPTED
                     if CHUNK_SIZE <= 0:
                         return [False, f'CHUNK_SIZE_DATA_CORRUPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
                     #READ THE AES-GCM ENCRYPTED CHUNK
