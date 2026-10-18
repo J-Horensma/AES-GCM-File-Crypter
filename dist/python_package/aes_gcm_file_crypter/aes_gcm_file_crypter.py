@@ -159,7 +159,7 @@ def main():
                 if not CONFIRMATION:
                     return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting a total of {getsize(FILE_PATH)}, in the file: "{FILE_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
@@ -186,7 +186,7 @@ def main():
             if PASSWORD is None:
                 return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'Decrypting a total of {getsize(FILE_PATH)}, in the file: "{FILE_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('insert', f'Decrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
