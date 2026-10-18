@@ -726,7 +726,7 @@ def aes_gcm_encrypt_file(
         ENCRYPTOR = CIPHER.encryptor()
         #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
-            return [False, f'\nPERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+            return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         elif PROCESSED_FOLDER_BYTES_TOTAL is not None:
             PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
         else:
@@ -798,14 +798,14 @@ def aes_gcm_encrypt_file(
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'AES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
-        file_processing_exception_cleanup(FILE_PATH, ERROR)
+        if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
-        file_processing_exception_cleanup(FILE_PATH, ERROR)
+        if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except Exception as ERROR:
+        if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         ERROR_TEXT = str(ERROR).strip() + '\nTry using a smaller block size.' if ERROR is not None and str(ERROR).strip() and BLOCK_SIZE > 65536 else ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'
-        file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
         return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
@@ -954,14 +954,14 @@ def aes_gcm_decrypt_file(
         if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         return [False, f'INCORRECT_PASSWORD!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except OSError as ERROR:
-        file_processing_exception_cleanup(FILE_PATH, ERROR)
+        if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except PermissionError as ERROR:
-        file_processing_exception_cleanup(FILE_PATH, ERROR)
+        if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         return [False, f'PERMISSION_DENIED!\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
     except Exception as ERROR:
+        if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         ERROR_TEXT = (str(ERROR).strip() + '\nTry using a smaller block size.' if str(ERROR).strip() and BLOCK_SIZE > 65536 else (ERROR if str(ERROR).strip() else 'An unknown error occurred, try using a smaller block size.'))
-        file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
         return [False, f'[{type(ERROR)}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
