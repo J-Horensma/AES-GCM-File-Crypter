@@ -118,16 +118,16 @@ def variable_ram_buffer_wipe(VARIABLE):
     try:
         #IF THE VARIABLE VALUE IS A BYTEARRAY TYPE, OVERWRITE IT'S RAM BUFFER CONTENTS 
         #TO ZEROED BYTES, TO PREVENT THE VARIABLE VALUE FROM REMAINING, IN THE RAM
-        if isinstance(VALUE, bytearray):
-            VALUE[:] = b'\x00' * len(VALUE)
+        if isinstance(VARIABLE, bytearray):
+            VARIABLE[:] = b'\x00' * len(VARIABLE)
         else:
             #PYTHON VARIABLES THAT ARE NOT BYTEARRAY TYPES ARE IMMUTABLE AND
             #CANNOT HAVE THEIR RAM BUFFER VALUES CHANGED, HOWEVER, 
             #THE VARIABLE VALUE CAN BE OVERWRITTEN AND UPDATED,
             #IN THE RAM AS SOON AS POSSIBLE (NOT AS SECURE AS USING A BYTEARRAY)
-            VALUE[:] = b'\x00' * len(VALUE)
+            VARIABLE[:] = b'\x00' * len(VARIABLE)
         #REMOVE THE VARIABLE VALUE'S BUFFER REFERENCE FROM THE RAM
-        del VALUE
+        del VARIABLE
     except Exception as ERROR:
         raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "variable_ram_buffer_wipe()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
@@ -138,11 +138,11 @@ def variable_ram_buffer_wipe(VARIABLE):
     #A.) A BLOCK SIZE INTEGER
 #3.) OVERWRITES THE FILE'S CONTENTS ON THE DISK WITH RANDOM BYTES AND
 #REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM, WHILE DOING SO
-def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
+def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     if not isinstance(FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe file path parameter must be a string type.')
+        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a string type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
-        raise TypeError('[TypeError]\nFunction: "wipe_file_contents()"\nThe block size parameter must be an integer type.')
+        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer type.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
@@ -165,7 +165,7 @@ def wipe_file_contents(FILE_PATH, BLOCK_SIZE=None):
             OVERWRITE_FILE.flush()
             fsync(OVERWRITE_FILE.fileno())
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "wipe_file_contents()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "file_contents_disk_wipe()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
@@ -640,13 +640,7 @@ def aes_gcm_decrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = DECRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
-        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
-        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
-        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
-        if isinstance(PASSWORD, bytearray):
-            PASSWORD[:] = b'\x00' * len(PASSWORD)
-        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
-        del PASSWORD
+        variable_ram_buffer_wipe(PASSWORD)
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise ERROR
@@ -797,9 +791,7 @@ def aes_gcm_encrypt_file(
                 #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
                 del NONCE_BYTES, TAG_BYTES, SALT_BYTES
         variable_ram_buffer_wipe(PASSWORD)
-        #OVERWRITE THE ORIGINAL FILE'S PLAINTEXT CONTENTS WITH RANDOM BYTES,
-        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT FILE CONTENT DATA FROM THE DRIVE
-        wipe_file_contents(FILE_PATH, BLOCK_SIZE)
+        file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'AES-GCM-{KEY_SIZE}_FILE_ENCRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
@@ -952,9 +944,7 @@ def aes_gcm_decrypt_file(
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 DECRYPTOR.finalize()
         variable_ram_buffer_wipe(PASSWORD)
-        #OVERWRITE THE ORIGINAL FILE'S ENCRYPTED CONTENTS WITH RANDOM BYTES,
-        #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY ENCRYPTED FILE CONTENT DATA FROM THE DRIVE
-        wipe_file_contents(FILE_PATH, BLOCK_SIZE)
+        file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
         replace(FILE_PATH + '.tmp', FILE_PATH)
         return [True, f'AES-GCM_FILE_DECRYPTION_SUCCESSFUL!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
