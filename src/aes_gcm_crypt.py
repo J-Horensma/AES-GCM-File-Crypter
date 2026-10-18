@@ -111,6 +111,28 @@ def file_processing_exception_cleanup(FILE_PATH, ERROR):
 
 #THIS FUNCTION:
 #1.) REQUIRES:
+    #A.) A VARIABLE (TO WIPE FROM THE RAM)
+#2.) OVERWRITES THE VARIABLE'S RAM BUFFER WITH NULL BYTES AND 
+#DELETES THE VARIABLE VALUE'S BUFFER REFERENCE
+def variable_ram_buffer_wipe(VARIABLE):
+    try:
+        #IF THE VARIABLE VALUE IS A BYTEARRAY TYPE, OVERWRITE IT'S RAM BUFFER CONTENTS 
+        #TO ZEROED BYTES, TO PREVENT THE VARIABLE VALUE FROM REMAINING, IN THE RAM
+        if isinstance(VALUE, bytearray):
+            VALUE[:] = b'\x00' * len(VALUE)
+        else:
+            #PYTHON VARIABLES THAT ARE NOT BYTEARRAY TYPES ARE IMMUTABLE AND
+            #CANNOT HAVE THEIR RAM BUFFER VALUES CHANGED, HOWEVER, 
+            #THE VARIABLE VALUE CAN BE OVERWRITTEN AND UPDATED,
+            #IN THE RAM AS SOON AS POSSIBLE (NOT AS SECURE AS USING A BYTEARRAY)
+            VALUE[:] = b'\x00' * len(VALUE)
+        #REMOVE THE VARIABLE VALUE'S BUFFER REFERENCE FROM THE RAM
+        del VALUE
+    except Exception as ERROR:
+        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "variable_ram_buffer_wipe()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+
+#THIS FUNCTION:
+#1.) REQUIRES:
     #A.) A FILE PATH STRING
 #2.) OPTIONALLY ACCEPTS:
     #A.) A BLOCK SIZE INTEGER
@@ -544,13 +566,7 @@ def aes_gcm_encrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = ENCRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
-        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
-        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
-        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
-        if isinstance(PASSWORD, bytearray):
-            PASSWORD[:] = b'\x00' * len(PASSWORD)
-        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
-        del PASSWORD
+        variable_ram_buffer_wipe(PASSWORD)
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise ERROR
@@ -762,17 +778,9 @@ def aes_gcm_encrypt_file(
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
                     ENCRYPTED_CHUNK = bytearray(ENCRYPTOR.update(PLAINTEXT_CHUNK))
-                    #OVERWRITE THE PLAINTEXT CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
-                    #TO ZEROED BYTES, TO PREVENT REMAINING PLAINTEXT FILE CONTENTS, IN THE RAM
-                    PLAINTEXT_CHUNK[:] = b'\x00' * len(PLAINTEXT_CHUNK)
-                    #REMOVE THE PLAINTEXT CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
-                    del PLAINTEXT_CHUNK
+                    variable_ram_buffer_wipe(PLAINTEXT_CHUNK)
                     OUTFILE.write(pack('>I', len(ENCRYPTED_CHUNK)) + ENCRYPTED_CHUNK)
-                    #OVERWRITE THE ENCRYPTED CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
-                    #TO ZEROED BYTES, TO PREVENT REMAINING ENCRYPTED FILE CONTENTS, IN THE RAM
-                    ENCRYPTED_CHUNK[:] = b'\x00' * len(ENCRYPTED_CHUNK)
-                    #REMOVE THE ENCRYPTED CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
-                    del ENCRYPTED_CHUNK
+                    variable_ram_buffer_wipe(ENCRYPTED_CHUNK)
                 #CLOSE THE ENCRYPTION STREAMER
                 ENCRYPTOR.finalize()
                 TAG_BYTES = ENCRYPTOR.tag
@@ -788,13 +796,7 @@ def aes_gcm_encrypt_file(
                 del HEADERS_LIST, HEADER
                 #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
                 del NONCE_BYTES, TAG_BYTES, SALT_BYTES
-        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
-        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
-        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
-        if isinstance(PASSWORD, bytearray):
-            PASSWORD[:] = b'\x00' * len(PASSWORD)
-        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
-        del PASSWORD
+        variable_ram_buffer_wipe(PASSWORD)
         #OVERWRITE THE ORIGINAL FILE'S PLAINTEXT CONTENTS WITH RANDOM BYTES,
         #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY PLAINTEXT FILE CONTENT DATA FROM THE DRIVE
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
@@ -944,26 +946,12 @@ def aes_gcm_decrypt_file(
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
                     PLAINTEXT_CHUNK = bytearray(DECRYPTOR.update(ENCRYPTED_CHUNK))
-                    #OVERWRITE THE ENCRYPTED CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
-                    #TO ZEROED BYTES, TO PREVENT REMAINING ENCRYPTED FILE CONTENTS, IN THE RAM
-                    ENCRYPTED_CHUNK[:] = b'\x00' * len(ENCRYPTED_CHUNK)
-                    #REMOVE THE ENCRYPTED CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
-                    del ENCRYPTED_CHUNK
+                    variable_ram_buffer_wipe(ENCRYPTED_CHUNK)
                     OUTFILE.write(PLAINTEXT_CHUNK)
-                    #OVERWRITE THE PLAINTEXT CHUNK VARIABLE BUFFER CONTENTS, IN THE RAM, 
-                    #TO ZEROED BYTES, TO PREVENT REMAINING PLAINTEXT FILE CONTENTS, IN THE RAM
-                    PLAINTEXT_CHUNK[:] = b'\x00' * len(PLAINTEXT_CHUNK)
-                    #REMOVE THE PLAINTEXT CHUNK VARIABLE BUFFER REFERENCE FROM THE RAM
-                    del PLAINTEXT_CHUNK
+                    variable_ram_buffer_wipe(PLAINTEXT_CHUNK)
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 DECRYPTOR.finalize()
-        #OVERWRITE THE PASSWORD VARIABLE BUFFER CONTENTS, IN THE RAM, 
-        #TO ZEROED BYTES, TO PREVENT THE PASSWORD FROM BEING STORED, IN THE RAM,
-        #IF THE SUPPLIED PASSWORD IS A BYTEARRAY TYPE
-        if isinstance(PASSWORD, bytearray):
-            PASSWORD[:] = b'\x00' * len(PASSWORD)
-        #REMOVE THE PASSWORD VARIABLE BUFFER REFERENCE FROM THE RAM
-        del PASSWORD
+        variable_ram_buffer_wipe(PASSWORD)
         #OVERWRITE THE ORIGINAL FILE'S ENCRYPTED CONTENTS WITH RANDOM BYTES,
         #BEFORE DELETION, TO PREVENT THE RECOVERY OF ANY ENCRYPTED FILE CONTENT DATA FROM THE DRIVE
         wipe_file_contents(FILE_PATH, BLOCK_SIZE)
