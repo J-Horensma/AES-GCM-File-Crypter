@@ -803,7 +803,7 @@ def aes_gcm_encrypt_file(
     except Exception as ERROR:
         if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         EXCEPTION_NAME = ERROR.__class__.__name__
-        return [False, f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_encrypt_file()"\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
@@ -909,13 +909,11 @@ def aes_gcm_decrypt_file(
                     (CHUNK_SIZE,) = unpack('>I', SIZE_DATA)
                     #CHECK IF THE CHUNK SIZE INTEGER, IS CORRUPTED
                     if CHUNK_SIZE <= 0:
-                        file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
                         return [False, f'\nCHUNK_SIZE_DATA_CORRUPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
                     #READ THE AES-GCM ENCRYPTED CHUNK
                     ENCRYPTED_CHUNK = bytearray(INFILE.read(CHUNK_SIZE))
                     #CHECK IF THE ENCRYPTED CHUNK IS CORRUPTED
                     if len(ENCRYPTED_CHUNK) != CHUNK_SIZE:
-                        file_processing_exception_cleanup(FILE_PATH, ERROR_TEXT)
                         return [False, f'\nCHUNK_DATA_CORRUPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
                     if START_TIME is not None:
                         CHUNK_LENGTH = 4 + len(ENCRYPTED_CHUNK)
@@ -959,7 +957,7 @@ def aes_gcm_decrypt_file(
     except Exception as ERROR:
         if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
         EXCEPTION_NAME = ERROR.__class__.__name__
-        return [False, f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR_TEXT}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
+        return [False, f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_decrypt_file()"\n{ERROR}\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
