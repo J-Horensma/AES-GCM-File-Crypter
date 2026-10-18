@@ -98,19 +98,6 @@ def error_safe_python_progressbar_decorator(FUNCTION):
 
 #THIS FUNCTION:
 #1.) REQUIRES:
-    #A.) A FILE PATH STRING
-    #B.) AN ERROR STRING
-#2.) REMOVES ANY EXISTING TEMP FILE FOR THAT FILE, IN THE SAME PATH
-#3.) RE-RAISES THE ERROR TO BE CAUGHT BY THE "error_safe_python_progressbar_decorator" WRAPPER
-#IF THE PYTHON PROGRESSBAR IS RUNNING
-def file_processing_exception_cleanup(FILE_PATH, ERROR):
-    if not isinstance(FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "file_processing_exception_cleanup()"\nThe file path parameter must be a string type.')
-    if isfile(FILE_PATH + '.tmp'): remove(FILE_PATH + '.tmp')
-    if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise ERROR
-
-#THIS FUNCTION:
-#1.) REQUIRES:
     #A.) A VARIABLE (TO WIPE FROM THE RAM)
 #2.) OVERWRITES THE VARIABLE'S RAM BUFFER VALUE WITH NULL BYTES AND 
 #DELETES THE VARIABLE VALUE'S RAM BUFFER REFERENCE
