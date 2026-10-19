@@ -95,4 +95,3 @@ if __name__ == '__main__':
     if CLI_RESULT:
         print(CLI_RESULT)
     exit()
-    s
