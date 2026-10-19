@@ -74,12 +74,12 @@ def cli():
             return DECRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'encrypt_file':
             from .src.aes_gcm_crypt import aes_gcm_encrypt_file
-            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {getsize(ARGUMENTS.file_path)}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
+            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_file':
             from .src.aes_gcm_crypt import aes_gcm_decrypt_file
-            print(f'Decrypting a total of {getsize(ARGUMENTS.file_path)}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
+            print(f'Decrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return DECRYPT_RESULT[1].strip()
     except KeyboardInterrupt:
