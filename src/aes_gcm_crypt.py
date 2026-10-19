@@ -580,7 +580,7 @@ def aes_gcm_encrypt_folder(
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
         EXCEPTION_PRETEXT = f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_encrypt_folder()"\n'
-        ERROR_MESSAGE = EXCEPTION_PRETEXT + ERROR + f'\nFolder path: {FOLDER_PATH}' if str(ERROR).strip() else f'An unknown error occurred!\nFolder path: {FOLDER_PATH}'
+        ERROR_MESSAGE = EXCEPTION_PRETEXT + str(ERROR) + f'\nFolder path: {FOLDER_PATH}' if str(ERROR).strip() else f'An unknown error occurred!\nFolder path: {FOLDER_PATH}'
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
@@ -658,7 +658,7 @@ def aes_gcm_decrypt_folder(
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
         EXCEPTION_PRETEXT = f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_decrypt_folder()"\n'
-        ERROR_MESSAGE = EXCEPTION_PRETEXT + ERROR + f'\nFolder path: {FOLDER_PATH}' if str(ERROR).strip() else f'An unknown error occurred!\nFolder path: {FOLDER_PATH}'
+        ERROR_MESSAGE = EXCEPTION_PRETEXT + str(ERROR) + f'\nFolder path: {FOLDER_PATH}' if str(ERROR).strip() else f'An unknown error occurred!\nFolder path: {FOLDER_PATH}'
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
