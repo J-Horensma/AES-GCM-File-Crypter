@@ -62,13 +62,13 @@ def cli():
     try:
         if ARGUMENTS.COMMAND == 'encrypt_folder':
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_encrypt_folder
-            CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(FOLDER_PATH)[2])
+            CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(ARGUMENTS.folder_path)[2])
             print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_folder':
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_decrypt_folder
-            CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(FOLDER_PATH)[2])
+            CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(ARGUMENTS.folder_path)[2])
             print(f'Decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return DECRYPT_RESULT[1].strip()
