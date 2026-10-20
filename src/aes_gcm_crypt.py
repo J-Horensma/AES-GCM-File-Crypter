@@ -21,7 +21,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 '''
 
 from threading import local
-from sys import maxsize, stdout
+from sys import stdout
 from time import time
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
@@ -700,10 +700,15 @@ def aes_gcm_encrypt_file(
         TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None, 
         PROCESSED_FOLDER_BYTES_TOTAL=None
     ):
+    KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a string type.')
     elif not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
+    elif KDF_ITERATIONS and not isinstance(KDF_ITERATIONS, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe key derivation function iterations parameter must be an integer type.')
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe block size parameter must be an integer type.')
     elif BYTES_TOTAL and not isinstance(BYTES_TOTAL, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe bytes total parameter must be an integer type.')
     elif START_TIME and not isinstance(START_TIME, float):
@@ -724,27 +729,29 @@ def aes_gcm_encrypt_file(
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be an absolute path.')
     elif not isfile(FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "aes_gcm_encrypt_file()"\nThe file path parameter must be a path to an existing file.')
+    elif KEY_SIZE not in KEY_SIZE_LIST:
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         if PYTHON_PROGRESSBAR and not PROCESSED_FOLDER_BYTES_TOTAL:
             ansi.hide_terminal_cursor()
         FILE_PATH = abspath(FILE_PATH)
-        KEY_SIZE_LIST = [128, 192, 256]
-        BLOCK_SIZE = maxsize if BLOCK_SIZE is None else BLOCK_SIZE
+        BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
+        #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
+        #USING THE "get_aes_key_and_salt()" FUNCTION, KEY SIZE (128, 192, OR 256), 
+        #AND THE USER-ENTERED PASSWORD STRING, BYTES, OR BYTEARRAY
+        KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, None, KDF_ITERATIONS)
+        #CREATE A 12-BYTE NONCE
+        NONCE_BYTES = token_bytes(12)
+        #USE THE KEY AND NONCE BYTES TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
+        CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
+        #START THE ENCRYPTION STREAMER
+        ENCRYPTOR = CIPHER.encryptor()
+        #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-        elif KEY_SIZE not in KEY_SIZE_LIST:
-            return [False, f'INVALID_KEY_SIZE!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-        elif KDF_ITERATIONS and not 600_000 <= KDF_ITERATIONS <= 2147483647:
-            return [False, f'INVALID_KDF_ITERATIONS!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-        elif BLOCK_SIZE and isinstance(BLOCK_SIZE, int) and not 1 <= BLOCK_SIZE <= maxsize:
-            return [False, f'INVALID_BLOCK_SIZE!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-        KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, None, KDF_ITERATIONS)
-        NONCE_BYTES = token_bytes(12)
-        CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
-        ENCRYPTOR = CIPHER.encryptor()
-        if PROCESSED_FOLDER_BYTES_TOTAL is not None:
+        elif PROCESSED_FOLDER_BYTES_TOTAL is not None:
             PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
         else:
             PROCESSED_BYTES = 0
@@ -856,6 +863,10 @@ def aes_gcm_decrypt_file(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe file path parameter must be a string type.')
     elif not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
+    elif KDF_ITERATIONS and not isinstance(KDF_ITERATIONS, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe key derivation function iterations parameter must be an integer type.')
+    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe block size parameter must be an integer type.')
     elif BYTES_TOTAL and not isinstance(BYTES_TOTAL, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe bytes total parameter must be an integer type.')
     elif START_TIME and not isinstance(START_TIME, float):
@@ -879,16 +890,13 @@ def aes_gcm_decrypt_file(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
+        FILE_PATH = abspath(FILE_PATH)
+        BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
         if PYTHON_PROGRESSBAR:
             ansi.hide_terminal_cursor()
-        FILE_PATH = abspath(FILE_PATH)
-        BLOCK_SIZE = maxsize if BLOCK_SIZE is None else BLOCK_SIZE
+        #CHECK PERMISSIONS
         if not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-        elif KDF_ITERATIONS and not 600_000 <= KDF_ITERATIONS <= 2147483647:
-            return [False, f'INVALID_KDF_ITERATIONS!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
-        elif BLOCK_SIZE and isinstance(BLOCK_SIZE, int) and not 1 <= BLOCK_SIZE <= maxsize:
-            return [False, f'INVALID_BLOCK_SIZE!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         #OPEN THE FILE TO DECRYPT, IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
