@@ -737,7 +737,6 @@ def aes_gcm_encrypt_file(
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 600000 and 2147483647.', PROCESSED_FOLDER_BYTES_TOTAL]
         elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= maxsize]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {maxsize}.', PROCESSED_FOLDER_BYTES_TOTAL]
-        KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, None, KDF_ITERATIONS)
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
         #USING THE "get_aes_key_and_salt()" FUNCTION, KEY SIZE (128, 192, OR 256), 
         #AND THE USER-ENTERED PASSWORD STRING, BYTES, OR BYTEARRAY
