@@ -204,12 +204,21 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
                 salt=SALT_BYTES,
                 iterations=KDF_ITERATIONS
             )
-            ENCODED_PASSWORD = bytearray(PASSWORD) if not isinstance(PASSWORD, (bytes, bytearray)) else PASSWORD
+            if isinstance(PASSWORD, str):
+                ENCODED_PASSWORD = bytearray(PASSWORD.encode())
+            elif isinstance(PASSWORD, bytes):
+                ENCODED_PASSWORD = bytearray(PASSWORD)
+            elif isinstance(PASSWORD, bytearray):
+                ENCODED_PASSWORD = bytearray(PASSWORD)
             #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION,
             #STORES THE RETURNED KEY BYTES OBJECT VALUE, IN C-SIDE BUFFERS, NOT THE RAM (MORE DIFFICULT TO INSPECT)
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
-            VARIABLE_LIST = [PASSWORD, ENCODED_PASSWORD]
-            for VALUE in VARIABLE_LIST: variable_ram_buffer_wipe(VALUE)
+            #THE PASSWORD VARIABLE'S RAM BUFFER IS THE RAM BUFFER FOR THE PASSWORD VARIABLE OF THE CALLER THAT PASSED IT,
+            #SO WIPING IT FROM THE CALLER, WILL WIPE IT HERE TOO.
+            #ONLY THE ENCODED PASSWORD VARIABLE SHOULD BE WIPED OR NULL BYTE KEY BYTES WILL BE RETURNED, AS KEY BYTES BY THIS FUNCTION,
+            #IN SUBSEQUENT CALLS, SUCH AS, IN "encrypt_folder()" OR "decrypt_folder()", AS IT WILL WIPE THE ORIGINAL PASSWORD VARIABLE
+            #FROM THEM, BEFORE THEY FINISH.
+            variable_ram_buffer_wipe(ENCODED_PASSWORD)
             return [KEY_BYTES, SALT_BYTES]
         except Exception as ERROR:
             EXCEPTION_CLASS = ERROR.__class__
