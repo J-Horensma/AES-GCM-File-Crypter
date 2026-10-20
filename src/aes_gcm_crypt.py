@@ -21,7 +21,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 '''
 
 from threading import local
-from sys import stdout
+from sys import maxsize, stdout
 from time import time
 from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
@@ -718,7 +718,7 @@ def aes_gcm_encrypt_file(
         FILE_PATH = abspath(FILE_PATH)
         KEY_SIZE_LIST = [128, 192, 256]
         BLOCK_SIZE = maxsize if BLOCK_SIZE is None else BLOCK_SIZE
-        if not isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH):
+        if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
             return [False, f'FILE_PATH_DOES_NOT_EXIST!\nThe file path parameter must be an absolute file path string to an existing file path.\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         elif not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
@@ -873,7 +873,7 @@ def aes_gcm_decrypt_file(
             ansi.hide_terminal_cursor()
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = maxsize if BLOCK_SIZE is None else BLOCK_SIZE
-        if not isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH):
+        if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
             return [False, f'FILE_PATH_DOES_NOT_EXIST!\nThe file path parameter must be an absolute file path string to an existing file path.\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
         elif not all([is_normal(FILE_PATH), has_permissions(FILE_PATH, 'RW')]):
             return [False, f'PERMISSION_DENIED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
