@@ -73,26 +73,28 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         #HAS NOT RETURNED (WHICH IS CAUGHT BY THE FINALLY BLOCK), RETURN
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
             return FUNCTION(*args, **kwargs)
-        _PYTHON_PROGRESSBAR_STATE.active = True
+        else:
+            _PYTHON_PROGRESSBAR_STATE.active = True
+            ansi.hide_terminal_cursor()
         try:
             return FUNCTION(*args, **kwargs)
         except Exception as ERROR:
             #IF THE PYTHON PROGRESSBAR IS ACTIVE AND AN EXCEPTION OCCURS, WITHIN A DECORATED FUNCTION,
             #TURN OFF THE PYTHON PROGRESSBAR, WRITE A NEWLINE TO STDOUT, 
             #WRITE THE ERROR TO STDOUT, AND SHOW THE TERMINAL CURSOR AGAIN
-            _PYTHON_PROGRESSBAR_STATE.active = False
             if stdout is not None:
                 stdout.write('\n')
                 stdout.flush()
                 stdout.write(f'{ERROR}')
+                _PYTHON_PROGRESSBAR_STATE.active = False
                 ansi.show_terminal_cursor()
         finally:
             #WHEN THE PYTHON PROGRESSBAR IS ACTIVE AND THE OUTERMOST CALLING DECORATED FUNCTION FINISHES,
             #TURN OFF THE PYTHON PROGRESSBAR, WRITE A NEWLINE TO STDOUT,  AND SHOW THE TERMINAL CURSOR AGAIN
-            _PYTHON_PROGRESSBAR_STATE.active = False
             if stdout is not None:
                 stdout.write('\n')
                 stdout.flush()
+                _PYTHON_PROGRESSBAR_STATE.active = False
                 ansi.show_terminal_cursor()
     return wrapper
 
@@ -722,8 +724,6 @@ def aes_gcm_encrypt_file(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
-        if PYTHON_PROGRESSBAR and not PROCESSED_FOLDER_BYTES_TOTAL:
-            ansi.hide_terminal_cursor()
         FILE_PATH = abspath(FILE_PATH)
         KEY_SIZE_LIST = [128, 192, 256]
         BLOCK_SIZE = maxsize if BLOCK_SIZE is None else BLOCK_SIZE
@@ -877,8 +877,6 @@ def aes_gcm_decrypt_file(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
-        if PYTHON_PROGRESSBAR and not PROCESSED_FOLDER_BYTES_TOTAL:
-            ansi.hide_terminal_cursor()
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = maxsize if BLOCK_SIZE is None else BLOCK_SIZE
         if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
