@@ -74,7 +74,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         #HAS NOT RETURNED (WHICH IS CAUGHT BY THE FINALLY BLOCK), RETURN
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
             return FUNCTION(*args, **kwargs)
-        else:
+        elif stdout is not None:
             _PYTHON_PROGRESSBAR_STATE.active = True
             ansi.hide_terminal_cursor()
         try:
@@ -566,7 +566,7 @@ def aes_gcm_encrypt_folder(
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
-        if PYTHON_PROGRESSBAR or all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        if stdout and PYTHON_PROGRESSBAR or TKINTER_PROGRESSBAR_WINDOW:
             FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
@@ -596,7 +596,7 @@ def aes_gcm_encrypt_folder(
             f'{str(ERROR).strip() or "An unknown error occurred!"}\n'
             f'{FOLDER_PATH_MESSAGE}'
         )
-        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
+        if stdout and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
 #THIS FUNCTION:
@@ -647,7 +647,7 @@ def aes_gcm_decrypt_folder(
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
-        if PYTHON_PROGRESSBAR or all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+        if stdout and PYTHON_PROGRESSBAR or TKINTER_PROGRESSBAR_WINDOW:
             FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
@@ -677,7 +677,7 @@ def aes_gcm_decrypt_folder(
             f'{str(ERROR).strip() or "An unknown error occurred!"}\n'
             f'{FOLDER_PATH_MESSAGE}'
         )
-        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
+        if stdout and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
 #THIS FUNCTION:
@@ -772,10 +772,9 @@ def aes_gcm_encrypt_file(
                     #WRITE THE RESERVED SPACE FOR THE HEADER SIZE INTEGER (MAX INTEGER OF 4294967295, BINARY ENCODED INTO 4 BYTES) 
                     #AND THE HEADER BYTES, USING NULL-BYTES
                     OUTFILE.write(pack('>I', RESERVED_HEADER_LENGTH) + (b'\x00' * RESERVED_HEADER_LENGTH))
-                if all(VALUE is None for VALUE in [BYTES_TOTAL, START_TIME, PROCESSED_FOLDER_BYTES_TOTAL]):
-                    if START_TIME is None and any([PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
-                        START_TIME = time()
-                        BYTES_TOTAL = getsize(FILE_PATH)
+                if PROCESSED_FOLDER_BYTES_TOTAL is None and any([stdout and PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
+                    START_TIME = time()
+                    BYTES_TOTAL = getsize(FILE_PATH)
                 #STREAM-ENCRYPT THE PLAINTEXT DATA, IN CHUNKS (TO ALLOW ENCRYPTION OF ALL FILE TYPES)
                 while True:
                     PLAINTEXT_CHUNK = bytearray(INFILE.read(BLOCK_SIZE))
@@ -786,17 +785,14 @@ def aes_gcm_encrypt_file(
                         PROCESSED_BYTES += CHUNK_LENGTH
                         if PROCESSED_FOLDER_BYTES_TOTAL is not None: 
                             PROCESSED_FOLDER_BYTES_TOTAL += CHUNK_LENGTH
-                        if PYTHON_PROGRESSBAR: 
+                        if stdout and PYTHON_PROGRESSBAR: 
                             python_progressbar(BYTES_TOTAL, START_TIME, PROCESSED_BYTES)
                         if TKINTER_PROGRESSBAR_WINDOW:
                             PERCENT_COMPLETE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
-                            ELAPSED_SECONDS = time() - START_TIME
-                            if ELAPSED_SECONDS <= 0: 
-                                ETA_SECONDS = 0
-                            else:
-                                BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
-                                REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
-                                ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
+                            ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
+                            BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
+                            REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
+                            ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
@@ -920,9 +916,7 @@ def aes_gcm_decrypt_file(
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
             INFILE.seek(TOTAL_HEADERS_SIZE)
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
-                #IF RUNNING A TKINTER PROGRESSBAR FROM THIS FUNCTION,
-                #THE REQUIRED VARIABLES ARE SET
-                if START_TIME is None and any([PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
+                if PROCESSED_FOLDER_BYTES_TOTAL is None and any([stdout and PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
                     START_TIME = time()
                     BYTES_TOTAL = getsize(FILE_PATH)
                 #STREAM-DECRYPT THE ENCRYPTED DATA, IN CHUNKS (TO ALLOW DECRYPTION OF ALL FILE TYPES)
@@ -947,17 +941,14 @@ def aes_gcm_decrypt_file(
                         PROCESSED_BYTES += CHUNK_LENGTH
                         if PROCESSED_FOLDER_BYTES_TOTAL is not None:
                             PROCESSED_FOLDER_BYTES_TOTAL += CHUNK_LENGTH
-                        if PYTHON_PROGRESSBAR:
+                        if stdout and PYTHON_PROGRESSBAR:
                             python_progressbar(BYTES_TOTAL, START_TIME, PROCESSED_BYTES)
                         if TKINTER_PROGRESSBAR_WINDOW:
                             PERCENT_COMPLETE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
-                            ELAPSED_SECONDS = time() - START_TIME
-                            if ELAPSED_SECONDS <= 0:
-                                ETA_SECONDS = 0
-                            else:
-                                BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
-                                REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
-                                ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
+                            ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
+                            BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
+                            REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
+                            ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
                             TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
