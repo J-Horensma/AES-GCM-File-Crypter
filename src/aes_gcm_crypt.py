@@ -72,7 +72,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         global _PYTHON_PROGRESSBAR_STATE
         if stdout is not None and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
             return FUNCTION(*args, **kwargs)
-        elif stdout is not None:
+        elif stdout is not None and kwargs.get('PYTHON_PROGRESSBAR'):
             _PYTHON_PROGRESSBAR_STATE.active = True
             ansi.hide_terminal_cursor()
         try:
@@ -80,7 +80,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
         except Exception as ERROR:
             #IF THE PYTHON PROGRESSBAR IS ACTIVE AND AN EXCEPTION OCCURS, WITHIN A DECORATED FUNCTION,
             #THIS DECORATOR WILL CATCH THAT ERROR, WRITE A NEWLINE TO "stdout" AND WRITE THE ERROR TO "stdout"
-            if stdout is not None:
+            if stdout is not None and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
                 stdout.write('\n')
                 stdout.write(f'{ERROR}')
                 stdout.flush()
@@ -88,7 +88,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
             #WHEN "stdout" IS NOT "None", THE PYTHON PROGRESSBAR IS ACTIVE, AND THE OUTERMOST CALLING DECORATED FUNCTION FINISHES OR AN EXCEPTION OCCURS,
             #WRITE A NEWLINE TO "stdout", TURN OFF THE PYTHON PROGRESSBAR, AND SHOW THE TERMINAL CURSOR AGAIN, BEFORE RETURNING
             #THE CALLING DECORATED FUNCTION OR AFTER AN EXCEPTION IS CAUGHT AND PROCESSED ABOVE
-            if stdout is not None:
+            if stdout is not None and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
                 stdout.write('\n')
                 stdout.flush()
                 _PYTHON_PROGRESSBAR_STATE.active = False
@@ -440,6 +440,35 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
 
 #THIS FUNCTION:
 #1.) REQUIRES:
+    #A.) A TOTAL INTEGER
+    #B.) A START TIME FLOAT
+    #C.) A PROCESSED INTEGER
+    #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
+    #E.) A "tkinter.Label()" CLASS (FOR ETA, IN THE GUI PROGRESSBAR WINDOW)
+    #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW, PROGRESSBAR)
+    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE, IN THE GUI PROGRESSBAR WINDOW)
+#2.) UPDATES THE SUPPLIED TKINTER PROGRESSBAR WINDOW
+def update_tkinter_progressbar(
+        TOTAL, START_TIME, PROCESSED, TKINTER_PROGRESSBAR_WINDOW, 
+        TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
+    ):
+    try:
+        PERCENT_COMPLETE = (PROCESSED / TOTAL) * 100
+        ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
+        PROCESSED_PER_SECOND = PROCESSED / ELAPSED_SECONDS
+        REMAINING = TOTAL - PROCESSED
+        ETA_SECONDS = REMAINING / PROCESSED_PER_SECOND
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
+    except Exception as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_tkinter_progressbar()"\n{ERROR_MESSAGE}')
+        
+#THIS FUNCTION:
+#1.) REQUIRES:
     #A.) A FILE OBJECT OPENED, IN BINARY READ MODE
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE
 #3.) RETURNS THE HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
@@ -784,14 +813,10 @@ def aes_gcm_encrypt_file(
                         if stdout and PYTHON_PROGRESSBAR: 
                             python_progressbar(BYTES_TOTAL, START_TIME, PROCESSED_BYTES)
                         if TKINTER_PROGRESSBAR_WINDOW:
-                            PERCENT_COMPLETE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
-                            ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
-                            BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
-                            REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
-                            ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
-                            TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
-                            TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
-                            TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
+                            update_tkinter_progressbar(
+                                BYTES_TOTAL, START_TIME, PROCESSED_BYTES, TKINTER_PROGRESSBAR_WINDOW, 
+                                TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
+                            )
                     ENCRYPTED_CHUNK = bytearray(ENCRYPTOR.update(PLAINTEXT_CHUNK))
                     variable_ram_buffer_wipe(PLAINTEXT_CHUNK)
                     OUTFILE.write(pack('>I', len(ENCRYPTED_CHUNK)) + ENCRYPTED_CHUNK)
@@ -940,14 +965,10 @@ def aes_gcm_decrypt_file(
                         if stdout and PYTHON_PROGRESSBAR:
                             python_progressbar(BYTES_TOTAL, START_TIME, PROCESSED_BYTES)
                         if TKINTER_PROGRESSBAR_WINDOW:
-                            PERCENT_COMPLETE = (PROCESSED_BYTES / BYTES_TOTAL) * 100
-                            ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
-                            BYTES_PER_SECOND = PROCESSED_BYTES / ELAPSED_SECONDS
-                            REMAINING_BYTES = BYTES_TOTAL - PROCESSED_BYTES
-                            ETA_SECONDS = REMAINING_BYTES / BYTES_PER_SECOND
-                            TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
-                            TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
-                            TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
+                            update_tkinter_progressbar(
+                                BYTES_TOTAL, START_TIME, PROCESSED_BYTES, TKINTER_PROGRESSBAR_WINDOW, 
+                                TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
+                            )
                     PLAINTEXT_CHUNK = bytearray(DECRYPTOR.update(ENCRYPTED_CHUNK))
                     variable_ram_buffer_wipe(ENCRYPTED_CHUNK)
                     OUTFILE.write(PLAINTEXT_CHUNK)
