@@ -169,28 +169,30 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     #A.) A 16 BYTE SALT BYTES
     #B.) KDF ITERATIONS INTEGER
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
-#4.) IF A KDF ITERATIONS INTEGER 600_000 OR HIGHER IS NOT SUPPLIED, ONE IS SET TO 600_000
+#4.) IF A KDF ITERATIONS INTEGER IS NOT SUPPLIED, 
+#THE MOST SPEED EFFICIENT AND SECURITY BALANCED ONE IS SET, IN ACCORDANCE WITH THE CPU SPEED
 #5.) A KDF-KEY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
 #6.) RETURNS A LIST CONTAINING:
     #A.) KEY BYTES
     #B.) SALT BYTES
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
+    MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
     if not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif SALT_BYTES and not isinstance(SALT_BYTES, bytes):
+    elif SALT_BYTES is not None and not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type.')
-    elif KDF_ITERATIONS and not isinstance(KDF_ITERATIONS, int):
+    elif KDF_ITERATIONS is not None and not isinstance(KDF_ITERATIONS, int):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
-    elif SALT_BYTES and len(SALT_BYTES) != 16:
+    elif SALT_BYTES is not None and len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
-    elif KDF_ITERATIONS and KDF_ITERATIONS < 600_000:
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer consisting of 600000 or more.')
+    elif not 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS:
+        raise TypeError(f'[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
     else:
         try:
-            KDF_ITERATIONS = 600_000 if KDF_ITERATIONS is None else KDF_ITERATIONS
+            KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
             SALT_BYTES = token_bytes(16) if SALT_BYTES is None else SALT_BYTES
             #CREATE A KEY (1 BYTE = 8 BITS):
             #16 BYTES = 128 BIT, KEY LENGTH (AES-128)
@@ -594,7 +596,7 @@ def aes_gcm_encrypt_folder(
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
-        MAX_KDF_ITERATIONS = int(600_000 * ((cpu_freq().max or 3000) / 3000))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
@@ -677,7 +679,7 @@ def aes_gcm_decrypt_folder(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
-        MAX_KDF_ITERATIONS = int(600_000 * ((cpu_freq().max or 3000) / 3000))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
@@ -771,7 +773,7 @@ def aes_gcm_encrypt_file(
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
-        MAX_KDF_ITERATIONS = int(600_000 * ((cpu_freq().max or 3000) / 3000))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
@@ -917,7 +919,7 @@ def aes_gcm_decrypt_file(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
-        MAX_KDF_ITERATIONS = int(600_000 * ((cpu_freq().max or 3000) / 3000))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
