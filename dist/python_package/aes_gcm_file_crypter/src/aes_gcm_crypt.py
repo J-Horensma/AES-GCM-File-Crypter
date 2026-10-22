@@ -452,6 +452,20 @@ def update_tkinter_progressbar(
         TOTAL, START_TIME, PROCESSED, TKINTER_PROGRESSBAR_WINDOW, 
         TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
     ):
+    if not isinstance(TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe total parameter must be an integer type.')
+    elif not isinstance(START_TIME, float):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe start time parameter must be a float type.')
+    elif not isinstance(PROCESSED, int):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe processed parameter must be an integer type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
     try:
         PERCENT_COMPLETE = (PROCESSED / TOTAL) * 100
         ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
