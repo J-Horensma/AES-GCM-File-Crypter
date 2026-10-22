@@ -70,9 +70,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
     @wraps(FUNCTION)
     def wrapper(*args, **kwargs):
         global _PYTHON_PROGRESSBAR_STATE
-        #IF THE PYTHON PROGRESSBAR IS ACTIVE AND THE OUTERMOST CALLING DECORATED FUNCTION
-        #HAS NOT RETURNED (WHICH IS CAUGHT BY THE FINALLY BLOCK), RETURN
-        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
+        if stdout is not None and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
             return FUNCTION(*args, **kwargs)
         elif stdout is not None:
             _PYTHON_PROGRESSBAR_STATE.active = True
@@ -81,17 +79,15 @@ def error_safe_python_progressbar_decorator(FUNCTION):
             return FUNCTION(*args, **kwargs)
         except Exception as ERROR:
             #IF THE PYTHON PROGRESSBAR IS ACTIVE AND AN EXCEPTION OCCURS, WITHIN A DECORATED FUNCTION,
-            #TURN OFF THE PYTHON PROGRESSBAR, WRITE A NEWLINE TO STDOUT, 
-            #WRITE THE ERROR TO STDOUT, AND SHOW THE TERMINAL CURSOR AGAIN
+            #THIS DECORATOR WILL CATCH THAT ERROR, WRITE A NEWLINE TO "stdout" AND WRITE THE ERROR TO "stdout"
             if stdout is not None:
                 stdout.write('\n')
-                stdout.flush()
                 stdout.write(f'{ERROR}')
-                _PYTHON_PROGRESSBAR_STATE.active = False
-                ansi.show_terminal_cursor()
+                stdout.flush()
         finally:
-            #WHEN THE PYTHON PROGRESSBAR IS ACTIVE AND THE OUTERMOST CALLING DECORATED FUNCTION FINISHES,
-            #TURN OFF THE PYTHON PROGRESSBAR, WRITE A NEWLINE TO STDOUT,  AND SHOW THE TERMINAL CURSOR AGAIN
+            #WHEN "stdout" IS NOT "None", THE PYTHON PROGRESSBAR IS ACTIVE, AND THE OUTERMOST CALLING DECORATED FUNCTION FINISHES OR AN EXCEPTION OCCURS,
+            #WRITE A NEWLINE TO "stdout", TURN OFF THE PYTHON PROGRESSBAR, AND SHOW THE TERMINAL CURSOR AGAIN, BEFORE RETURNING
+            #THE CALLING DECORATED FUNCTION OR AFTER AN EXCEPTION IS CAUGHT AND PROCESSED ABOVE
             if stdout is not None:
                 stdout.write('\n')
                 stdout.flush()
