@@ -329,6 +329,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
+        ALL_FILE_PATHS = []
         FILES_TOTAL = 0
         BYTES_TOTAL = 0
         for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
@@ -339,6 +340,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
                 ) 
                 for FILE_NAME in FILE_NAMES
             ]
+            ALL_FILE_PATHS.extend(FILE_PATHS)
             for FILE_PATH in FILE_PATHS:
                 if FILE_PATH[0]:
                     FILES_TOTAL += 1
@@ -635,7 +637,7 @@ def aes_gcm_encrypt_folder(
             f'{str(ERROR).strip() or "An unknown error occurred!"}\n'
             f'{FOLDER_PATH_MESSAGE}'
         )
-        if stdout and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
+        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
 #THIS FUNCTION:
@@ -716,7 +718,7 @@ def aes_gcm_decrypt_folder(
             f'{str(ERROR).strip() or "An unknown error occurred!"}\n'
             f'{FOLDER_PATH_MESSAGE}'
         )
-        if stdout and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
+        if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
 #THIS FUNCTION:
