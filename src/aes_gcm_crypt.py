@@ -491,75 +491,67 @@ def update_tkinter_progressbar(
         
 #THIS FUNCTION:
 #1.) REQUIRES:
-    #A.) A FILE OBJECT OPENED, IN BINARY READ MODE
+    #A.) A FILE PATH STRING
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE FILE
-#3.) RETURNS THE HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
-def check_aes_gcm_headers(FILE):
-    if not isinstance(FILE, IOBase) or 'r' not in FILE.mode or 'b' not in FILE.mode:
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file parameter must be a file object, in binary read mode.')
-    else:
-        try:
+#3.) RETURNS EXISTING AES-GCM HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
+def check_aes_gcm_headers(FILE_PATH):
+    if not isinstance(FILE_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a string type.')
+    elif not isabs(FILE_PATH):
+        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path.')
+    elif not isabs(FILE_PATH):
+        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a path to an existing file.')
+    try:
+        with open(FILE_PATH, 'rb') as FILE:
             TOTAL_HEADERS_SIZE = 0
             #READ THE HEADER SIZE DATA (FIRST 4 BYTES OF EVERY AES-GCM ENCRYPTION HEADER, ENCODED INTO BIG ENDIAN BINARY BYTES)
             ALGORITHM_AND_MODE_HEADER_SIZE_DATA = FILE.read(4)
             #CHECK IF THE FILE IS EMPTY, BY CHECKING FOR THE FIRST AES-GCM ENCRYPTION HEADER'S SIZE DATA
-            if len(ALGORITHM_AND_MODE_HEADER_SIZE_DATA) == 0:
-                FILE.seek(0); return [None, 'FILE_EMPTY']
+            if len(ALGORITHM_AND_MODE_HEADER_SIZE_DATA) == 0: return [None, 'FILE_EMPTY']
             #THE "aes_gcm_encrypt_file()" FUNCTION, WRITES HEADERS TO AES-GCM ENCRYPTED FILES, IN THE FORMAT: 
             #4 BYTES (CONTAINING BIG ENDIAN BINARY ENCODED HEADER SIZE DATA) + HEADER BYTES
             #LESS THAN 4 BYTES, MEANS THE HEADER SIZE DATA, IS TRUNCATED 
-            if len(ALGORITHM_AND_MODE_HEADER_SIZE_DATA) != 4:
-                FILE.seek(0); return [None, 'ALGORITHM_AND_MODE_HEADER_SIZE_TRUNCATED']
+            if len(ALGORITHM_AND_MODE_HEADER_SIZE_DATA) != 4: return [None, 'ALGORITHM_AND_MODE_HEADER_SIZE_TRUNCATED']
             #CONVERT THE HEADER SIZE DATA, FROM BIG ENDIAN BINARY ENCODED, TO AN INTEGER, REPRESENTING THE BYTES LENGTH OF THE HEADER
             (ALGORITHM_AND_MODE_HEADER_SIZE,) = unpack('>I', ALGORITHM_AND_MODE_HEADER_SIZE_DATA)
             #READ THE LENGTH OF THE HEADER
             ALGORITHM_AND_MODE_HEADER = FILE.read(ALGORITHM_AND_MODE_HEADER_SIZE)
             #CHECK IF THE FILE, IS AES-GCM ENCRYPTED
-            if ALGORITHM_AND_MODE_HEADER != b'AES-GCM':
-                FILE.seek(0); return [None, 'NOT_AES-GCM_ENCRYPTED']
+            if ALGORITHM_AND_MODE_HEADER != b'AES-GCM': return [None, 'NOT_AES-GCM_ENCRYPTED']
             #CHECK IF THE HEADER, IS CORRUPTED
-            elif ALGORITHM_AND_MODE_HEADER_SIZE != len(ALGORITHM_AND_MODE_HEADER):
-                FILE.seek(0); return [None, 'ALGORITHM_AND_MODE_HEADER_CORRUPTED']
+            elif ALGORITHM_AND_MODE_HEADER_SIZE != len(ALGORITHM_AND_MODE_HEADER): return [None, 'ALGORITHM_AND_MODE_HEADER_CORRUPTED']
             #UPDATE THE TOTAL HEADERS SIZE VARIABLE, REPRESENTING THE TOTAL BYTES LENGTH OF ALL THE AES-GCM ENCRYPTION HEADERS
             TOTAL_HEADERS_SIZE += 4 + ALGORITHM_AND_MODE_HEADER_SIZE
             KEY_SIZE_HEADER_SIZE_DATA = FILE.read(4)
-            if len(KEY_SIZE_HEADER_SIZE_DATA) != 4:
-                FILE.seek(0); return [None, 'KEY_SIZE_HEADER_SIZE_TRUNCATED']
+            if len(KEY_SIZE_HEADER_SIZE_DATA) != 4: return [None, 'KEY_SIZE_HEADER_SIZE_TRUNCATED']
             (KEY_SIZE_HEADER_SIZE,) = unpack('>I', KEY_SIZE_HEADER_SIZE_DATA)
             KEY_SIZE_HEADER = FILE.read(KEY_SIZE_HEADER_SIZE)
             TOTAL_HEADERS_SIZE += 4 + KEY_SIZE_HEADER_SIZE
             NONCE_BYTES_HEADER_SIZE_DATA = FILE.read(4)
-            if len(NONCE_BYTES_HEADER_SIZE_DATA) != 4:
-                FILE.seek(0); return [None, 'NONCE_BYTES_HEADER_SIZE_TRUNCATED']
+            if len(NONCE_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'NONCE_BYTES_HEADER_SIZE_TRUNCATED']
             (NONCE_BYTES_HEADER_SIZE,) = unpack('>I', NONCE_BYTES_HEADER_SIZE_DATA)
             NONCE_BYTES_HEADER = FILE.read(NONCE_BYTES_HEADER_SIZE)
-            if NONCE_BYTES_HEADER_SIZE != len(NONCE_BYTES_HEADER) or len(NONCE_BYTES_HEADER) != 12:
-                FILE.seek(0); return [None, 'NONCE_BYTES_HEADER_CORRUPTED']
+            if NONCE_BYTES_HEADER_SIZE != len(NONCE_BYTES_HEADER) or len(NONCE_BYTES_HEADER) != 12: return [None, 'NONCE_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + NONCE_BYTES_HEADER_SIZE
             TAG_BYTES_HEADER_SIZE_DATA = FILE.read(4)
-            if len(TAG_BYTES_HEADER_SIZE_DATA) != 4:
-                FILE.seek(0); return [None, 'TAG_BYTES_HEADER_SIZE_TRUNCATED']
+            if len(TAG_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'TAG_BYTES_HEADER_SIZE_TRUNCATED']
             (TAG_BYTES_HEADER_SIZE,) = unpack('>I', TAG_BYTES_HEADER_SIZE_DATA)
             TAG_BYTES_HEADER = FILE.read(TAG_BYTES_HEADER_SIZE)
-            if TAG_BYTES_HEADER_SIZE != len(TAG_BYTES_HEADER) or len(TAG_BYTES_HEADER) != 16:
-                FILE.seek(0); return [None, 'TAG_BYTES_HEADER_CORRUPTED']
+            if TAG_BYTES_HEADER_SIZE != len(TAG_BYTES_HEADER) or len(TAG_BYTES_HEADER) != 16: return [None, 'TAG_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + TAG_BYTES_HEADER_SIZE
             SALT_BYTES_HEADER_SIZE_DATA = FILE.read(4)
-            if len(SALT_BYTES_HEADER_SIZE_DATA) != 4:
-                FILE.seek(0); return [None, 'SALT_BYTES_HEADER_SIZE_TRUNCATED']
+            if len(SALT_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'SALT_BYTES_HEADER_SIZE_TRUNCATED']
             (SALT_BYTES_HEADER_SIZE,) = unpack('>I', SALT_BYTES_HEADER_SIZE_DATA)
             SALT_BYTES_HEADER = FILE.read(SALT_BYTES_HEADER_SIZE)
-            if SALT_BYTES_HEADER_SIZE != len(SALT_BYTES_HEADER) or len(SALT_BYTES_HEADER) != 16:
-                FILE.seek(0); return [None, 'SALT_BYTES_HEADER_CORRUPTED']
+            if SALT_BYTES_HEADER_SIZE != len(SALT_BYTES_HEADER) or len(SALT_BYTES_HEADER) != 16: return [None, 'SALT_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + SALT_BYTES_HEADER_SIZE
-            if TOTAL_HEADERS_SIZE != 74:
-                FILE.seek(0); return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
-            FILE.seek(0); return [ALGORITHM_AND_MODE_HEADER.decode(), int(KEY_SIZE_HEADER.decode()), NONCE_BYTES_HEADER, TAG_BYTES_HEADER, SALT_BYTES_HEADER, TOTAL_HEADERS_SIZE]
-        except Exception as ERROR:
-            EXCEPTION_CLASS = ERROR.__class__
-            EXCEPTION_NAME = ERROR.__class__.__name__
-            ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
-            raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "check_aes_gcm_headers()"\n{ERROR_MESSAGE}')
+            if TOTAL_HEADERS_SIZE != 74: return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
+            return [ALGORITHM_AND_MODE_HEADER.decode(), int(KEY_SIZE_HEADER.decode()), NONCE_BYTES_HEADER, TAG_BYTES_HEADER, SALT_BYTES_HEADER, TOTAL_HEADERS_SIZE]
+    except Exception as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "check_aes_gcm_headers()"\n{ERROR_MESSAGE}')
         
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -810,7 +802,7 @@ def aes_gcm_encrypt_file(
             PROCESSED_BYTES = 0
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE IS EMPTY OR ALREADY AES-GCM ENCRYPTED
-            AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
+            AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(FILE_PATH)
             if AES_GCM_HEADERS_CHECK[1] == 'FILE_EMPTY':
                 return [False, f'FILE_EMPTY!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             elif AES_GCM_HEADERS_CHECK[0]:
@@ -942,7 +934,7 @@ def aes_gcm_decrypt_file(
         #OPEN THE FILE TO DECRYPT, IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR HAS ANY OTHER ERROR
-            AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(INFILE)
+            AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(FILE_PATH)
             if not AES_GCM_HEADERS_CHECK[0]:
                 return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             ALGORITHM_AND_MODE, KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES, TOTAL_HEADERS_SIZE = AES_GCM_HEADERS_CHECK
