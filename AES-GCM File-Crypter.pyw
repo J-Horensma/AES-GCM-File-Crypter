@@ -23,7 +23,7 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 from threading import Thread
 from os.path import abspath, join, dirname, getsize
 from platform import system
-from tkinter import Tk, ttk, Frame, scrolledtext, Button, messagebox
+from tkinter import Tk, Menu, messagebox, Frame, scrolledtext, Button
 try:
     from .src.tkinter_functions import (
         set_window_icon, center_window, dropdown_menu_prompt, create_password_prompt, 
@@ -45,6 +45,9 @@ except ImportError:
 
 def main():
     try:
+        #SET THE VERSION AND EDITION
+        _VERSION = '1.0.0'
+        _EDITION = 'Standard'
         if system() != 'Windows':
             from signal import signal, SIGTSTP
             def handle_ctrl_z(signum, frame):
@@ -196,7 +199,18 @@ def main():
         WINDOW_WIDTH = 900
         WINDOW_HEIGHT = 500
         center_window(ROOT_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT)
-        ROOT_WINDOW.title('AES-GCM File-Crypter')
+        ROOT_WINDOW.title(f'AES-GCM File-Crypter {_VERSION} (Standard)')
+        MENU_BAR = Menu(ROOT_WINDOW)
+        HELP_MENU = Menu(MENU_BAR, tearoff=0)
+        HELP_MENU.add_command(
+            label=f'About',
+            command=lambda: messagebox.showinfo(
+                'About',
+                f'AES-GCM File-Crypter ({_EDITION})\nVersion {_VERSION}'
+            )
+        )
+        MENU_BAR.add_cascade(label='Help', menu=HELP_MENU)
+        ROOT_WINDOW.config(menu=MENU_BAR)
         BUTTON_FRAME = Frame(ROOT_WINDOW, bg='#D3D5D4')
         BUTTON_FRAME.pack(expand=True)
         ENCRYPT_FOLDER_BUTTON = Button(
