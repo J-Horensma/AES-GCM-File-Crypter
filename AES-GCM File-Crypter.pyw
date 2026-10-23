@@ -110,14 +110,14 @@ def main():
                 return
             ACTIVITY_LOG.config(state='normal')
             CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(FOLDER_PATH)[2])
-            ACTIVITY_LOG.insert('insert', f'AES-GCM decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('end', f'AES-GCM decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
                 enable_buttons()
                 ACTIVITY = DECRYPT_RESULT[1]
                 ACTIVITY_LOG.config(state='normal')
-                ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
+                ACTIVITY_LOG.insert('end', f'{ACTIVITY}\n\n')
                 ACTIVITY_LOG.config(state='disabled')
                 ACTIVITY_LOG.see('end')
                 PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
@@ -172,14 +172,14 @@ def main():
             if PASSWORD is None:
                 return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'AES-GCM decrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('end', f'AES-GCM decrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
                 enable_buttons()
                 ACTIVITY = DECRYPT_RESULT[1]
                 ACTIVITY_LOG.config(state='normal')
-                ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
+                ACTIVITY_LOG.insert('end', f'{ACTIVITY}\n\n')
                 ACTIVITY_LOG.config(state='disabled')
                 ACTIVITY_LOG.see('end')
                 PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
