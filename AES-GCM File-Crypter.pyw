@@ -247,6 +247,4 @@ def main():
 if __package__ in (None, ''):
     main()
 else:
-    #SKIP CALLING THE "main()" FUNCTION IF THIS FILE IS IMPORTED AS A PYTHON PACKAGE,
-    #SO THE "main()" FUNCTION DOES NOT GET CALLED A SECOND TIME WHEN THE APPLICATION IS CLOSED
     pass
