@@ -70,7 +70,7 @@ def cli():
         elif ARGUMENTS.COMMAND == 'decrypt_folder':
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_decrypt_folder
             CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(ARGUMENTS.folder_path)[2])
-            print(f'Decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
+            print(f'AES-GCM decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return DECRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'encrypt_file':
@@ -80,7 +80,7 @@ def cli():
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_file':
             from .src.aes_gcm_crypt import convert_bytes, aes_gcm_decrypt_file
-            print(f'Decrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
+            print(f'AES-GCM decrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return DECRYPT_RESULT[1].strip()
     except KeyboardInterrupt:
