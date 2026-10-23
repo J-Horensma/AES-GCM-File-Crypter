@@ -111,7 +111,7 @@ def variable_ram_buffer_wipe(VARIABLES):
                 #IF THE VARIABLE VALUE IS A BYTEARRAY TYPE, OVERWRITE IT'S RAM BUFFER CONTENTS 
                 #TO ZEROED BYTES, TO PREVENT THE VARIABLE VALUE FROM REMAINING, IN THE RAM
                 VALUE[:] = b'\x00' * len(VALUE)
-            elif VALUE is not None:
+            elif isinstance(VARIABLES, (str, bytes)):
                 #PYTHON VARIABLES THAT ARE NOT BYTEARRAY TYPES ARE IMMUTABLE AND
                 #CANNOT HAVE THEIR RAM BUFFER VALUES CHANGED DYNAMICALLY, HOWEVER, 
                 #THE VARIABLE VALUE CAN BE OVERWRITTEN AND UPDATED,
@@ -851,11 +851,8 @@ def aes_gcm_encrypt_file(
                 for HEADER in HEADERS_LIST:
                     HEADER_BYTES = HEADER if isinstance(HEADER, bytes) else str(HEADER).encode()
                     OUTFILE.write(pack('>I', len(HEADER_BYTES)) + HEADER_BYTES)
-                #DELETE THE HEADERS LIST AND HEADER VARIABLES, AFTER WRITING TO THE TEMPORARY FILE, 
-                #TO PREVENT ANY HEADER DATA FROM BEING STORED, IN THE RAM
-                del HEADERS_LIST, HEADER
-                #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
-                del NONCE_BYTES, TAG_BYTES, SALT_BYTES
+                    variable_ram_buffer_wipe([HEADER, HEADER_BYTES])
+                variable_ram_buffer_wipe([HEADERS_LIST, NONCE_BYTES, TAG_BYTES, SALT_BYTES])
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
             variable_ram_buffer_wipe(PASSWORD)
         file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
@@ -951,8 +948,7 @@ def aes_gcm_decrypt_file(
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES, KDF_ITERATIONS)[0]
             #USE THE KEY, NONCE, AND TAG BYTES TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
-            #DELETE THE NONCE, TAG, AND SALT BYTES TO PREVENT STORING THEM, IN THE RAM
-            del NONCE_BYTES, TAG_BYTES, SALT_BYTES
+            variable_ram_buffer_wipe([NONCE_BYTES, TAG_BYTES, SALT_BYTES])
             #START THE DECRYPTION STREAMER
             DECRYPTOR = CIPHER.decryptor()
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
