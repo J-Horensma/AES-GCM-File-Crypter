@@ -134,6 +134,10 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
         raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a string type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
         raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer type.')
+    elif not isabs(FILE_PATH):
+        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute file path.')
+    elif not isfile(FILE_PATH):
+        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a path to an existing file.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = 65536 if BLOCK_SIZE is None else BLOCK_SIZE
