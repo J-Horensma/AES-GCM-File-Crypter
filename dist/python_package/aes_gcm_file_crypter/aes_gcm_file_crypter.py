@@ -51,19 +51,16 @@ def main():
                 print('"Ctrl + z" was pressed, closing AES-GCM File-Crypter...')
                 ROOT_WINDOW.quit()
             signal(SIGTSTP, handle_ctrl_z)
-            
         def disable_buttons():
             ENCRYPT_FOLDER_BUTTON.config(state='disabled')
             DECRYPT_FOLDER_BUTTON.config(state='disabled')
             ENCRYPT_FILE_BUTTON.config(state='disabled')
             DECRYPT_FILE_BUTTON.config(state='disabled')
-    
         def enable_buttons():
             ENCRYPT_FOLDER_BUTTON.config(state='normal')
             DECRYPT_FOLDER_BUTTON.config(state='normal')
             ENCRYPT_FILE_BUTTON.config(state='normal')
             DECRYPT_FILE_BUTTON.config(state='normal')
-    
         def aes_gcm_encrypt_folder_thread():
             PROMPT_TITLE = 'Choose A Folder To Encrypt'
             FOLDER_PATH = folder_path_prompt(PROMPT_TITLE)
@@ -80,31 +77,24 @@ def main():
             PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH)
             if PASSWORD is None:
                 return
-            else:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Confirm Selection',
-                    message=f'The folder path:\n"{FOLDER_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
-                )
-                if not CONFIRMATION:
-                    return
             ACTIVITY_LOG.config(state='normal')
             CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(FOLDER_PATH)[2])
-            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('end', f'AES-GCM-{KEY_SIZE} encrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
                 enable_buttons()
                 ACTIVITY = ENCRYPT_RESULT[1]
                 ACTIVITY_LOG.config(state='normal')
-                ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
+                ACTIVITY_LOG.insert('end', f'{ACTIVITY}\n\n')
                 ACTIVITY_LOG.config(state='disabled')
                 ACTIVITY_LOG.see('end')
-                PROGRESSBAR_WINDOW.after(100, lambda: PROGRESSBAR_WINDOW.destroy())
+                PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
             def start_process():
                 disable_buttons()
                 PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
                 ENCRYPT_RESULT = aes_gcm_encrypt_folder(FOLDER_PATH, KEY_SIZE, PASSWORD, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
-                ROOT_WINDOW.after(100, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
+                ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
             Thread(target=start_process, daemon=True).start()
     
         def aes_gcm_decrypt_folder_thread():    
@@ -117,7 +107,7 @@ def main():
                 return
             ACTIVITY_LOG.config(state='normal')
             CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(FOLDER_PATH)[2])
-            ACTIVITY_LOG.insert('insert', f'Decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('insert', f'AES-GCM decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{FOLDER_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
@@ -127,12 +117,12 @@ def main():
                 ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
                 ACTIVITY_LOG.config(state='disabled')
                 ACTIVITY_LOG.see('end')
-                PROGRESSBAR_WINDOW.after(100, lambda: PROGRESSBAR_WINDOW.destroy())
+                PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
             def start_process():
                 disable_buttons()
                 PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
                 DECRYPT_RESULT = aes_gcm_decrypt_folder(FOLDER_PATH, PASSWORD, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE)
-                ROOT_WINDOW.after(100, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
+                ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
             Thread(target=start_process, daemon=True).start()
     
         def aes_gcm_encrypt_file_thread():
@@ -151,30 +141,23 @@ def main():
             PASSWORD = create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH)
             if PASSWORD is None:
                 return
-            else:
-                CONFIRMATION = messagebox.askyesno(
-                    title='Confirm Selection',
-                    message=f'The file path:\n"{FILE_PATH}", will be AES-GCM-{KEY_SIZE} encrypted.\nAre you sure you want to continue?'
-                )
-                if not CONFIRMATION:
-                    return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'AES-GCM-{KEY_SIZE} encrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('end', f'AES-GCM-{KEY_SIZE} encrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW):
                 enable_buttons()
                 ACTIVITY = ENCRYPT_RESULT[1]
                 ACTIVITY_LOG.config(state='normal')
-                ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
+                ACTIVITY_LOG.insert('end', f'{ACTIVITY}\n\n')
                 ACTIVITY_LOG.config(state='disabled')
                 ACTIVITY_LOG.see('end')
-                PROGRESSBAR_WINDOW.after(100, lambda: PROGRESSBAR_WINDOW.destroy())
+                PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
             def start_process():
                 disable_buttons()
                 PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
                 ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH, KEY_SIZE, PASSWORD, None, None, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
-                ROOT_WINDOW.after(100, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
+                ROOT_WINDOW.after(0, lambda: finish_process(ENCRYPT_RESULT, PROGRESSBAR_WINDOW))
             Thread(target=start_process, daemon=True).start()
     
         def aes_gcm_decrypt_file_thread():
@@ -186,7 +169,7 @@ def main():
             if PASSWORD is None:
                 return
             ACTIVITY_LOG.config(state='normal')
-            ACTIVITY_LOG.insert('insert', f'Decrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
+            ACTIVITY_LOG.insert('insert', f'AES-GCM decrypting a total of {convert_bytes(getsize(FILE_PATH))}, in the file: "{FILE_PATH}"\nplease wait...\n')
             ACTIVITY_LOG.config(state='disabled')
             ACTIVITY_LOG.see('end')
             def finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW):
@@ -196,12 +179,12 @@ def main():
                 ACTIVITY_LOG.insert('insert', f'{ACTIVITY}\n\n')
                 ACTIVITY_LOG.config(state='disabled')
                 ACTIVITY_LOG.see('end')
-                PROGRESSBAR_WINDOW.after(100, lambda: PROGRESSBAR_WINDOW.destroy())
+                PROGRESSBAR_WINDOW.after(0, lambda: PROGRESSBAR_WINDOW.destroy())
             def start_process():
                 disable_buttons()
                 PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE = progressbar_window(ROOT_WINDOW)
                 DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH, PASSWORD, None, None, None, None, False, PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE, None)
-                ROOT_WINDOW.after(100, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
+                ROOT_WINDOW.after(0, lambda: finish_process(DECRYPT_RESULT, PROGRESSBAR_WINDOW))
             Thread(target=start_process, daemon=True).start()
     
         ROOT_WINDOW = Tk()
