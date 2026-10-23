@@ -394,13 +394,13 @@ def convert_seconds(SECONDS):
     if not isinstance(SECONDS, (int, float)):
         raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds parameter must be an integer or float type.')
     try:
-        YEARS = f'{round((SECONDS // 31536000))}y:' if SECONDS // 31536000 > 0 else ''; REMAINDER_SECONDS = SECONDS % 31536000
-        MONTHS = f'{round((REMAINDER_SECONDS // 2628000))}M:' if REMAINDER_SECONDS // 2628000 > 0 else ''; REMAINDER_SECONDS %= 2628000
-        WEEKS = f'{round((REMAINDER_SECONDS // 604800))}w:' if REMAINDER_SECONDS // 604800 > 0 else ''; REMAINDER_SECONDS %= 604800
-        DAYS = f'{round((REMAINDER_SECONDS // 86400))}d:' if REMAINDER_SECONDS // 86400 > 0 else ''; REMAINDER_SECONDS %= 86400
-        HOURS = f'{round((REMAINDER_SECONDS // 3600))}h:' if REMAINDER_SECONDS // 3600 > 0 else ''; REMAINDER_SECONDS %= 3600
-        MINUTES = f'{round((REMAINDER_SECONDS // 60))}m:' if REMAINDER_SECONDS // 60 > 0 else ''; REMAINDER_SECONDS %= 60
-        SECONDS = f'{round((REMAINDER_SECONDS % 60))}s'
+        YEARS = f'{round(SECONDS // 31536000)}y:' if SECONDS // 31536000 > 0 else ''; REMAINDER_SECONDS = SECONDS % 31536000
+        MONTHS = f'{round(REMAINDER_SECONDS // 2628000)}M:' if REMAINDER_SECONDS // 2628000 > 0 else ''; REMAINDER_SECONDS %= 2628000
+        WEEKS = f'{round(REMAINDER_SECONDS // 604800)}w:' if REMAINDER_SECONDS // 604800 > 0 else ''; REMAINDER_SECONDS %= 604800
+        DAYS = f'{round(REMAINDER_SECONDS // 86400)}d:' if REMAINDER_SECONDS // 86400 > 0 else ''; REMAINDER_SECONDS %= 86400
+        HOURS = f'{round(REMAINDER_SECONDS // 3600)}h:' if REMAINDER_SECONDS // 3600 > 0 else ''; REMAINDER_SECONDS %= 3600
+        MINUTES = f'{round(REMAINDER_SECONDS // 60)}m:' if REMAINDER_SECONDS // 60 > 0 else ''; REMAINDER_SECONDS %= 60
+        SECONDS = f'{round(REMAINDER_SECONDS % 60)}s'
         CONVERTED_SECONDS = f'{YEARS}{MONTHS}{WEEKS}{DAYS}{HOURS}{MINUTES}{SECONDS}'
         return CONVERTED_SECONDS
     except Exception as ERROR:
