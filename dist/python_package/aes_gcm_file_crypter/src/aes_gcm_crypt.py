@@ -180,6 +180,8 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 #6.) RETURNS A LIST CONTAINING:
     #A.) KEY BYTES
     #B.) SALT BYTES
+#7.) CAN BE CALLED WITH THE SAME PASSWORD PREVIOUSLY USED AND IT'S RETURNED SALT BYTES, 
+#TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTES FOR PASSWORD MATCHING
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
     MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
@@ -217,13 +219,13 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             elif isinstance(PASSWORD, bytearray):
                 ENCODED_PASSWORD = bytearray(PASSWORD)
             #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION,
-            #STORES THE RETURNED KEY BYTES OBJECT VALUE, IN C-SIDE BUFFERS, NOT THE RAM (MORE DIFFICULT TO INSPECT)
+            #STORES THE RETURNED KEY-BYTES OBJECT VALUE, IN C-SIDE BUFFERS, NOT THE RAM (MORE DIFFICULT TO INSPECT)
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
             #THE PASSWORD VARIABLE'S RAM BUFFER IS THE RAM BUFFER FOR THE PASSWORD VARIABLE OF THE CALLER THAT PASSED IT,
             #SO WIPING IT FROM THE CALLER, WILL WIPE IT HERE TOO.
-            #ONLY THE ENCODED PASSWORD VARIABLE SHOULD BE WIPED OR NULL BYTE KEY BYTES WILL BE RETURNED, AS KEY BYTES BY THIS FUNCTION,
-            #IN SUBSEQUENT CALLS, SUCH AS, IN "encrypt_folder()" OR "decrypt_folder()", AS IT WILL WIPE THE ORIGINAL PASSWORD VARIABLE
-            #FROM THEM, BEFORE THEY FINISH.
+            #ONLY THE ENCODED PASSWORD VARIABLE IS WIPED BY THIS FUNCTION, SO SUBSEQUENT CALLS, SUCH AS IN "aes_gcm_encrypt_folder()", 
+            #"aes_gcm_decrypt_folder()", "aes_gcm_encrypt_file()", OR "aes_gcm_decrypt_file()", DO NOT HAVE THEIR PASSWORD VARIABLE WIPED
+            #FROM THEM, BEFORE THEY FINISH. 
             variable_ram_buffer_wipe(ENCODED_PASSWORD)
             return [KEY_BYTES, SALT_BYTES]
         except Exception as ERROR:
@@ -235,7 +237,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
 #THIS FUNCTION:
 #1.) REQUIRES A PATH STRING
 #2.) CHECKS IF THE PATH IS A NORMAL PATH
-#3.) RETURNS "True" OR "False"
+#3.) RETURNS A "True" OR "False" BOOLEAN
 def is_normal(PATH):
     try:
         PATH = abspath(PATH)
@@ -245,14 +247,14 @@ def is_normal(PATH):
         if not any([S_ISDIR(PATH_MODE), S_ISREG(PATH_MODE)]):
             return False
         elif system() == 'Windows':
-            #CHECK IF THE PATH, IS A HIDDEN, SYSTEM, OR REPARSE-POINT PATH
+            #CHECK IF THE PATH IS A HIDDEN, SYSTEM, OR REPARSE-POINT PATH
             WINDOWS_FILE_ATTRIBUTE_HIDDEN = 0x2
             WINDOWS_FILE_ATTRIBUTE_SYSTEM = 0x4
             WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT = 0x400
             WINDOWS_FILE_ATTRIBUTES = PATH_STATUS.st_file_attributes
-            if WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_SYSTEM:
+            if WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_HIDDEN:
                 return False
-            elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_HIDDEN:
+            elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_SYSTEM:
                 return False
             elif WINDOWS_FILE_ATTRIBUTES & WINDOWS_FILE_ATTRIBUTE_REPARSE_POINT:
                 return False
@@ -263,9 +265,9 @@ def is_normal(PATH):
 #THIS FUNCTION:
 #1.) REQUIRES: 
     #A.) A PATH STRING
-    #B.) A PERMISSION(S) STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
+    #B.) A PERMISSIONS STRING CONTAINING "R" (READ) "W" (WRITE) AND/OR "X" (EXECUTE)
 #2.) CHECKS IF THE SUPPLIED PATH HAS THE REQUESTED PERMISSION(S)
-#3.) RETURNS "True" OR "False"
+#3.) RETURNS A "True" OR "False" BOOLEAN
 def has_permissions(PATH, PERMISSIONS):
     try:
         PATH = abspath(PATH)
@@ -325,12 +327,14 @@ def has_permissions(PATH, PERMISSIONS):
 #2.) RECURSIVELY SCANS THE PATH
 #3.) RETURNS A LIST CONTAINING:
     #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING: 
-        #i.)"True" OR "False" FOR THE FILE PATH ACCESSABILITY STATUS
+        #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
         #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
     #C.) AN ACCESSABLE FILES BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
-    if not isabs(FOLDER_PATH):
+    if not isinstance(FOLDER_PATH, str):
+        raise TypeError('[TypeError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a string type.')
+    elif not isabs(FOLDER_PATH):
         raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
     elif not isdir(FOLDER_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
@@ -363,27 +367,27 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
 #1.) REQUIRES:
     #A.) A BYTES NUMBER STRING OR INTEGER
 #2.) CONVERTS THE SUPPLIED BYTES NUMBER
-#3.) RETURNS THE CONVERTED BYTES AS A STRING
+#3.) RETURNS THE CONVERTED BYTES NUMBER, AS A STRING, WITH THE CONVERTED STORAGE UNITS APPENDED TO THE END OF THE STRING 
 def convert_bytes(BYTES_NUMBER):
     if not isinstance(BYTES_NUMBER, (str, int)):
         raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be a string or integer type.')
     try:
         BINARY_INCREMENT = 1024
-        if BYTES_NUMBER < BINARY_INCREMENT:return f'{BYTES_NUMBER} Bytes'
+        if BYTES_NUMBER < BINARY_INCREMENT:return f'{BYTES_NUMBER} B'
         KILOBYTES = f'{round(BYTES_NUMBER/BINARY_INCREMENT, 2)}'
-        if BYTES_NUMBER >= BINARY_INCREMENT and BYTES_NUMBER < (BINARY_INCREMENT ** 2):return f'{KILOBYTES} KB'
+        if BYTES_NUMBER >= BINARY_INCREMENT and BYTES_NUMBER < (BINARY_INCREMENT ** 2): return f'{KILOBYTES} KB'
         MEGABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 2), 2)
-        if BYTES_NUMBER >= (BINARY_INCREMENT ** 2) and BYTES_NUMBER < BINARY_INCREMENT ** 3:return f'{MEGABYTES} MB'
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 2) and BYTES_NUMBER < BINARY_INCREMENT ** 3: return f'{MEGABYTES} MB'
         GIGABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 3), 2)
-        if BYTES_NUMBER >= (BINARY_INCREMENT ** 3) and BYTES_NUMBER < BINARY_INCREMENT ** 4:return f'{GIGABYTES} GB'
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 3) and BYTES_NUMBER < BINARY_INCREMENT ** 4: return f'{GIGABYTES} GB'
         TERABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 4), 2)
-        if BYTES_NUMBER >= (BINARY_INCREMENT ** 4) and BYTES_NUMBER < BINARY_INCREMENT ** 5:return f'{TERABYTES} TB'
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 4) and BYTES_NUMBER < BINARY_INCREMENT ** 5: return f'{TERABYTES} TB'
         PETABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 5), 2)
-        if BYTES_NUMBER >= (BINARY_INCREMENT ** 5) and BYTES_NUMBER < BINARY_INCREMENT ** 6:return f'{PETABYTES} PB'
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 5) and BYTES_NUMBER < BINARY_INCREMENT ** 6: return f'{PETABYTES} PB'
         EXABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 6), 2)
-        if BYTES_NUMBER >= (BINARY_INCREMENT ** 6) and BYTES_NUMBER < BINARY_INCREMENT ** 7:return f'{EXABYTES} EB'
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 6) and BYTES_NUMBER < BINARY_INCREMENT ** 7: return f'{EXABYTES} EB'
         ZETTABYTES = round(BYTES_NUMBER/(BINARY_INCREMENT ** 7), 2)
-        if BYTES_NUMBER >= (BINARY_INCREMENT ** 7) and BYTES_NUMBER < BINARY_INCREMENT ** 8:return f'{ZETTABYTES} ZB'
+        if BYTES_NUMBER >= (BINARY_INCREMENT ** 7) and BYTES_NUMBER < BINARY_INCREMENT ** 8: return f'{ZETTABYTES} ZB'
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -399,12 +403,18 @@ def convert_seconds(SECONDS):
     if not isinstance(SECONDS, (int, float)):
         raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds parameter must be an integer or float type.')
     try:
-        YEARS = f'{round(SECONDS // 31536000)}y:' if SECONDS // 31536000 > 0 else ''; REMAINDER_SECONDS = SECONDS % 31536000
-        MONTHS = f'{round(REMAINDER_SECONDS // 2628000)}M:' if REMAINDER_SECONDS // 2628000 > 0 else ''; REMAINDER_SECONDS %= 2628000
-        WEEKS = f'{round(REMAINDER_SECONDS // 604800)}w:' if REMAINDER_SECONDS // 604800 > 0 else ''; REMAINDER_SECONDS %= 604800
-        DAYS = f'{round(REMAINDER_SECONDS // 86400)}d:' if REMAINDER_SECONDS // 86400 > 0 else ''; REMAINDER_SECONDS %= 86400
-        HOURS = f'{round(REMAINDER_SECONDS // 3600)}h:' if REMAINDER_SECONDS // 3600 > 0 else ''; REMAINDER_SECONDS %= 3600
-        MINUTES = f'{round(REMAINDER_SECONDS // 60)}m:' if REMAINDER_SECONDS // 60 > 0 else ''; REMAINDER_SECONDS %= 60
+        YEARS = f'{round(SECONDS // 31536000)}y:' if SECONDS // 31536000 > 0 else ''
+        REMAINDER_SECONDS = SECONDS % 31536000
+        MONTHS = f'{round(REMAINDER_SECONDS // 2628000)}M:' if REMAINDER_SECONDS // 2628000 > 0 else ''
+        REMAINDER_SECONDS %= 2628000
+        WEEKS = f'{round(REMAINDER_SECONDS // 604800)}w:' if REMAINDER_SECONDS // 604800 > 0 else ''
+        REMAINDER_SECONDS %= 604800
+        DAYS = f'{round(REMAINDER_SECONDS // 86400)}d:' if REMAINDER_SECONDS // 86400 > 0 else ''
+        REMAINDER_SECONDS %= 86400
+        HOURS = f'{round(REMAINDER_SECONDS // 3600)}h:' if REMAINDER_SECONDS // 3600 > 0 else ''
+        REMAINDER_SECONDS %= 3600
+        MINUTES = f'{round(REMAINDER_SECONDS // 60)}m:' if REMAINDER_SECONDS // 60 > 0 else ''
+        REMAINDER_SECONDS %= 60
         SECONDS = f'{round(REMAINDER_SECONDS % 60)}s'
         CONVERTED_SECONDS = f'{YEARS}{MONTHS}{WEEKS}{DAYS}{HOURS}{MINUTES}{SECONDS}'
         return CONVERTED_SECONDS
