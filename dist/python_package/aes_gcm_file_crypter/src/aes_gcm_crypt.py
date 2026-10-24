@@ -59,20 +59,17 @@ class ansi():
         stdout.flush()
 
 #THIS FUNCTION:
-#1.) IS A DECORATOR TO WRAP THE ENCRYPT/DECRYPT FOLDER/FILE FUNCTIONS, OF THIS LIBRARY, AND CATCH THEIR EXCEPTIONS, 
-#WHILE THE PYTHON PROGRESSBAR FUNCTION IS ACTIVE, SO A NEWLINE CAN BE ADDED, BEFORE ERROR OUTPUT, AND THE TERMINAL CURSOR IS MADE VISIBLE AGAIN
-#2.) WRAPS ANY FUNCTION WITH "@error_safe_python_progressbar_decorator" PLACED ABOVE IT AND INITIATES THE FINALLY BLOCK, JUST BEFORE THAT FUNCTION RETURNS
-#3.) CATCHES ANY RAISED ERRORS THAT ARE NOT CAUGHT OR ARE RE-RAISED
+#1.) WRAPS ANY FUNCTION WITH "@error_safe_python_progressbar_decorator" PLACED ABOVE IT AND INITIATES THE FINALLY BLOCK, BEFORE THAT WRAPPED FUNCTION RETURNS,
+#IF "_PYTHON_PROGRESSBAR_STATE.active = True" IS SET, WITHIN THAT DECORATED FUNCTION
+#2.) CATCHES ANY RAISED ERRORS THAT ARE NOT CAUGHT OR ARE RE-RAISED AND ADDS A NEWLINE, BEFORE THAT WRAPPED FUNCTION RETURNS
 _PYTHON_PROGRESSBAR_STATE = local()
 def error_safe_python_progressbar_decorator(FUNCTION):
     @wraps(FUNCTION)
     def wrapper(*args, **kwargs):
         global _PYTHON_PROGRESSBAR_STATE
         if stdout is not None and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False):
-            return FUNCTION(*args, **kwargs)
-        elif stdout is not None:
-            _PYTHON_PROGRESSBAR_STATE.active = True
             ansi.hide_terminal_cursor()
+            return FUNCTION(*args, **kwargs)
         try:
             return FUNCTION(*args, **kwargs)
         except Exception as ERROR:
@@ -619,6 +616,9 @@ def aes_gcm_encrypt_folder(
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
+        if PYTHON_PROGRESSBAR:
+            global _PYTHON_PROGRESSBAR_STATE
+            _PYTHON_PROGRESSBAR_STATE.active = True
         if stdout and PYTHON_PROGRESSBAR or TKINTER_PROGRESSBAR_WINDOW:
             FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
@@ -702,6 +702,9 @@ def aes_gcm_decrypt_folder(
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
+        if PYTHON_PROGRESSBAR:
+            global _PYTHON_PROGRESSBAR_STATE
+            _PYTHON_PROGRESSBAR_STATE.active = True
         if stdout and PYTHON_PROGRESSBAR or TKINTER_PROGRESSBAR_WINDOW:
             FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
@@ -809,6 +812,9 @@ def aes_gcm_encrypt_file(
         #USE THE KEY AND NONCE BYTES TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
         CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
         ENCRYPTOR = CIPHER.encryptor()
+        if PYTHON_PROGRESSBAR:
+            global _PYTHON_PROGRESSBAR_STATE
+            _PYTHON_PROGRESSBAR_STATE.active = True
         if PROCESSED_FOLDER_BYTES_TOTAL is not None:
             PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
         else:
@@ -949,6 +955,9 @@ def aes_gcm_decrypt_file(
             if not AES_GCM_HEADERS_CHECK[0]:
                 return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             ALGORITHM_AND_MODE, KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES, TOTAL_HEADERS_SIZE = AES_GCM_HEADERS_CHECK
+            if PYTHON_PROGRESSBAR:
+                global _PYTHON_PROGRESSBAR_STATE
+                _PYTHON_PROGRESSBAR_STATE.active = True
             if PROCESSED_FOLDER_BYTES_TOTAL is not None:
                 PROCESSED_FOLDER_BYTES_TOTAL += TOTAL_HEADERS_SIZE
                 PROCESSED_BYTES = PROCESSED_FOLDER_BYTES_TOTAL
