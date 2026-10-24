@@ -635,6 +635,7 @@ def aes_gcm_encrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = ENCRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
+        #WIPE THE PASSWORD FROM THE RAM, AFTER THE FUNCTION COMPLETES
         variable_ram_buffer_wipe(PASSWORD)
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM-{KEY_SIZE}_FOLDER_ENCRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
@@ -717,6 +718,7 @@ def aes_gcm_decrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = DECRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
+        #WIPE THE PASSWORD FROM THE RAM, AFTER THE FUNCTION COMPLETES
         variable_ram_buffer_wipe(PASSWORD)
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
@@ -859,6 +861,8 @@ def aes_gcm_encrypt_file(
                     variable_ram_buffer_wipe([HEADER, HEADER_BYTES])
                 variable_ram_buffer_wipe([HEADERS_LIST, NONCE_BYTES, TAG_BYTES, SALT_BYTES])
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
+            #IF THIS FUNCTION, IS NOT CALLED BY THE "aes_gcm_encrypt_folder()" FUNCTION,
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM, AFTER THE FUNCTION COMPLETES
             variable_ram_buffer_wipe(PASSWORD)
         file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
@@ -998,6 +1002,8 @@ def aes_gcm_decrypt_file(
                 #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 DECRYPTOR.finalize()
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
+            #IF THIS FUNCTION, IS NOT CALLED BY THE "aes_gcm_decrypt_folder()" FUNCTION,
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM, AFTER THE FUNCTION COMPLETES
             variable_ram_buffer_wipe(PASSWORD)
         file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
