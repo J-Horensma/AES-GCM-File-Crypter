@@ -132,6 +132,7 @@ def variable_ram_buffer_wipe(VARIABLES):
 #3.) OVERWRITES THE FILE'S CONTENTS, ON THE DISK, WITH RANDOM BYTES AND
 #REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM, WHILE DOING SO
 def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
+    MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
     if not isinstance(FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a string type.')
     elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
@@ -140,9 +141,10 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
         raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute file path.')
     elif not isfile(FILE_PATH):
         raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a path to an existing file.')
+    elif BLOCK_SIZE is not None and not 1 <= BLOCK_SIZE <= BLOCK_SIZE:
+        raise TypeError(f'[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
     try:
         FILE_PATH = abspath(FILE_PATH)
-        MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         with open(FILE_PATH, 'r+b') as OVERWRITE_FILE:
             while True:
@@ -196,7 +198,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
     elif SALT_BYTES is not None and len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
-    elif not 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS:
+    elif KDF_ITERATIONS is not None and not 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS:
         raise TypeError(f'[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
     else:
         try:
@@ -510,7 +512,7 @@ def check_aes_gcm_headers(FILE_PATH):
         raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a string type.')
     elif not isabs(FILE_PATH):
         raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path.')
-    elif not isabs(FILE_PATH):
+    elif not isfile(FILE_PATH):
         raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a path to an existing file.')
     try:
         with open(FILE_PATH, 'rb') as FILE:
@@ -742,7 +744,7 @@ def aes_gcm_decrypt_folder(
 #2.) OPTIONALLY ACCEPTS: 
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
-    #C.) A BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
+    #C.) A BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
     #D.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
     #E.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN THE TERMINAL (DEFAULT IS "False")
     #F.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
@@ -887,7 +889,7 @@ def aes_gcm_encrypt_file(
 #2.) OPTIONALLY ACCEPTS: 
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
-    #C.) A BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
+    #C.) A BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
     #D.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
     #E.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN THE TERMINAL (DEFAULT IS "False")
     #F.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
