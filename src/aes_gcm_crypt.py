@@ -173,7 +173,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
     #A.) A 16 BYTE SALT BYTES
-    #B.) KDF ITERATIONS INTEGER
+    #B.) KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
 #4.) IF A KDF ITERATIONS INTEGER IS NOT SUPPLIED, 
 #THE MOST SPEED EFFICIENT AND SECURITY BALANCED ONE IS SET, IN ACCORDANCE WITH THE CPU SPEED
@@ -185,7 +185,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 #TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTES FOR PASSWORD MATCHING
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
-    MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
+    MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
     if not isinstance(PASSWORD, (str, bytes, bytearray)):
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif SALT_BYTES is not None and not isinstance(SALT_BYTES, bytes):
@@ -570,7 +570,7 @@ def check_aes_gcm_headers(FILE_PATH):
     #B.) A KEY SIZE INTEGER
     #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
-    #A.) A KDF ITERATIONS INTEGER
+    #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
     #C.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN A TERMINAL (DEFAULT IS "False")
     #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
@@ -603,7 +603,7 @@ def aes_gcm_encrypt_folder(
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
-        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
@@ -655,7 +655,7 @@ def aes_gcm_encrypt_folder(
     #A.) A FOLDER PATH STRING
     #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
-    #A.) A KDF ITERATIONS INTEGER
+    #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
     #C.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN A TERMINAL (DEFAULT IS "False")
     #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
@@ -687,7 +687,7 @@ def aes_gcm_decrypt_folder(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
-        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
@@ -738,7 +738,7 @@ def aes_gcm_decrypt_folder(
     #B.) A KEY SIZE INTEGER
     #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) OPTIONALLY ACCEPTS: 
-    #A.) A KDF ITERATIONS INTEGER
+    #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
     #C.) A BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
     #D.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
@@ -782,7 +782,7 @@ def aes_gcm_encrypt_file(
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
-        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
@@ -881,7 +881,7 @@ def aes_gcm_encrypt_file(
     #A.) A FILE PATH STRING
     #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
 #2.) OPTIONALLY ACCEPTS: 
-    #A.) A KDF ITERATIONS INTEGER
+    #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
     #C.) A BYTES_TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
     #D.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
@@ -923,7 +923,7 @@ def aes_gcm_decrypt_file(
     elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
-        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 3000) / 3000)))
+        MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
