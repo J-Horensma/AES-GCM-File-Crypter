@@ -23,7 +23,6 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 from threading import local
 from sys import stdout
 from time import time
-from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
 from os.path import isabs, abspath, join, isdir, isfile, getsize
 from functools import wraps
