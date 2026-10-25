@@ -588,13 +588,13 @@ def aes_gcm_encrypt_folder(
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
-        if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
-            return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder path.\nFolder path: {FOLDER_PATH}']
+        if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
+            return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder.\nFolder path: {FOLDER_PATH}']
         elif KEY_SIZE not in KEY_SIZE_LIST:
             return [False, f'INVALID_KEY_SIZE!\nThe key size parameter must be an integer value of: 128, 192, or 256.']
-        elif KDF_ITERATIONS is not None and not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
-        elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
+        elif not any([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
@@ -638,7 +638,7 @@ def aes_gcm_encrypt_folder(
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A FOLDER PATH STRING
-    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
@@ -657,8 +657,8 @@ def aes_gcm_decrypt_folder(
         PYTHON_PROGRESSBAR=False, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, 
         TKINTER_PROGRESSBAR_PERCENTAGE=None
     ):
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a bytearray type.')
     elif PYTHON_PROGRESSBAR and not isinstance(PYTHON_PROGRESSBAR, bool):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe python progressbar parameter must be a bool type.')
     elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
@@ -669,18 +669,18 @@ def aes_gcm_decrypt_folder(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
     elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
-        if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
+        if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
             return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder path.\nFolder path: {FOLDER_PATH}']
-        elif not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
-        elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
+        elif not any([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
