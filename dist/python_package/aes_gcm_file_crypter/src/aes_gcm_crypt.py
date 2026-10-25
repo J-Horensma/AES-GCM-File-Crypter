@@ -1110,3 +1110,4 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             EXCEPTION_NAME = ERROR.__class__.__name__
             ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
             return [False, f'[{EXCEPTION_NAME}]\nFunction: "aes_gcm_decrypt_variable()"\n{ERROR_MESSAGE}']
+s
