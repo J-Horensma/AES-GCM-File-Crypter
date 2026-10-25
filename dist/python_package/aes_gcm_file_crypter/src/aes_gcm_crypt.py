@@ -23,7 +23,6 @@ This copyright notice and license must be retained, precisely as-is, in all copi
 from threading import local
 from sys import stdout
 from time import time
-from io import IOBase
 from os import walk, access, R_OK, W_OK, X_OK, replace, remove, fsync
 from os.path import isabs, abspath, join, isdir, isfile, getsize
 from functools import wraps
@@ -130,22 +129,17 @@ def variable_ram_buffer_wipe(VARIABLES):
 #REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM, WHILE DOING SO
 def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
-    if not isinstance(FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a string type.')
-    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer type.')
-    elif not isabs(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute file path.')
-    elif not isfile(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a path to an existing file.')
-    elif BLOCK_SIZE is not None and not 1 <= BLOCK_SIZE <= BLOCK_SIZE:
-        raise TypeError(f'[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
+    if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute path string to an existing file.')
+    elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= BLOCK_SIZE]):
+        raise ValueError(f'[ValueError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         with open(FILE_PATH, 'r+b') as OVERWRITE_FILE:
             while True:
-                #LOAD EACH PLAINTEXT CHUNK OF THE FILE BEING WIPED, AS A BYTEARRAY, SO THE PLAINTEXT CHUNK VARIABLE BUFFER CAN BE REPLACED WITH NULL-BYTES, 
+                #LOAD EACH PLAINTEXT CHUNK OF THE FILE BEING WIPED, AS A BYTEARRAY, 
+                #SO THE PLAINTEXT CHUNK VARIABLE BUFFER CAN BE REPLACED WITH NULL-BYTES, 
                 #AFTER PROCESSING, TO REDUCE PLAINTEXT DATA REMAINING, IN THE RAM
                 PLAINTEXT_CHUNK = bytearray(OVERWRITE_FILE.read(BLOCK_SIZE))
                 if not PLAINTEXT_CHUNK:
@@ -160,6 +154,16 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
                 del PLAINTEXT_CHUNK
             OVERWRITE_FILE.flush()
             fsync(OVERWRITE_FILE.fileno())
+    except PermissionError as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "file_contents_disk_wipe()"\n{ERROR_MESSAGE}')
+    except OSError as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "file_contents_disk_wipe()"\n{ERROR_MESSAGE}')
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -169,7 +173,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 #THIS FUNCTION:
 #1.) REQUIRES: 
     #A.) A KEY SIZE INTEGER
-    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
     #A.) A 16 BYTE SALT BYTES
     #B.) KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
@@ -185,18 +189,14 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
     MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif SALT_BYTES is not None and not isinstance(SALT_BYTES, bytes):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type.')
-    elif KDF_ITERATIONS is not None and not isinstance(KDF_ITERATIONS, int):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer type.')
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
-    elif SALT_BYTES is not None and len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
-    elif KDF_ITERATIONS is not None and not 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS:
-        raise TypeError(f'[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
+    elif SALT_BYTES is not None and not any([isinstance(SALT_BYTES, bytes), len(SALT_BYTES) != 16]):
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type that is 16 bytes long.')
+    elif KDF_ITERATIONS is not None and not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        raise ValueError(f'[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
     else:
         try:
             KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
@@ -330,19 +330,15 @@ def has_permissions(PATH, PERMISSIONS):
         #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
         #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
-    #C.) AN ACCESSABLE FILES BYTES TOTAL INTEGER
+    #C.) AN ACCESSABLE FILES, FOLDER BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
-    if not isinstance(FOLDER_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a string type.')
-    elif not isabs(FOLDER_PATH):
-        raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
-    elif not isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
+    if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isfile(FOLDER_PATH)]):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path string to an existing folder.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
         ALL_FILE_PATHS = []
         FILES_TOTAL = 0
-        BYTES_TOTAL = 0
+        FOLDER_BYTES_TOTAL = 0
         for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
             FILE_PATHS = [
                 (
@@ -355,8 +351,8 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
             for FILE_PATH in FILE_PATHS:
                 if FILE_PATH[0]:
                     FILES_TOTAL += 1
-                    BYTES_TOTAL += getsize(FILE_PATH[1])
-        return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
+                    FOLDER_BYTES_TOTAL += getsize(FILE_PATH[1])
+        return FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -369,8 +365,8 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
 #2.) CONVERTS THE SUPPLIED BYTES NUMBER
 #3.) RETURNS THE CONVERTED BYTES NUMBER AS A STRING WITH THE CONVERTED STORAGE UNITS APPENDED TO THE END OF THE STRING
 def convert_bytes(BYTES_NUMBER):
-    if not isinstance(BYTES_NUMBER, (str, int)):
-        raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be a string or integer type.')
+    if not isinstance(BYTES_NUMBER, int):
+        raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be an integer type.')
     try:
         BINARY_INCREMENT = 1024
         if BYTES_NUMBER < BINARY_INCREMENT: return f'{BYTES_NUMBER} B'
@@ -505,12 +501,8 @@ def update_tkinter_progressbar(
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE SUPPLIED FILE PATH'S FILE
 #3.) RETURNS EXISTING AES-GCM HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE_PATH):
-    if not isinstance(FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a string type.')
-    elif not isabs(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path.')
-    elif not isfile(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a path to an existing file.')
+    if not any([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path string to an existing file.')
     try:
         with open(FILE_PATH, 'rb') as FILE:
             TOTAL_HEADERS_SIZE = 0
@@ -567,7 +559,7 @@ def check_aes_gcm_headers(FILE_PATH):
 #1.) REQUIRES:
     #A.) A FOLDER PATH STRING
     #B.) A KEY SIZE INTEGER
-    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #C.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
@@ -586,10 +578,10 @@ def aes_gcm_encrypt_folder(
         BLOCK_SIZE=None, PYTHON_PROGRESSBAR=False, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, 
         TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None
     ):
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif PYTHON_PROGRESSBAR and not isinstance(PYTHON_PROGRESSBAR, bool):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe python progressbar parameter must be a bool type.')
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a bytearray type.')
+    elif PYTHON_PROGRESSBAR is True and not isinstance(PYTHON_PROGRESSBAR, bool):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe python progressbar parameter must be a boolean type.')
     elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
@@ -598,7 +590,7 @@ def aes_gcm_encrypt_folder(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
     elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
@@ -606,31 +598,31 @@ def aes_gcm_encrypt_folder(
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
-        if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
-            return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder path.\nFolder path: {FOLDER_PATH}']
+        if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
+            return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder.\nFolder path: {FOLDER_PATH}']
         elif KEY_SIZE not in KEY_SIZE_LIST:
             return [False, f'INVALID_KEY_SIZE!\nThe key size parameter must be an integer value of: 128, 192, or 256.']
-        elif KDF_ITERATIONS is not None and not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
-        elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
+        elif not any([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
-        if PYTHON_PROGRESSBAR:
+        if stdout and PYTHON_PROGRESSBAR is True:
             global _PYTHON_PROGRESSBAR_STATE
             _PYTHON_PROGRESSBAR_STATE.active = True
         if stdout and PYTHON_PROGRESSBAR or TKINTER_PROGRESSBAR_WINDOW:
-            FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
+            FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
         else:
             FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
-            BYTES_TOTAL = None
+            FOLDER_BYTES_TOTAL = None
             START_TIME = None
             PROCESSED_FOLDER_BYTES_TOTAL = None
         for FILE_PATH in FILE_PATHS:
             if FILE_PATH[0]:
-                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[1], KEY_SIZE, PASSWORD, KDF_ITERATIONS, BLOCK_SIZE, BYTES_TOTAL, START_TIME, PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
+                ENCRYPT_RESULT = aes_gcm_encrypt_file(FILE_PATH[1], KEY_SIZE, PASSWORD, KDF_ITERATIONS, BLOCK_SIZE, FOLDER_BYTES_TOTAL, START_TIME, PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
                 if not ENCRYPT_RESULT[0]:
                     ERRORS += ENCRYPT_RESULT[1].splitlines()
                 if PROCESSED_FOLDER_BYTES_TOTAL is not None:
@@ -656,7 +648,7 @@ def aes_gcm_encrypt_folder(
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A FOLDER PATH STRING
-    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
@@ -675,10 +667,10 @@ def aes_gcm_decrypt_folder(
         PYTHON_PROGRESSBAR=False, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, 
         TKINTER_PROGRESSBAR_PERCENTAGE=None
     ):
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif PYTHON_PROGRESSBAR and not isinstance(PYTHON_PROGRESSBAR, bool):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe python progressbar parameter must be a bool type.')
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a bytearray type.')
+    elif PYTHON_PROGRESSBAR is True and not isinstance(PYTHON_PROGRESSBAR, bool):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe python progressbar parameter must be a boolean type.')
     elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
@@ -687,36 +679,36 @@ def aes_gcm_decrypt_folder(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
     elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
-        if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
+        if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
             return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder path.\nFolder path: {FOLDER_PATH}']
-        elif not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
-        elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
+        elif not any([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
-        if PYTHON_PROGRESSBAR:
+        if stdout and PYTHON_PROGRESSBAR is True:
             global _PYTHON_PROGRESSBAR_STATE
             _PYTHON_PROGRESSBAR_STATE.active = True
-        if stdout and PYTHON_PROGRESSBAR or TKINTER_PROGRESSBAR_WINDOW:
-            FILE_PATHS, FILES_TOTAL, BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
+        if stdout and PYTHON_PROGRESSBAR is True or TKINTER_PROGRESSBAR_WINDOW:
+            FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
         else:
             FILE_PATHS = recursive_files_and_bytes_total(FOLDER_PATH)[0]
-            BYTES_TOTAL = None
+            FOLDER_BYTES_TOTAL = None
             START_TIME = None
             PROCESSED_FOLDER_BYTES_TOTAL = None
         for FILE_PATH in FILE_PATHS:
             if FILE_PATH[0]:
-                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH[1], PASSWORD, KDF_ITERATIONS, BLOCK_SIZE, BYTES_TOTAL, START_TIME, PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
+                DECRYPT_RESULT = aes_gcm_decrypt_file(FILE_PATH[1], PASSWORD, KDF_ITERATIONS, BLOCK_SIZE, FOLDER_BYTES_TOTAL, START_TIME, PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE, PROCESSED_FOLDER_BYTES_TOTAL)
                 if not DECRYPT_RESULT[0]: 
                     ERRORS += DECRYPT_RESULT[1].splitlines()
                 if PROCESSED_FOLDER_BYTES_TOTAL is not None:
@@ -743,11 +735,11 @@ def aes_gcm_decrypt_folder(
 #1.) REQUIRES:
     #A.) A FILE PATH STRING
     #B.) A KEY SIZE INTEGER
-    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #C.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS: 
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
-    #C.) A BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
+    #C.) A FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
     #D.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_encrypt_folder()" FUNCTION)
     #E.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN THE TERMINAL (DEFAULT IS "False")
     #F.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
@@ -763,18 +755,18 @@ def aes_gcm_decrypt_folder(
 @error_safe_python_progressbar_decorator
 def aes_gcm_encrypt_file(
         FILE_PATH, KEY_SIZE, PASSWORD, KDF_ITERATIONS=None, 
-        BLOCK_SIZE=None, BYTES_TOTAL=None, START_TIME=None, PYTHON_PROGRESSBAR=False, 
+        BLOCK_SIZE=None, FOLDER_BYTES_TOTAL=None, START_TIME=None, PYTHON_PROGRESSBAR=False, 
         TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None, 
         PROCESSED_FOLDER_BYTES_TOTAL=None
     ):
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif BYTES_TOTAL and not isinstance(BYTES_TOTAL, int):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe bytes total parameter must be an integer type.')
-    elif START_TIME and not isinstance(START_TIME, float):
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe password parameter must be a bytearray type.')
+    elif FOLDER_BYTES_TOTAL is not None and not isinstance(FOLDER_BYTES_TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe folder bytes total parameter must be an integer type.')
+    elif START_TIME is not None and not isinstance(START_TIME, float):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe start time parameter must be a float type.')
-    elif PYTHON_PROGRESSBAR and not isinstance(PYTHON_PROGRESSBAR, bool):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe python progressbar parameter must be a bool type.')
+    elif PYTHON_PROGRESSBAR is True and not isinstance(PYTHON_PROGRESSBAR, bool):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe python progressbar parameter must be a boolean type.')
     elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
@@ -783,9 +775,9 @@ def aes_gcm_encrypt_file(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
     elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif PROCESSED_FOLDER_BYTES_TOTAL and not isinstance(PROCESSED_FOLDER_BYTES_TOTAL, int):
+    elif PROCESSED_FOLDER_BYTES_TOTAL is not None and not isinstance(PROCESSED_FOLDER_BYTES_TOTAL, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_file()"\nThe processed folder bytes total parameter must be an integer type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
@@ -805,14 +797,14 @@ def aes_gcm_encrypt_file(
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.', PROCESSED_FOLDER_BYTES_TOTAL]
         FILE_PATH = abspath(FILE_PATH)
         #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE KEY SIZE) AND A 16-BYTE SALT, 
-        #USING THE "get_aes_key_and_salt()" FUNCTION AND THE USER-ENTERED PASSWORD STRING, BYTES, OR BYTEARRAY
+        #USING THE "get_aes_key_and_salt()" FUNCTION AND THE USER-ENTERED PASSWORD BYTEARRAY
         KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, None, KDF_ITERATIONS)
         #CREATE A 12-BYTE NONCE
         NONCE_BYTES = token_bytes(12)
         #USE THE KEY AND NONCE BYTES TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
         CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
         ENCRYPTOR = CIPHER.encryptor()
-        if PYTHON_PROGRESSBAR:
+        if stdout and PYTHON_PROGRESSBAR is True:
             global _PYTHON_PROGRESSBAR_STATE
             _PYTHON_PROGRESSBAR_STATE.active = True
         if PROCESSED_FOLDER_BYTES_TOTAL is not None:
@@ -828,14 +820,17 @@ def aes_gcm_encrypt_file(
                 return [False, f'ALREADY_AES-GCM_ENCRYPTED!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             #CREATE AND OPEN A TEMPORARY FILE, TO WRITE TO, IN WRITE BYTES MODE
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
+                #RESERVE THE HEADERS SPACE, BECAUSE THE TAG HEADER CANNOT BE WRITTEN, UNTIL AFTER ENCRYPTION
                 RESERVED_HEADERS_LENGTH_LIST = [7, 3, 12, 16, 16]
                 for RESERVED_HEADER_LENGTH in RESERVED_HEADERS_LENGTH_LIST:
                     #WRITE THE RESERVED SPACE FOR THE HEADER SIZE INTEGER (MAX INTEGER OF 4294967295, BIG ENDIAN BINARY ENCODED, INTO 4 BYTES) 
                     #AND THE HEADER BYTES, USING NULL-BYTES OF THE SAME LENGTH
                     OUTFILE.write(pack('>I', RESERVED_HEADER_LENGTH) + (b'\x00' * RESERVED_HEADER_LENGTH))
-                if PROCESSED_FOLDER_BYTES_TOTAL is None and any([stdout and PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
+                if PROCESSED_FOLDER_BYTES_TOTAL is None and any([stdout and PYTHON_PROGRESSBAR is True, TKINTER_PROGRESSBAR_WINDOW]):
                     START_TIME = time()
                     BYTES_TOTAL = getsize(FILE_PATH)
+                elif PROCESSED_FOLDER_BYTES_TOTAL is not None and any([stdout and PYTHON_PROGRESSBAR is True, TKINTER_PROGRESSBAR_WINDOW]):
+                    BYTES_TOTAL = FOLDER_BYTES_TOTAL
                 #STREAM-ENCRYPT THE PLAINTEXT DATA, IN CHUNKS (TO ALLOW ENCRYPTION OF ALL FILE TYPES)
                 while True:
                     PLAINTEXT_CHUNK = bytearray(INFILE.read(BLOCK_SIZE))
@@ -846,7 +841,7 @@ def aes_gcm_encrypt_file(
                         PROCESSED_BYTES += CHUNK_LENGTH
                         if PROCESSED_FOLDER_BYTES_TOTAL is not None: 
                             PROCESSED_FOLDER_BYTES_TOTAL += CHUNK_LENGTH
-                        if stdout and PYTHON_PROGRESSBAR: 
+                        if stdout and PYTHON_PROGRESSBAR is True: 
                             python_progressbar(BYTES_TOTAL, START_TIME, PROCESSED_BYTES)
                         if TKINTER_PROGRESSBAR_WINDOW:
                             update_tkinter_progressbar(
@@ -857,11 +852,11 @@ def aes_gcm_encrypt_file(
                     variable_ram_buffer_wipe(PLAINTEXT_CHUNK)
                     OUTFILE.write(pack('>I', len(ENCRYPTED_CHUNK)) + ENCRYPTED_CHUNK)
                     variable_ram_buffer_wipe(ENCRYPTED_CHUNK)
-                #CLOSE THE ENCRYPTION STREAMER
                 ENCRYPTOR.finalize()
                 TAG_BYTES = ENCRYPTOR.tag
-                #RESET THE FILE POINTER AND OVERWRITE THE RESERVED HEADERS SPACE WITH THE AES-GCM ENCRYPTION HEADERS
+                #RESET THE FILE POINTER
                 OUTFILE.seek(0)
+                #OVERWRITE THE RESERVED HEADERS SPACE WITH THE AES-GCM ENCRYPTION HEADERS
                 HEADERS_LIST = ['AES-GCM', KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES]
                 for HEADER in HEADERS_LIST:
                     HEADER_BYTES = HEADER if isinstance(HEADER, bytes) else str(HEADER).encode()
@@ -891,11 +886,11 @@ def aes_gcm_encrypt_file(
 #THIS FUNCTION:
 #1.) REQUIRES: 
     #A.) A FILE PATH STRING
-    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS: 
     #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
-    #C.) A BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
+    #C.) A FOLDER BYTES TOTAL INTEGER (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
     #D.) A START TIME FLOAT (FOR CALCULATING ETA, IN THE PYTHON AND/OR GUI PROGRESSBAR OF THE "aes_gcm_decrypt_folder()" FUNCTION)
     #E.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN THE TERMINAL (DEFAULT IS "False")
     #F.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
@@ -911,17 +906,17 @@ def aes_gcm_encrypt_file(
 @error_safe_python_progressbar_decorator
 def aes_gcm_decrypt_file(
         FILE_PATH, PASSWORD, KDF_ITERATIONS=None, BLOCK_SIZE=None, 
-        BYTES_TOTAL=None, START_TIME=None, PYTHON_PROGRESSBAR=False, TKINTER_PROGRESSBAR_WINDOW=None, 
+        FOLDER_BYTES_TOTAL=None, START_TIME=None, PYTHON_PROGRESSBAR=False, TKINTER_PROGRESSBAR_WINDOW=None, 
         TKINTER_PROGRESSBAR_MESSAGE=None, TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None, PROCESSED_FOLDER_BYTES_TOTAL=None
     ):
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif BYTES_TOTAL and not isinstance(BYTES_TOTAL, int):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe bytes total parameter must be an integer type.')
-    elif START_TIME and not isinstance(START_TIME, float):
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe password parameter must be a bytearray type.')
+    elif FOLDER_BYTES_TOTAL is not None and not isinstance(FOLDER_BYTES_TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe folder bytes total parameter must be an integer type.')
+    elif START_TIME is not None and not isinstance(START_TIME, float):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe start time parameter must be a float type.')
-    elif PYTHON_PROGRESSBAR and not isinstance(PYTHON_PROGRESSBAR, bool):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe python progressbar parameter must be a bool type.')
+    elif PYTHON_PROGRESSBAR is True and not isinstance(PYTHON_PROGRESSBAR, bool):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe python progressbar parameter must be a boolean type.')
     elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
@@ -930,9 +925,9 @@ def aes_gcm_decrypt_file(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
     elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif PROCESSED_FOLDER_BYTES_TOTAL and not isinstance(PROCESSED_FOLDER_BYTES_TOTAL, int):
+    elif PROCESSED_FOLDER_BYTES_TOTAL is not None and not isinstance(PROCESSED_FOLDER_BYTES_TOTAL, int):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_file()"\nThe processed folder bytes total parameter must be an integer type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_file()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
@@ -955,7 +950,7 @@ def aes_gcm_decrypt_file(
             if not AES_GCM_HEADERS_CHECK[0]:
                 return [False, f'{AES_GCM_HEADERS_CHECK[1]}!\nFile path: {FILE_PATH}', PROCESSED_FOLDER_BYTES_TOTAL]
             ALGORITHM_AND_MODE, KEY_SIZE, NONCE_BYTES, TAG_BYTES, SALT_BYTES, TOTAL_HEADERS_SIZE = AES_GCM_HEADERS_CHECK
-            if PYTHON_PROGRESSBAR:
+            if stdout and PYTHON_PROGRESSBAR is True:
                 global _PYTHON_PROGRESSBAR_STATE
                 _PYTHON_PROGRESSBAR_STATE.active = True
             if PROCESSED_FOLDER_BYTES_TOTAL is not None:
@@ -969,15 +964,15 @@ def aes_gcm_decrypt_file(
             #USE THE KEY, NONCE, AND TAG BYTES TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
             variable_ram_buffer_wipe([NONCE_BYTES, TAG_BYTES, SALT_BYTES])
-            #START THE DECRYPTION STREAMER
             DECRYPTOR = CIPHER.decryptor()
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK, AFTER THE FILE'S HEADERS
             INFILE.seek(TOTAL_HEADERS_SIZE)
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
-                if PROCESSED_FOLDER_BYTES_TOTAL is None and any([stdout and PYTHON_PROGRESSBAR, TKINTER_PROGRESSBAR_WINDOW]):
+                if PROCESSED_FOLDER_BYTES_TOTAL is None and any([stdout and PYTHON_PROGRESSBAR is True, TKINTER_PROGRESSBAR_WINDOW]):
                     START_TIME = time()
                     BYTES_TOTAL = getsize(FILE_PATH)
-                #STREAM-DECRYPT THE ENCRYPTED DATA, IN CHUNKS (TO ALLOW DECRYPTION OF ALL FILE TYPES)
+                elif PROCESSED_FOLDER_BYTES_TOTAL is not None and any([stdout and PYTHON_PROGRESSBAR is True, TKINTER_PROGRESSBAR_WINDOW]):
+                    BYTES_TOTAL = FOLDER_BYTES_TOTAL
                 while True:
                     #READ THE BIG ENDIAN ENCODED SIZE DATA
                     SIZE_DATA = INFILE.read(4)
@@ -999,7 +994,7 @@ def aes_gcm_decrypt_file(
                         PROCESSED_BYTES += CHUNK_LENGTH
                         if PROCESSED_FOLDER_BYTES_TOTAL is not None:
                             PROCESSED_FOLDER_BYTES_TOTAL += CHUNK_LENGTH
-                        if stdout and PYTHON_PROGRESSBAR:
+                        if stdout and PYTHON_PROGRESSBAR is True:
                             python_progressbar(BYTES_TOTAL, START_TIME, PROCESSED_BYTES)
                         if TKINTER_PROGRESSBAR_WINDOW:
                             update_tkinter_progressbar(
@@ -1010,7 +1005,6 @@ def aes_gcm_decrypt_file(
                     variable_ram_buffer_wipe(ENCRYPTED_CHUNK)
                     OUTFILE.write(PLAINTEXT_CHUNK)
                     variable_ram_buffer_wipe(PLAINTEXT_CHUNK)
-                #FINALIZE, AFTER ALL CHUNKS ARE PROCESSED
                 DECRYPTOR.finalize()
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
             #IF THIS FUNCTION, IS NOT CALLED BY THE "aes_gcm_decrypt_folder()" FUNCTION,
@@ -1039,8 +1033,8 @@ def aes_gcm_decrypt_file(
 #1.) REQUIRES: 
     #A.) A PLAINTEXT STRING OR BYTES
     #B.) A KEY SIZE INTEGER
-    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) CREATES A 16 BYTE SALT AND 12 BYTE NONCE
+    #C.) A PASSWORD BYTEARRAY
+#2.) CREATES A 16 BYTE SALT, 12 BYTE NONCE, AND A 16 BYTE TAG
 #3.) AES-GCM ENCRYPTS THE VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
@@ -1052,7 +1046,7 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PLAINTEXT_VARIABLE, (str, bytes)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe plaintext variable parameter must be a string or bytes type.')
-    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+    elif not isinstance(PASSWORD, bytearray):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
@@ -1075,11 +1069,12 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
 #1.) REQUIRES:
     #A.) AN ENCRYPTED BYTES VARIABLE
     #B.) A KEY SIZE INTEGER
-    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #C.) A PASSWORD BYTEARRAY
     #D.) A SALT BYTES
     #E.) A NONCE BYTES
     #F.) A TAG BYTES
-#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, IN COMBINATION WITH THE PASSWORD, USING THE "get_aes_key_and_salt()" FUNCTION
+#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, IN COMBINATION WITH THE PASSWORD, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
+#USING THE "get_aes_key_and_salt()" FUNCTION
 #3.) DECRYPTS THE SUPPLIED ENCRYPTED VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR) 
@@ -1089,8 +1084,8 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(ENCRYPTED_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe encrypted bytes parameter must be a bytes type.')
-    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
+    elif not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a bytearray type.')
     elif not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter must be a bytes type.')
     elif not isinstance(NONCE_BYTES, bytes):
