@@ -130,16 +130,10 @@ def variable_ram_buffer_wipe(VARIABLES):
 #REDUCES PLAINTEXT CHUNK DATA LEFT, IN THE RAM, WHILE DOING SO
 def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
-    if not isinstance(FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a string type.')
-    elif BLOCK_SIZE and not isinstance(BLOCK_SIZE, int):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer type.')
-    elif not isabs(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute file path.')
-    elif not isfile(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be a path to an existing file.')
-    elif BLOCK_SIZE is not None and not 1 <= BLOCK_SIZE <= BLOCK_SIZE:
-        raise TypeError(f'[TypeError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
+    if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute path string to an existing file.')
+    elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= BLOCK_SIZE]):
+        raise ValueError(f'[ValueError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
@@ -169,7 +163,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 #THIS FUNCTION:
 #1.) REQUIRES: 
     #A.) A KEY SIZE INTEGER
-    #B.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
     #A.) A 16 BYTE SALT BYTES
     #B.) KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
@@ -185,18 +179,14 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
     MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a string, bytes, or bytearray type.')
-    elif SALT_BYTES is not None and not isinstance(SALT_BYTES, bytes):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type.')
-    elif KDF_ITERATIONS is not None and not isinstance(KDF_ITERATIONS, int):
-        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer type.')
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
-    elif SALT_BYTES is not None and len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be 16 bytes long.')
-    elif KDF_ITERATIONS is not None and not 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS:
-        raise TypeError(f'[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
+    elif SALT_BYTES is not None and not any([isinstance(SALT_BYTES, bytes), len(SALT_BYTES) != 16]):
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type that is 16 bytes long.')
+    elif KDF_ITERATIONS is not None and not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        raise ValueError(f'[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
     else:
         try:
             KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
@@ -332,12 +322,8 @@ def has_permissions(PATH, PERMISSIONS):
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
     #C.) AN ACCESSABLE FILES BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
-    if not isinstance(FOLDER_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a string type.')
-    elif not isabs(FOLDER_PATH):
-        raise ValueError('[ValueError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path.')
-    elif not isdir(FOLDER_PATH):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be a path to an existing folder.')
+    if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isfile(FOLDER_PATH)]):
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path string to an existing folder.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
         ALL_FILE_PATHS = []
@@ -369,8 +355,8 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
 #2.) CONVERTS THE SUPPLIED BYTES NUMBER
 #3.) RETURNS THE CONVERTED BYTES NUMBER AS A STRING WITH THE CONVERTED STORAGE UNITS APPENDED TO THE END OF THE STRING
 def convert_bytes(BYTES_NUMBER):
-    if not isinstance(BYTES_NUMBER, (str, int)):
-        raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be a string or integer type.')
+    if not isinstance(BYTES_NUMBER, int):
+        raise TypeError('[TypeError]\nFunction: "convert_bytes()"\nThe bytes number parameter must be an integer type.')
     try:
         BINARY_INCREMENT = 1024
         if BYTES_NUMBER < BINARY_INCREMENT: return f'{BYTES_NUMBER} B'
@@ -505,12 +491,8 @@ def update_tkinter_progressbar(
 #2.) CHECKS FOR AES-GCM HEADERS, IN THE SUPPLIED FILE PATH'S FILE
 #3.) RETURNS EXISTING AES-GCM HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE_PATH):
-    if not isinstance(FILE_PATH, str):
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a string type.')
-    elif not isabs(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path.')
-    elif not isfile(FILE_PATH):
-        raise TypeError('[TypeError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be a path to an existing file.')
+    if not any([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
+        raise FileNotFoundError('[FileNotFoundError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path string to an existing file.')
     try:
         with open(FILE_PATH, 'rb') as FILE:
             TOTAL_HEADERS_SIZE = 0
@@ -586,10 +568,10 @@ def aes_gcm_encrypt_folder(
         BLOCK_SIZE=None, PYTHON_PROGRESSBAR=False, TKINTER_PROGRESSBAR_WINDOW=None, TKINTER_PROGRESSBAR_MESSAGE=None, 
         TKINTER_PROGRESSBAR=None, TKINTER_PROGRESSBAR_PERCENTAGE=None
     ):
-    if not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a string, bytes, or bytearray type.')
+    if not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe password parameter must be a bytearray type.')
     elif PYTHON_PROGRESSBAR and not isinstance(PYTHON_PROGRESSBAR, bool):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe python progressbar parameter must be a bool type.')
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe python progressbar parameter must be a boolean type.')
     elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
     elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
@@ -598,7 +580,7 @@ def aes_gcm_encrypt_folder(
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
     elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not all([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         KEY_SIZE_LIST = [128, 192, 256]
@@ -610,7 +592,7 @@ def aes_gcm_encrypt_folder(
             return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder path.\nFolder path: {FOLDER_PATH}']
         elif KEY_SIZE not in KEY_SIZE_LIST:
             return [False, f'INVALID_KEY_SIZE!\nThe key size parameter must be an integer value of: 128, 192, or 256.']
-        elif KDF_ITERATIONS is not None and not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif KDF_ITERATIONS is not None and not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
         elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
