@@ -139,7 +139,8 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
         with open(FILE_PATH, 'r+b') as OVERWRITE_FILE:
             while True:
-                #LOAD EACH PLAINTEXT CHUNK OF THE FILE BEING WIPED, AS A BYTEARRAY, SO THE PLAINTEXT CHUNK VARIABLE BUFFER CAN BE REPLACED WITH NULL-BYTES, 
+                #LOAD EACH PLAINTEXT CHUNK OF THE FILE BEING WIPED, AS A BYTEARRAY, 
+                #SO THE PLAINTEXT CHUNK VARIABLE BUFFER CAN BE REPLACED WITH NULL-BYTES, 
                 #AFTER PROCESSING, TO REDUCE PLAINTEXT DATA REMAINING, IN THE RAM
                 PLAINTEXT_CHUNK = bytearray(OVERWRITE_FILE.read(BLOCK_SIZE))
                 if not PLAINTEXT_CHUNK:
@@ -154,6 +155,16 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
                 del PLAINTEXT_CHUNK
             OVERWRITE_FILE.flush()
             fsync(OVERWRITE_FILE.fileno())
+    except PermissionError as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "file_contents_disk_wipe()"\n{ERROR_MESSAGE}')
+    except OSError as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "file_contents_disk_wipe()"\n{ERROR_MESSAGE}')
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -320,7 +331,7 @@ def has_permissions(PATH, PERMISSIONS):
         #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
         #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
-    #C.) AN ACCESSABLE FILES BYTES TOTAL INTEGER
+    #C.) AN ACCESSABLE FILES, FOLDER BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isfile(FOLDER_PATH)]):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path string to an existing folder.')
@@ -328,7 +339,7 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         FOLDER_PATH = abspath(FOLDER_PATH)
         ALL_FILE_PATHS = []
         FILES_TOTAL = 0
-        BYTES_TOTAL = 0
+        FOLDER_BYTES_TOTAL = 0
         for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
             FILE_PATHS = [
                 (
@@ -341,8 +352,8 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
             for FILE_PATH in FILE_PATHS:
                 if FILE_PATH[0]:
                     FILES_TOTAL += 1
-                    BYTES_TOTAL += getsize(FILE_PATH[1])
-        return FILE_PATHS, FILES_TOTAL, BYTES_TOTAL
+                    FOLDER_BYTES_TOTAL += getsize(FILE_PATH[1])
+        return FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -1023,8 +1034,8 @@ def aes_gcm_decrypt_file(
 #1.) REQUIRES: 
     #A.) A PLAINTEXT STRING OR BYTES
     #B.) A KEY SIZE INTEGER
-    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
-#2.) CREATES A 16 BYTE SALT AND 12 BYTE NONCE
+    #C.) A PASSWORD BYTEARRAY
+#2.) CREATES A 16 BYTE SALT, 12 BYTE NONCE, AND A 16 BYTE TAG
 #3.) AES-GCM ENCRYPTS THE VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
@@ -1036,7 +1047,7 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PLAINTEXT_VARIABLE, (str, bytes)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe plaintext variable parameter must be a string or bytes type.')
-    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
+    elif not isinstance(PASSWORD, bytearray):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
@@ -1059,11 +1070,12 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
 #1.) REQUIRES:
     #A.) AN ENCRYPTED BYTES VARIABLE
     #B.) A KEY SIZE INTEGER
-    #C.) A PASSWORD STRING, BYTES, OR BYTEARRAY
+    #C.) A PASSWORD BYTEARRAY
     #D.) A SALT BYTES
     #E.) A NONCE BYTES
     #F.) A TAG BYTES
-#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, IN COMBINATION WITH THE PASSWORD, USING THE "get_aes_key_and_salt()" FUNCTION
+#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, IN COMBINATION WITH THE PASSWORD, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
+#USING THE "get_aes_key_and_salt()" FUNCTION
 #3.) DECRYPTS THE SUPPLIED ENCRYPTED VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR) 
@@ -1073,8 +1085,8 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(ENCRYPTED_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe encrypted bytes parameter must be a bytes type.')
-    elif not isinstance(PASSWORD, (str, bytes, bytearray)):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
+    elif not isinstance(PASSWORD, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a bytearray type.')
     elif not isinstance(SALT_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter must be a bytes type.')
     elif not isinstance(NONCE_BYTES, bytes):
