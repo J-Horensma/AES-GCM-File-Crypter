@@ -89,7 +89,7 @@ def error_safe_python_progressbar_decorator(FUNCTION):
 #1.) REQUIRES:
     #A.) A VARIABLE OR LIST OF VARIABLES (TO WIPE FROM THE RAM)
 #2.) DYNAMICALLY OVERWRITES EACH SUPPLIED BYTEARRAY TYPE VARIABLE'S RAM BUFFER VALUE WITH NULL-BYTES, 
-#REPLACES STRING AND BYTES TYPE VARIABLE VALUES WITH NULL-BYTES TO BE UPDATED, IN THE RAM BUFFERS, ASAP, THEN
+#REPLACES STRING AND BYTES TYPE VARIABLE VALUES WITH NULL-BYTES TO BE UPDATED, IN THE RAM BUFFERS ASAP, THEN
 #DELETES EACH SUPPLIED VARIABLE VALUE'S RAM BUFFER REFERENCE
 def variable_ram_buffer_wipe(VARIABLES):
     try:
@@ -206,20 +206,15 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
                 salt=SALT_BYTES,
                 iterations=KDF_ITERATIONS
             )
-            if isinstance(PASSWORD, str):
-                ENCODED_PASSWORD = bytearray(PASSWORD.encode())
-            elif isinstance(PASSWORD, bytes):
-                ENCODED_PASSWORD = bytearray(PASSWORD)
-            elif isinstance(PASSWORD, bytearray):
-                ENCODED_PASSWORD = bytearray(PASSWORD)
-            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION,
-            #STORES THE RETURNED KEY-BYTES OBJECT VALUE IN C-SIDE BUFFERS, NOT IN THE RAM (MORE DIFFICULT TO INSPECT)
+            #THE PASSWORD MUST BE ENCODED, HOWEVER, A BYTEARRAY IS ALREADY ENCODED ("bytearray(b'PASSWORD_HERE')")
+            ENCODED_PASSWORD = PASSWORD
+            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION STORES THE RETURNED KEY-BYTES OBJECT VALUE 
+            #IN C-SIDE BUFFERS, NOT IN THE RAM (MORE DIFFICULT TO INSPECT)
             KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
             #THE PASSWORD VARIABLE'S RAM BUFFER IS THE RAM BUFFER FOR THE PASSWORD VARIABLE OF THE CALLER THAT PASSED IT,
-            #SO WIPING IT FROM THE CALLER, WILL WIPE IT HERE TOO.
+            #SO WIPING IT FROM HERE WILL WIPE IT FROM THE CALLER TOO.
             #ONLY THE ENCODED PASSWORD VARIABLE IS WIPED BY THIS FUNCTION, SO SUBSEQUENT CALLS, SUCH AS IN "aes_gcm_encrypt_folder()", 
-            #"aes_gcm_decrypt_folder()", "aes_gcm_encrypt_file()", OR "aes_gcm_decrypt_file()", DO NOT HAVE THEIR PASSWORD VARIABLE WIPED
-            #FROM THEM BEFORE THEY FINISH. 
+            #"aes_gcm_decrypt_folder()", "aes_gcm_encrypt_file()", OR "aes_gcm_decrypt_file()", DO NOT HAVE THEIR PASSWORD VARIABLE WIPED FROM THEM BEFORE THEY FINISH. 
             variable_ram_buffer_wipe(ENCODED_PASSWORD)
             return [KEY_BYTES, SALT_BYTES]
         except Exception as ERROR:
@@ -321,12 +316,12 @@ def has_permissions(PATH, PERMISSIONS):
 #2.) RECURSIVELY SCANS THE PATH
 #3.) RETURNS A LIST CONTAINING:
     #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING: 
-        #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
-        #ii.) A FILE PATH STRING
+            #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
+            #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
     #C.) AN ACCESSABLE FILES, FOLDER BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
-    if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isfile(FOLDER_PATH)]):
+    if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path string to an existing folder.')
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
@@ -388,7 +383,7 @@ def convert_bytes(BYTES_NUMBER):
 #1.) REQUIRES:
     #A.) A SECONDS INTEGER OR FLOAT
 #2.) CONVERTS THE SUPPLIED SECONDS
-#3.) RETURNS A CONVERTED SECONDS STRING
+#3.) RETURNS A CONVERTED SECONDS STRING ACCORDINGLY
 def convert_seconds(SECONDS):
     if not isinstance(SECONDS, (int, float)):
         raise TypeError('[TypeError]\nFunction: "convert_seconds()"\nThe seconds parameter must be an integer or float type.')
@@ -419,8 +414,8 @@ def convert_seconds(SECONDS):
     #A.) A TOTAL INTEGER
     #B.) A START TIME FLOAT
     #C.) A PROCESSED INTEGER
-#2.) DISPLAYS A PROGRESSBAR, IN THE TERMINAL, WITH THE SUPPLIED VALUES USING "stdout.write()"
-#AND A RETURN CARRIAGE TO KEEP THE PROGRESSBAR, ON THE SAME TERMINAL ROW
+#2.) DISPLAYS A PROGRESSBAR IN THE TERMINAL WITH THE SUPPLIED VALUES USING "stdout.write()"
+#AND A RETURN CARRIAGE, TO KEEP THE PROGRESSBAR ON THE SAME TERMINAL ROW
 def python_progressbar(TOTAL, START_TIME, PROCESSED):
     if not isinstance(TOTAL, int):
         raise TypeError('[TypeError]\nFunction: "python_progressbar()"\nThe total parameter must be an integer type.')
