@@ -591,21 +591,21 @@ def aes_gcm_encrypt_folder(
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
-        if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
+        if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
             return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder.\nFolder path: {FOLDER_PATH}']
         elif KEY_SIZE not in KEY_SIZE_LIST:
             return [False, f'INVALID_KEY_SIZE!\nThe key size parameter must be an integer value of 128, 192, or 256.']
-        elif not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
-        elif not any([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
+        elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
+        #GET THE STATE VARIABLE FROM THE WRAPPER AND SET THE "active()" STATE TO "True" IF THE PYTHON PROGRESSBAR IS SET
         if stdout and PYTHON_PROGRESSBAR is True:
-            #IF THE PYTHON PROGRESSBAR IS SET, GET THE STATE VARIABLE FROM THE WRAPPER AND SET THE "active()" STATE TO "True"
             global _PYTHON_PROGRESSBAR_STATE
             _PYTHON_PROGRESSBAR_STATE.active = True
-        if stdout and PYTHON_PROGRESSBAR is True or TKINTER_PROGRESSBAR_WINDOW is not None:
+        if stdout and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False) or TKINTER_PROGRESSBAR_WINDOW is not None:
             FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
@@ -645,14 +645,14 @@ def aes_gcm_encrypt_folder(
     #A.) A FOLDER PATH STRING
     #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
-    #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS, AT 2GHZ, AND IS SCALED ACCORDING TO THE CPU SPEED)
+    #A.) A KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS AT 2GHZ AND IS SCALED ACCORDING TO THE CPU SPEED)
     #B.) A BLOCK SIZE INTEGER (DEFAULT IS 16 MB OR 25% OF THE RAM, WHICHEVER IS SMALLER)
-    #C.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR, IN A TERMINAL (DEFAULT IS "False")
+    #C.) A PYTHON PROGRESSBAR BOOLEAN FOR DISPLAYING A PROGRESSBAR IN A TERMINAL (DEFAULT IS "False")
     #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
-    #E.) A "tkinter.Label()" CLASS (FOR ETA, IN THE GUI PROGRESSBAR WINDOW)
+    #E.) A "tkinter.Label()" CLASS (FOR ETA IN THE GUI PROGRESSBAR WINDOW)
     #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW'S, PROGRESSBAR)
-    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE, IN THE GUI PROGRESSBAR WINDOW)
-#3.) RECURSIVELY AES-GCM DECRYPTS ALL FILES, WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD IS CORRECT)
+    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE IN THE GUI PROGRESSBAR WINDOW)
+#3.) RECURSIVELY AES-GCM DECRYPTS ALL FILES WITHIN THE FOLDER PATH (IF THE SUPPLIED PASSWORD IS CORRECT)
 #4.) RETURNS A LIST CONTAINING:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #B.) ANY INFO
@@ -664,35 +664,36 @@ def aes_gcm_decrypt_folder(
     ):
     if not isinstance(PASSWORD, bytearray):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe password parameter must be a bytearray type.')
-    elif PYTHON_PROGRESSBAR is True and not isinstance(PYTHON_PROGRESSBAR, bool):
+    elif PYTHON_PROGRESSBAR is not False and not isinstance(PYTHON_PROGRESSBAR, bool):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe python progressbar parameter must be a boolean type.')
-    elif TKINTER_PROGRESSBAR_WINDOW and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+    elif TKINTER_PROGRESSBAR_WINDOW is not None and not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
-    elif TKINTER_PROGRESSBAR_MESSAGE and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+    elif TKINTER_PROGRESSBAR_MESSAGE is not None and not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
-    elif TKINTER_PROGRESSBAR and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+    elif TKINTER_PROGRESSBAR is not None and not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
-    elif TKINTER_PROGRESSBAR_PERCENTAGE and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+    elif TKINTER_PROGRESSBAR_PERCENTAGE is not None and not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_folder()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    elif any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]) and not any([TKINTER_PROGRESSBAR_WINDOW, TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE]):
+    elif any([TKINTER_PROGRESSBAR_WINDOW is not None, TKINTER_PROGRESSBAR_MESSAGE is not None, TKINTER_PROGRESSBAR is not None, TKINTER_PROGRESSBAR_PERCENTAGE is not None]) and not all([TKINTER_PROGRESSBAR_WINDOW is not None, TKINTER_PROGRESSBAR_MESSAGE is not None, TKINTER_PROGRESSBAR is not None, TKINTER_PROGRESSBAR_PERCENTAGE is not None]):
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_folder()"\nWhen using a tkinter progressbar with this function, all 4 optional tkinter classes must be supplied.')
     try:
         MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
         KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
         MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
-        if not any([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
+        if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
             return [False, f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder path.\nFolder path: {FOLDER_PATH}']
-        elif not any([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
+        elif not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
             return [False, f'INVALID_KDF_ITERATIONS!\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.']
-        elif not any([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
+        elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.']
         FOLDER_PATH = abspath(FOLDER_PATH)
         ERRORS = []
+        #GET THE STATE VARIABLE FROM THE WRAPPER AND SET THE "active()" STATE TO "True" IF THE PYTHON PROGRESSBAR IS SET
         if stdout and PYTHON_PROGRESSBAR is True:
             global _PYTHON_PROGRESSBAR_STATE
             _PYTHON_PROGRESSBAR_STATE.active = True
-        if stdout and PYTHON_PROGRESSBAR is True or TKINTER_PROGRESSBAR_WINDOW:
+        if stdout and getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False) or TKINTER_PROGRESSBAR_WINDOW is not None:
             FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL = recursive_files_and_bytes_total(FOLDER_PATH)
             START_TIME = time()
             PROCESSED_FOLDER_BYTES_TOTAL = 0
@@ -710,7 +711,7 @@ def aes_gcm_decrypt_folder(
                     PROCESSED_FOLDER_BYTES_TOTAL = DECRYPT_RESULT[2]
         if ERRORS:
             ERRORS = '\n'.join(ERRORS) + '\n'
-        #WIPE THE PASSWORD FROM THE RAM, AFTER THE FUNCTION COMPLETES
+        #WIPE THE PASSWORD FROM THE RAM AFTER THE FUNCTION COMPLETES
         variable_ram_buffer_wipe(PASSWORD)
         return [True if not ERRORS else False, f'{ERRORS if ERRORS else ''}AES-GCM_FOLDER_DECRYPTION_COMPLETE!\nFolder path: {FOLDER_PATH}']
     except Exception as ERROR:
@@ -723,6 +724,7 @@ def aes_gcm_decrypt_folder(
             f'{str(ERROR).strip() or "An unknown error occurred!"}\n'
             f'{FOLDER_PATH_MESSAGE}'
         )
+        #RE-RAISE THE ERROR IF THE PYTHON PROGRESSBAR IS ACTIVE, SO A NEWLINE IS ADDED BEFORE RETURNING
         if getattr(_PYTHON_PROGRESSBAR_STATE, 'active', False): raise EXCEPTION_CLASS(ERROR_MESSAGE)
         return [False, f'{ERROR_MESSAGE}']
 
