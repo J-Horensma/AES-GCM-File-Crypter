@@ -130,6 +130,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     try:
         FILE_PATH = abspath(FILE_PATH)
         BLOCK_SIZE = MAX_BLOCK_SIZE if BLOCK_SIZE is None else BLOCK_SIZE
+        #OPEN THE FILE IN READ, WRITE BYTES MODE (TO READ ALL FILE TYPES AND ALLOW OVERWRITE)
         with open(FILE_PATH, 'r+b') as OVERWRITE_FILE:
             while True:
                 #LOAD EACH PLAINTEXT CHUNK OF DATA IN THE FILE BEING WIPED AS A BYTEARRAY, 
@@ -447,9 +448,9 @@ def python_progressbar(TOTAL, START_TIME, PROCESSED):
     #B.) A START TIME FLOAT
     #C.) A PROCESSED INTEGER
     #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
-    #E.) A "tkinter.Label()" CLASS (FOR ETA, IN THE GUI PROGRESSBAR WINDOW)
+    #E.) A "tkinter.Label()" CLASS (FOR ETA IN THE GUI PROGRESSBAR WINDOW)
     #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW'S, PROGRESSBAR)
-    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE, IN THE GUI PROGRESSBAR WINDOW)
+    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE IN THE GUI PROGRESSBAR WINDOW)
 #2.) UPDATES THE SUPPLIED TKINTER PROGRESSBAR WINDOW
 def update_tkinter_progressbar(
         TOTAL, START_TIME, PROCESSED, TKINTER_PROGRESSBAR_WINDOW, 
@@ -487,12 +488,13 @@ def update_tkinter_progressbar(
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A FILE PATH STRING
-#2.) CHECKS FOR AES-GCM HEADERS, IN THE SUPPLIED FILE PATH'S FILE
+#2.) CHECKS FOR AES-GCM ENCRYPTION HEADERS IN THE SUPPLIED FILE PATH'S FILE
 #3.) RETURNS EXISTING AES-GCM HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE_PATH):
-    if not any([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
+    if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "check_aes_gcm_headers()"\nThe file path parameter must be an absolute path string to an existing file.')
     try:
+        #OPEN THE FILE IN READ BYTES MODE (TO READ ALL FILE TYPES)
         with open(FILE_PATH, 'rb') as FILE:
             TOTAL_HEADERS_SIZE = 0
             #READ THE HEADER SIZE DATA (FIRST 4 BYTES OF EVERY AES-GCM ENCRYPTION HEADER, ENCODED INTO BIG ENDIAN BINARY BYTES)
