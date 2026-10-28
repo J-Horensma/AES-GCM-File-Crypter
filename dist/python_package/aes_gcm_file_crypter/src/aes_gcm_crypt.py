@@ -8,7 +8,7 @@ Custom License With Redistribution Limitations
 "Personal" means any use not intended for financial gain.
 "Software" means the source code, in this file.
 
-Personal and Commercial use are permitted.
+Personal use is permitted.
 
 Redistribution, sale, or relicensing of the unmodified Software, or a
 substantially unchanged copy of the Software, is prohibited without prior
