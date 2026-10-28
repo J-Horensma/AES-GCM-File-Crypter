@@ -555,3 +555,46 @@ def progressbar_window(ROOT_WINDOW):
         EXCEPTION_NAME = ERROR.__class__.__name__
         ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
         raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "progressbar_window()"\n{ERROR_MESSAGE}')
+
+#THIS FUNCTION:
+#1.) REQUIRES:
+    #A.) A TOTAL INTEGER
+    #B.) A START TIME FLOAT
+    #C.) A PROCESSED INTEGER
+    #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
+    #E.) A "tkinter.Label()" CLASS (FOR ETA IN THE GUI PROGRESSBAR WINDOW)
+    #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW'S, PROGRESSBAR)
+    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE IN THE GUI PROGRESSBAR WINDOW)
+#2.) UPDATES THE SUPPLIED TKINTER PROGRESSBAR WINDOW
+def update_tkinter_progressbar(
+        TOTAL, START_TIME, PROCESSED, TKINTER_PROGRESSBAR_WINDOW, 
+        TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
+    ):
+    if not isinstance(TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe total parameter must be an integer type.')
+    elif not isinstance(START_TIME, float):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe start time parameter must be a float type.')
+    elif not isinstance(PROCESSED, int):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe processed parameter must be an integer type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
+    try:
+        PERCENT_COMPLETE = (PROCESSED / TOTAL) * 100
+        ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
+        PROCESSED_PER_SECOND = PROCESSED / ELAPSED_SECONDS
+        REMAINING = TOTAL - PROCESSED
+        ETA_SECONDS = REMAINING / PROCESSED_PER_SECOND
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
+    except Exception as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_tkinter_progressbar()"\n{ERROR_MESSAGE}')
