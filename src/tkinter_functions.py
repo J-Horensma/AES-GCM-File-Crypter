@@ -9,7 +9,7 @@ For clarity:
 "Personal" means any use not intended for financial gain.
 "Commercial" means use with product(s) and/or service(s) intended for financial gain.
 
-Personal and Commercial use are permitted.
+Personal use is permitted.
 
 Redistribution, sale, or relicensing of the unmodified Software, or a
 substantially unchanged copy of the Software, is prohibited without prior
