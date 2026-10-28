@@ -36,23 +36,23 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
-    elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
+    elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be a string type.')
-    elif ICON_PNG_FILE_PATH and not isinstance(ICON_PNG_FILE_PATH, str):
+    elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be a string type.')
-    elif not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]) and system() == 'Windows':
+    elif not all([ICON_ICO_FILE_PATH is not None, ICON_PNG_FILE_PATH is not None]) and system() == 'Windows':
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file path parameters must both be set when calling this function on Windows.')
     elif ICON_ICO_FILE_PATH is None and system() == 'Darwin':
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be set when calling this function on Mac.')
     elif ICON_PNG_FILE_PATH is None and system() != 'Darwin':
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be set when calling this function on an OS other than Mac.')
-    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH is not None and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be an absolute path.')
-    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH is not None and not isabs(ICON_PNG_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be an absolute path.')
-    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
         if system() == 'Windows':
@@ -118,9 +118,9 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
     elif not isinstance(WINDOW_WIDTH, int):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter must be an integer.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter must be an integer type.')
     elif not isinstance(WINDOW_HEIGHT, int):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window height parameter must be an integer.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window height parameter must be an integer type.')
     try:
         WINDOW.update_idletasks()
         X = (WINDOW.winfo_screenwidth() - WINDOW_WIDTH) // 2
@@ -146,9 +146,9 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif not isinstance(DROPDOWN_MENU_OPTIONS, list):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter must be a list type.')
-    elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt title parameter must be a string type.')
-    elif PROMPT_MESSAGE and not isinstance(PROMPT_MESSAGE, str):
+    elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt message parameter must be a string type.')
     try:
         PROMPT_TITLE = 'Select An Option' if PROMPT_TITLE is None else PROMPT_TITLE
