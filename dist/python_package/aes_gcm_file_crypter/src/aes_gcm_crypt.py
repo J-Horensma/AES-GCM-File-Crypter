@@ -484,8 +484,7 @@ def update_tkinter_progressbar(
         EXCEPTION_NAME = ERROR.__class__.__name__
         ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
         raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_tkinter_progressbar()"\n{ERROR_MESSAGE}')
-
-#TODO: SET BYTEARRAYS FOR THE HEADERS TO ALLOW DYNAMIC VARIABLE RAM BUFFER OVERWRITE (REQUIRES A TEST AFTER THIS FINAL CHECK)
+        
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A FILE PATH STRING
@@ -510,7 +509,7 @@ def check_aes_gcm_headers(FILE_PATH):
             #CONVERT THE HEADER SIZE DATA FROM BIG-ENDIAN BINARY ENCODED BYTES, TO AN INTEGER REPRESENTING THE BYTES LENGTH OF THE HEADER
             (ALGORITHM_AND_MODE_HEADER_SIZE,) = unpack('>I', ALGORITHM_AND_MODE_HEADER_SIZE_DATA)
             #READ THE BYTES LENGTH OF THE HEADER
-            ALGORITHM_AND_MODE_HEADER = FILE.read(ALGORITHM_AND_MODE_HEADER_SIZE)
+            ALGORITHM_AND_MODE_HEADER = bytearray(FILE.read(ALGORITHM_AND_MODE_HEADER_SIZE))
             #CHECK IF THE FILE IS AES-GCM ENCRYPTED
             if ALGORITHM_AND_MODE_HEADER != str('AES-GCM').encode(): return [None, 'NOT_AES-GCM_ENCRYPTED']
             #CHECK IF THE HEADER IS CORRUPTED
@@ -520,25 +519,25 @@ def check_aes_gcm_headers(FILE_PATH):
             KEY_SIZE_HEADER_SIZE_DATA = FILE.read(4)
             if len(KEY_SIZE_HEADER_SIZE_DATA) != 4: return [None, 'KEY_SIZE_HEADER_SIZE_TRUNCATED']
             (KEY_SIZE_HEADER_SIZE,) = unpack('>I', KEY_SIZE_HEADER_SIZE_DATA)
-            KEY_SIZE_HEADER = FILE.read(KEY_SIZE_HEADER_SIZE)
+            KEY_SIZE_HEADER = bytearray(FILE.read(KEY_SIZE_HEADER_SIZE))
             TOTAL_HEADERS_SIZE += 4 + KEY_SIZE_HEADER_SIZE
             NONCE_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(NONCE_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'NONCE_BYTES_HEADER_SIZE_TRUNCATED']
             (NONCE_BYTES_HEADER_SIZE,) = unpack('>I', NONCE_BYTES_HEADER_SIZE_DATA)
-            NONCE_BYTES_HEADER = FILE.read(NONCE_BYTES_HEADER_SIZE)
+            NONCE_BYTES_HEADER = bytearray(FILE.read(NONCE_BYTES_HEADER_SIZE))
             if NONCE_BYTES_HEADER_SIZE != len(NONCE_BYTES_HEADER) or len(NONCE_BYTES_HEADER) != 12: return [None, 'NONCE_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + NONCE_BYTES_HEADER_SIZE
             TAG_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(TAG_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'TAG_BYTES_HEADER_SIZE_TRUNCATED']
             (TAG_BYTES_HEADER_SIZE,) = unpack('>I', TAG_BYTES_HEADER_SIZE_DATA)
-            TAG_BYTES_HEADER = FILE.read(TAG_BYTES_HEADER_SIZE)
+            TAG_BYTES_HEADER = bytearray(FILE.read(TAG_BYTES_HEADER_SIZE))
             if TAG_BYTES_HEADER_SIZE != len(TAG_BYTES_HEADER) or len(TAG_BYTES_HEADER) != 16: return [None, 'TAG_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + TAG_BYTES_HEADER_SIZE
             SALT_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(SALT_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'SALT_BYTES_HEADER_SIZE_TRUNCATED']
             (SALT_BYTES_HEADER_SIZE,) = unpack('>I', SALT_BYTES_HEADER_SIZE_DATA)
-            SALT_BYTES_HEADER = FILE.read(SALT_BYTES_HEADER_SIZE)
-            if SALT_BYTES_HEADER_SIZE != len(SALT_BYTES_HEADER) or len(SALT_BYTES_HEADER) != 16: return [None, 'SALT_BYTES_HEADER_CORRUPTED']
+            SALT_BYTES_HEADER = bytearray(FILE.read(SALT_BYTES_HEADER_SIZE))
+            if len(SALT_BYTES_HEADER) != 16: return [None, 'SALT_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + SALT_BYTES_HEADER_SIZE
             if TOTAL_HEADERS_SIZE != 74: return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
             return [ALGORITHM_AND_MODE_HEADER.decode(), int(KEY_SIZE_HEADER.decode()), NONCE_BYTES_HEADER, TAG_BYTES_HEADER, SALT_BYTES_HEADER, TOTAL_HEADERS_SIZE]
@@ -944,7 +943,7 @@ def aes_gcm_decrypt_file(
         elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.', PROCESSED_FOLDER_BYTES_TOTAL]
         FILE_PATH = abspath(FILE_PATH)
-        #OPEN THE FILE TO DECRYPT, IN READ BYTES MODE
+        #OPEN THE FILE IN READ BYTES MODE
         with open(FILE_PATH, 'rb') as INFILE:
             #CHECK IF THE FILE IS EMPTY, NOT AES-GCM ENCRYPTED, OR CORRUPTED
             AES_GCM_HEADERS_CHECK = check_aes_gcm_headers(FILE_PATH)
@@ -1011,7 +1010,7 @@ def aes_gcm_decrypt_file(
                 DECRYPTOR.finalize()
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
             #IF THIS FUNCTION IS NOT CALLED BY THE "aes_gcm_decrypt_folder()" FUNCTION,
-            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM, AFTER THE FUNCTION COMPLETES
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER THE FUNCTION COMPLETES
             variable_ram_buffer_wipe(PASSWORD)
         file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
@@ -1037,14 +1036,15 @@ def aes_gcm_decrypt_file(
     #A.) A PLAINTEXT STRING OR BYTES
     #B.) A KEY SIZE INTEGER
     #C.) A PASSWORD BYTEARRAY
-#2.) CREATES A 16 BYTE SALT, 12 BYTE NONCE, AND A 16 BYTE TAG
+#2.) CREATES A 16 BYTE SALT, 12 BYTE NONCE, AND 16 BYTE TAG
 #3.) AES-GCM ENCRYPTS THE VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #IF SUCCESS:
-        #B.) SALT BYTES 
-        #C.) NONCE BYTES
-        #D.) TAG BYTES
+        #B.) ENCRYPTED BYTES
+        #C.) SALT BYTES 
+        #D.) NONCE BYTES
+        #E.) TAG BYTES
 def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PLAINTEXT_VARIABLE, (str, bytes)):
@@ -1052,11 +1052,14 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     elif not isinstance(PASSWORD, bytearray):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer value of 128, 192, or 256.')
     else:
         try:
             PLAINTEXT = PLAINTEXT_VARIABLE.encode() if isinstance(PLAINTEXT_VARIABLE, str) else PLAINTEXT_VARIABLE
             KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
+            #BY THE "get_aes_key_and_salt()" FUNCTION
+            variable_ram_buffer_wipe(PASSWORD)
             NONCE_BYTES = token_bytes(12)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
             ENCRYPTOR = CIPHER.encryptor()
@@ -1076,13 +1079,13 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     #D.) A SALT BYTES
     #E.) A NONCE BYTES
     #F.) A TAG BYTES
-#2.) VALIDATES THE PASSWORD USING THE SALT BYTES, IN COMBINATION WITH THE PASSWORD, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
+#2.) VALIDATES THE PASSWORD USING THE SALT BYTES IN COMBINATION WITH THE PASSWORD, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
 #USING THE "get_aes_key_and_salt()" FUNCTION
 #3.) DECRYPTS THE SUPPLIED ENCRYPTED VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR) 
     #IF SUCCESS:
-        #B.) DECRYPTED PLAINTEXT
+        #B.) A DECRYPTED PLAINTEXT STRING
 def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NONCE_BYTES, TAG_BYTES):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(ENCRYPTED_BYTES, bytes):
@@ -1096,7 +1099,7 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     elif not isinstance(TAG_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter must be a bytes type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter must be an integer type consisting of 128, 192, or 256.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter must be an integer value of 128, 192, or 256.')
     elif len(SALT_BYTES) != 16:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter must be 16 bytes long.')
     elif len(NONCE_BYTES) != 12:
@@ -1106,6 +1109,9 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     else:
         try:
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES)[0]
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
+            #BY THE "get_aes_key_and_salt()" FUNCTION
+            variable_ram_buffer_wipe(PASSWORD)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
             DECRYPTOR = CIPHER.decryptor()
             PLAINTEXT = DECRYPTOR.update(ENCRYPTED_BYTES) + DECRYPTOR.finalize()
