@@ -293,9 +293,9 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
-            #DELETE THE PASSWORD ENTRY, FROM THE RAM
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
-            #DELETE THE CONFIRM PASSWORD ENTRY, FROM THE RAM
+            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         def process_password():
@@ -303,9 +303,9 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
             #SET THE PASSWORD VALUE TO A BYTEARRAY, 
             #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
-            #DELETE THE PASSWORD ENTRY, FROM THE RAM
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
-            #DELETE THE CONFIRM PASSWORD ENTRY, FROM THE RAM
+            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
@@ -323,7 +323,6 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         PASSWORD_ENTRY.pack(side='left')
         #SET FOCUS ON THE PASSWORD ENTRY
         PASSWORD_ENTRY.focus_force()
-        #SET THE PASSWORD VISIBILITY BUTTON
         PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_3_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -338,7 +337,6 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         CONFIRM_PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_5_FRAME = Frame(CREATE_PASSWORD_WINDOW)
         ROW_5_FRAME.pack(padx=10, pady=(0, 10))
-        #SET THE PASSWORD CHECK STATUS LABEL
         STATUS_LABEL = Label(ROW_5_FRAME, text=None, font=('Times New Roman', 14, 'bold'), wraplength=400)
         STATUS_LABEL.pack()
         ROW_6_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -347,10 +345,10 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_6_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
         CONFIRM_BUTTON.pack(side='right')
-        #UPDATE THE STATUS LABEL, ON KEY-UP
+        #UPDATE THE STATUS LABEL ON KEY-UP
         PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
         CONFIRM_PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
-        #ALLOW CONFIRM BUTTON, ON ENTER-KEY PRESS
+        #ALLOW CONFIRM BUTTON CLICK ON ENTER-KEY PRESS
         CREATE_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         CREATE_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
@@ -361,10 +359,10 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "create_password_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
-#1.) CAN BE TRIGGERED, ON KEY-UP WITH "ENTRY_VARIABLE.bind(
+#1.) CAN BE TRIGGERED ON KEY-UP WITH "ENTRY_VARIABLE.bind(
 #'<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(
 #STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON)
-)"
+#)"
 #2.) REQUIRES:
     #A.) A "tkinter.Label()" CLASS
     #B.) A "tkinter.Entry()" CLASS
@@ -383,7 +381,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         if not PASSWORD_VALUE:
             STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and paste a password.', fg='#F44336')
         else:
             STATUS_LABEL.config(text='')
         if not PASSWORD_VALUE and ASCII_CHECK:
