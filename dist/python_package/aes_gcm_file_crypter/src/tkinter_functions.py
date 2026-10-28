@@ -9,11 +9,11 @@ For clarity:
 "Personal" means any use not intended for financial gain.
 "Commercial" means use with product(s) and/or service(s) intended for financial gain.
 
-This Software may be used, modified, and/or incorporated into projects for personal use.
+Personal and Commercial use are permitted.
 
-Commercial use of this Software is allowed when:
-1.) Substantial modifications and/or additions have first been incorporated into the Software (More than minor cosmetic and/or structural changes).
-2.) The Software changes must be reasonably demonstratable, in the behavior, functionality, and/or structure of the running Software(s) and/or service(s).
+Redistribution, sale, or relicensing of the unmodified Software, or a
+substantially unchanged copy of the Software, is prohibited without prior
+written permission from the copyright holder.
 
 Redistribution of the unmodified Software or a substantially unchanged copy of it, with Commercial intent and without prior written permission, is prohibited.
 
@@ -28,28 +28,31 @@ from tkinter import Tk, ttk, Toplevel, Frame, PhotoImage, Label, StringVar, Entr
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
-    #B.) ICON ICO AND/OR ICON PNG FILE PATH STRING(S) (DEPENDING ON THE OS)
+    #B.) ICON ICO AND/OR ICON PNG FILE PATH STRING/S (DEPENDING ON THE OS)
+        #LINUX: PNG
+        #WINDOWS: BOTH
+        #MAC: ICO
 #2.) SETS THE WINDOW ICON
 def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
-    elif ICON_ICO_FILE_PATH and not isinstance(ICON_ICO_FILE_PATH, str):
+    elif ICON_ICO_FILE_PATH is not None and not isinstance(ICON_ICO_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be a string type.')
-    elif ICON_PNG_FILE_PATH and not isinstance(ICON_PNG_FILE_PATH, str):
+    elif ICON_PNG_FILE_PATH is not None and not isinstance(ICON_PNG_FILE_PATH, str):
         raise TypeError('[TypeError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be a string type.')
-    elif system() == 'Windows' and not all([ICON_ICO_FILE_PATH, ICON_PNG_FILE_PATH]):
+    elif not all([ICON_ICO_FILE_PATH is not None, ICON_PNG_FILE_PATH is not None]) and system() == 'Windows':
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico and icon png file path parameters must both be set when calling this function on Windows.')
-    elif system() == 'Darwin' and not ICON_ICO_FILE_PATH:
+    elif ICON_ICO_FILE_PATH is None and system() == 'Darwin':
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be set when calling this function on Mac.')
-    elif system() != 'Darwin' and not ICON_PNG_FILE_PATH:
+    elif ICON_PNG_FILE_PATH is None and system() != 'Darwin':
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be set when calling this function on an OS other than Mac.')
-    elif ICON_ICO_FILE_PATH and not isabs(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH is not None and not isabs(ICON_ICO_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be an absolute path.')
-    elif ICON_PNG_FILE_PATH and not isabs(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH is not None and not isabs(ICON_PNG_FILE_PATH):
         raise ValueError('[ValueError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be an absolute path.')
-    elif ICON_ICO_FILE_PATH and not isfile(ICON_ICO_FILE_PATH):
+    elif ICON_ICO_FILE_PATH is not None and not isfile(ICON_ICO_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon ico file path parameter must be a path to an existing file.')
-    elif ICON_PNG_FILE_PATH and not isfile(ICON_PNG_FILE_PATH):
+    elif ICON_PNG_FILE_PATH is not None and not isfile(ICON_PNG_FILE_PATH):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "set_window_icon()"\nThe icon png file path parameter must be a path to an existing file.')
     try:
         if system() == 'Windows':
@@ -66,27 +69,33 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             ICON_IMAGE = PhotoImage(file=ICON_PNG_FILE_PATH)
             WINDOW.iconphoto(True, ICON_IMAGE)
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "set_window_icon()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "set_window_icon()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES: 
     #A.) A "tkinter.Tk()" CLASS
-#2.) RETURNS WIDTH AND HEIGHT INTEGERS OF THE DEVICE SCREEN
+#2.) RETURNS WIDTH AND HEIGHT INTEGERS OF THE DEVICE'S SCREEN
 def get_device_screen_size(ROOT_WINDOW):
     if not isinstance(ROOT_WINDOW, Tk):
-        raise TypeError('[TypeError]\nFunction: "get_device_screen_size()"\nThe root window parameter must be a "tkinter.Tk()" class type.')
+        raise TypeError('[TypeError]\nFunction: "get_device_screen_size()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     try:
         ROOT_WINDOW.update_idletasks()
         SCREEN_WIDTH = ROOT_WINDOW.winfo_screenwidth()
         SCREEN_HEIGHT = ROOT_WINDOW.winfo_screenheight()
         return [SCREEN_WIDTH, SCREEN_HEIGHT]
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "get_device_screen_size()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "get_device_screen_size()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
-#2.) CLEARS ALL WIDGETS, IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
+#2.) CLEARS ALL WIDGETS IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
 def clear_window(WINDOW):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
@@ -95,7 +104,10 @@ def clear_window(WINDOW):
         for WIDGET in WINDOW.winfo_children():
             WIDGET.destroy()
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "clear_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "clear_window()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -106,16 +118,19 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
     elif not isinstance(WINDOW_WIDTH, int):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter must be an integer.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window width parameter must be an integer type.')
     elif not isinstance(WINDOW_HEIGHT, int):
-        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window height parameter must be an integer.')
+        raise TypeError('[TypeError]\nFunction: "center_window()"\nThe window height parameter must be an integer type.')
     try:
         WINDOW.update_idletasks()
         X = (WINDOW.winfo_screenwidth() - WINDOW_WIDTH) // 2
         Y = (WINDOW.winfo_screenheight() - WINDOW_HEIGHT) // 2
         WINDOW.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}+{X}+{Y}')
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "center_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "center_window()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -123,7 +138,7 @@ def center_window(WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT):
     #B.) A LIST OF DROPDOWN MENU OPTIONS
 #2.) OPTIONALLY ACCEPTS:
     #A.) A PROMPT TITLE STRING (DEFAULT IS "Select An Option")
-    #B.) A PROMPT MESSAGE STRING (DEFAULT IS "Select An Option")
+    #B.) A PROMPT MESSAGE STRING (DEFAULT IS "Select An Option:")
 #3.) PROMPTS THE USER TO SELECT A DROPDOWN MENU OPTION
 #4.) RETURNS THE USER-SELECTED OPTION AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, PROMPT_MESSAGE=None):
@@ -131,12 +146,12 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
     elif not isinstance(DROPDOWN_MENU_OPTIONS, list):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe dropdown menu options parameter must be a list type.')
-    elif not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt title parameter must be a string type.')
-    elif not isinstance(PROMPT_MESSAGE, str):
+    elif PROMPT_MESSAGE is not None and not isinstance(PROMPT_MESSAGE, str):
         raise TypeError('[TypeError]\nFunction: "dropdown_menu_prompt()"\nThe prompt message parameter must be a string type.')
     try:
-        PROMPT_TITLE = 'Select An Option:' if PROMPT_TITLE is None else PROMPT_TITLE
+        PROMPT_TITLE = 'Select An Option' if PROMPT_TITLE is None else PROMPT_TITLE
         PROMPT_MESSAGE = 'Select An Option:' if PROMPT_MESSAGE is None else PROMPT_MESSAGE
         SELECTED_DROPDOWN_MENU_VALUE = None
         def close_window():
@@ -172,7 +187,10 @@ def dropdown_menu_prompt(ROOT_WINDOW, DROPDOWN_MENU_OPTIONS, PROMPT_TITLE=None, 
         DROPDOWN_MENU_WINDOW.wait_window()
         return SELECTED_DROPDOWN_MENU_VALUE
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "dropdown_menu_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "dropdown_menu_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -192,10 +210,17 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
             ENTRY_WIDGET.config(show='')
             VISIBILITY_BUTTON.config(text='Hide')
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "toggle_input_visibility()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "toggle_input_visibility()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
-#1.) CAN BE TRIGGERED ON-KEY RELEASE WITH "Entry().bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))"
+#1.) CAN BE TRIGGERED ON-KEY RELEASE WITH: 
+#"Entry().bind(
+#'<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(
+#STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH)
+#)"
 #2.) REQUIRES:
     #A.) A "tkinter.Label()" CLASS
     #B.) 2x "tkinter.Entry()" CLASSES
@@ -243,7 +268,10 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
             #DISABLE THE CONFIRM BUTTON IF ANY CHECKS FAIL
             CONFIRM_BUTTON.config(state='disabled')
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "update_create_password_input_status()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_create_password_input_status()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES:
@@ -272,7 +300,8 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
             CREATE_PASSWORD_WINDOW.destroy()
         def process_password():
             nonlocal PASSWORD_VALUE
-            #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
+            #SET THE PASSWORD VALUE TO A BYTEARRAY, 
+            #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
             #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
@@ -294,7 +323,6 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         PASSWORD_ENTRY.pack(side='left')
         #SET FOCUS ON THE PASSWORD ENTRY
         PASSWORD_ENTRY.focus_force()
-        #SET THE PASSWORD VISIBILITY BUTTON
         PASSWORD_VISIBILITY_BUTTON = Button(ROW_2_FRAME, text='Show', command=lambda: toggle_input_visibility(PASSWORD_ENTRY, PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_3_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -305,12 +333,10 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         CONFIRM_PASSWORD_VISIBILITY_VARIABLE = StringVar()
         CONFIRM_PASSWORD_ENTRY = Entry(ROW_4_FRAME, textvariable=CONFIRM_PASSWORD_VISIBILITY_VARIABLE, show='*', font=('Times New Roman', 26, 'bold'))
         CONFIRM_PASSWORD_ENTRY.pack(side='left')
-        #SET CONFIRM PASSWORD VISIBILITY BUTTON
         CONFIRM_PASSWORD_VISIBILITY_BUTTON = Button(ROW_4_FRAME, text='Show', command=lambda: toggle_input_visibility(CONFIRM_PASSWORD_ENTRY, CONFIRM_PASSWORD_VISIBILITY_BUTTON), font=('Times New Roman', 18, 'bold'))
         CONFIRM_PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_5_FRAME = Frame(CREATE_PASSWORD_WINDOW)
         ROW_5_FRAME.pack(padx=10, pady=(0, 10))
-        #SET A PASSWORD CHECK STATUS LABEL
         STATUS_LABEL = Label(ROW_5_FRAME, text=None, font=('Times New Roman', 14, 'bold'), wraplength=400)
         STATUS_LABEL.pack()
         ROW_6_FRAME = Frame(CREATE_PASSWORD_WINDOW)
@@ -319,22 +345,28 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_6_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
         CONFIRM_BUTTON.pack(side='right')
-        #UPDATE THE STATUS LABEL ON-KEY UP
+        #UPDATE THE STATUS LABEL ON KEY-UP
         PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
         CONFIRM_PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH))
-        #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
+        #ALLOW CONFIRM BUTTON CLICK ON ENTER-KEY PRESS
         CREATE_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         CREATE_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "create_password_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "create_password_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
-#1.) CAN BE TRIGGERED, ON-KEY RELEASE WITH "ENTRY_VARIABLE.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))"
+#1.) CAN BE TRIGGERED ON KEY-UP WITH "ENTRY_VARIABLE.bind(
+#'<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(
+#STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON)
+#)"
 #2.) REQUIRES:
-    #A.) A "tkinter.Label()"
-    #B.) A "tkinter.Entry()"
-    #C.) A "tkinter.Button()"
+    #A.) A "tkinter.Label()" CLASS
+    #B.) A "tkinter.Entry()" CLASS
+    #C.) A "tkinter.Button()" CLASS
 #3.) UPDATES WHAT THE SUPPLIED PASSWORD STATUS LABEL DISPLAYS
 def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON):
     if not isinstance(STATUS_LABEL, Label):
@@ -349,7 +381,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         if not PASSWORD_VALUE:
             STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and paste a password.', fg='#F44336')
         else:
             STATUS_LABEL.config(text='')
         if not PASSWORD_VALUE and ASCII_CHECK:
@@ -357,11 +389,15 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
         else:
             CONFIRM_BUTTON.config(state='normal')
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "update_enter_password_input_status()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_enter_password_input_status()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
-#2.) OPTIONALLY ACCEPTS A PROMPT TITLE STRING (DEFAULT IS "Enter Password")
+#2.) OPTIONALLY ACCEPTS:
+    #A.) A PROMPT TITLE STRING (DEFAULT IS "Enter Password")
 #3.) DISPLAYS AN ENTER PASSWORD PROMPT
 #4.) RETURNS THE USER-ENTERED PASSWORD AS A BYTEARRAY OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
@@ -378,7 +414,8 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
             ENTER_PASSWORD_WINDOW.destroy()
         def process_password():
             nonlocal PASSWORD_VALUE
-            #SET THE PASSWORD VALUE TO A BYTEARRAY, TO PREVENT RAM EXPOSURE
+            #SET THE PASSWORD VALUE TO A BYTEARRAY, 
+            #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
             #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
@@ -401,7 +438,6 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_3_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_3_FRAME.pack(padx=10, pady=(0, 10))
-        #SET A PASSWORD CHECK STATUS LABEL
         STATUS_LABEL = Label(ROW_3_FRAME, font=('Times New Roman', 14, 'bold'), fg='grey', wraplength=400)
         STATUS_LABEL.pack()
         ROW_4_FRAME = Frame(ENTER_PASSWORD_WINDOW)
@@ -410,17 +446,21 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_4_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
         CONFIRM_BUTTON.pack(side='right')
-        #UPDATE THE STATUS LABEL ON-KEY UP
         PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))
-        #ALLOW CONFIRM BUTTON ON-ENTER KEY PRESS
+        #ALLOW THE CONFIRM BUTTON TO BE CLICKED ON ENTER-KEY PRESS
         ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         ENTER_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "enter_password_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "enter_password_prompt()"\n{ERROR_MESSAGE}')
     
 #THIS FUNCTION:
-#1.) OPTIONALLY ACCEPTS PROMPT TITLE AND/OR PROMPT PATH STRING(S)
+#1.) OPTIONALLY ACCEPTS:
+    #A.) A PROMPT TITLE STRING (DEFAULT IS "Choose A Folder")
+    #B.) A PROMPT PATH STRING
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
 #3.) RETURNS THE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
@@ -441,11 +481,14 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
             PATH = None
         return PATH
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "folder_path_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "folder_path_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS:
-    #A.) PROMPT TITLE AND/OR PROMPT PATH STRING(S)
+    #A.) PROMPT TITLE AND/OR PROMPT PATH STRING/S
     #B.) A FILE TYPES LIST
     #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
 #2.) PROMPTS THE USER TO CHOOSE A FILE PATH
@@ -472,7 +515,10 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
             PATH = None
         return PATH
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "file_path_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "file_path_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
@@ -505,4 +551,50 @@ def progressbar_window(ROOT_WINDOW):
         PROGRESSBAR_PERCENTAGE.pack(side='left')
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "progressbar_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "progressbar_window()"\n{ERROR_MESSAGE}')
+
+#THIS FUNCTION:
+#1.) REQUIRES:
+    #A.) A TOTAL INTEGER
+    #B.) A START TIME FLOAT
+    #C.) A PROCESSED INTEGER
+    #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
+    #E.) A "tkinter.Label()" CLASS (FOR ETA IN THE GUI PROGRESSBAR WINDOW)
+    #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW'S, PROGRESSBAR)
+    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE IN THE GUI PROGRESSBAR WINDOW)
+#2.) UPDATES THE SUPPLIED TKINTER PROGRESSBAR WINDOW
+def update_tkinter_progressbar(
+        TOTAL, START_TIME, PROCESSED, TKINTER_PROGRESSBAR_WINDOW, 
+        TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
+    ):
+    if not isinstance(TOTAL, int):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe total parameter must be an integer type.')
+    elif not isinstance(START_TIME, float):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe start time parameter must be a float type.')
+    elif not isinstance(PROCESSED, int):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe processed parameter must be an integer type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
+    elif not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
+        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
+    try:
+        PERCENT_COMPLETE = (PROCESSED / TOTAL) * 100
+        ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
+        PROCESSED_PER_SECOND = PROCESSED / ELAPSED_SECONDS
+        REMAINING = TOTAL - PROCESSED
+        ETA_SECONDS = REMAINING / PROCESSED_PER_SECOND
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
+        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
+    except Exception as ERROR:
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_tkinter_progressbar()"\n{ERROR_MESSAGE}')
