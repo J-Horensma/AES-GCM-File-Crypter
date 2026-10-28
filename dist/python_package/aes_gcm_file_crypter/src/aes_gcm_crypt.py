@@ -170,17 +170,17 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     #A.) A KEY SIZE INTEGER
     #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
-    #A.) A 16 BYTE SALT BYTEARRAY
+    #A.) A 16 BYTE SALT BYTES
     #B.) KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS AT A 2GHZ CPU SPEED AND IS SCALED ACCORDINGLY WITH THE CPU SPEED)
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
 #4.) IF A KDF ITERATIONS INTEGER IS NOT SUPPLIED, 
 #THE MOST SPEED EFFICIENT AND SECURITY BALANCED ONE IS SET IN ACCORDANCE WITH THE CPU SPEED
-#5.) A KDF-KEY BYTEARRAY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
+#5.) A KDF-KEY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
 #6.) RETURNS A LIST CONTAINING:
-    #A.) A KEY BYTEARRAY
-    #B.) A SALT BYTEARRAY
-#7.) CAN BE CALLED WITH THE SAME PASSWORD PREVIOUSLY USED AND THIS FUNCTION'S PREVIOUSLY RETURNED SALT BYTEARRAY, 
-#TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTEARRAY FOR PASSWORD MATCHING
+    #A.) KEY BYTES
+    #B.) SALT BYTES
+#7.) CAN BE CALLED WITH THE SAME PASSWORD PREVIOUSLY USED AND THIS FUNCTION'S PREVIOUSLY RETURNED SALT BYTES, 
+#TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTES FOR PASSWORD MATCHING
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
     MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
@@ -188,14 +188,14 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer value of 128, 192, or 256.')
-    elif SALT_BYTES is not None and not all([isinstance(SALT_BYTES, bytearray), len(SALT_BYTES) == 16]):
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytearray type that is 16 bytes long.')
+    elif SALT_BYTES is not None and not all([isinstance(SALT_BYTES, bytes), len(SALT_BYTES) == 16]):
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type that is 16 bytes long.')
     elif KDF_ITERATIONS is not None and not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
         raise ValueError(f'[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
     else:
         try:
             KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
-            SALT_BYTES = bytearray(token_bytes(16)) if SALT_BYTES is None else SALT_BYTES
+            SALT_BYTES = token_bytes(16) if SALT_BYTES is None else SALT_BYTES
             #CREATE A KEY (1 BYTE = 8 BITS):
             #16 BYTES = 128 BIT, KEY LENGTH (AES-128)
             #24 BYTES = 192 BIT, KEY LENGTH (AES-192)
@@ -211,11 +211,11 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             ENCODED_PASSWORD = PASSWORD
             #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION STORES THE RETURNED KEY-BYTES OBJECT VALUE 
             #IN C-SIDE BUFFERS, NOT IN THE RAM (MORE DIFFICULT TO INSPECT)
-            KEY_BYTES = bytearray(KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD))
+            KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
             #THE PASSWORD VARIABLE'S RAM BUFFER IS THE RAM BUFFER FOR THE PASSWORD VARIABLE OF THE CALLER THAT PASSED IT,
             #SO WIPING IT FROM HERE WILL WIPE IT FROM THE CALLER TOO.
             #ONLY THE ENCODED PASSWORD VARIABLE IS WIPED BY THIS FUNCTION, SO SUBSEQUENT CALLS, SUCH AS IN "aes_gcm_encrypt_folder()", 
-            #"aes_gcm_decrypt_folder()", "aes_gcm_encrypt_file()", OR "aes_gcm_decrypt_file()", DO NOT HAVE THEIR PASSWORD VARIABLE WIPED FROM THEM BEFORE THEY FINISH. 
+            #"aes_gcm_decrypt_folder()", "aes_gcm_encrypt_file()", OR "aes_gcm_decrypt_file()", DO NOT HAVE THEIR PASSWORD VARIABLE WIPED FROM THEM BEFORE THEY FINISH 
             variable_ram_buffer_wipe(ENCODED_PASSWORD)
             return [KEY_BYTES, SALT_BYTES]
         except Exception as ERROR:
@@ -488,7 +488,7 @@ def update_tkinter_progressbar(
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A FILE PATH STRING
-#2.) CHECKS FOR AES-GCM ENCRYPTION HEADERS IN THE SUPPLIED FILE PATH'S FILE
+#2.) CHECKS FOR AES-GCM ENCRYPTION HEADERS IN THE SUPPLIED FILE PATH
 #3.) RETURNS EXISTING AES-GCM HEADERS AS A LIST OR "None" WITH ERROR INFORMATION
 def check_aes_gcm_headers(FILE_PATH):
     if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
@@ -524,19 +524,19 @@ def check_aes_gcm_headers(FILE_PATH):
             NONCE_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(NONCE_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'NONCE_BYTES_HEADER_SIZE_TRUNCATED']
             (NONCE_BYTES_HEADER_SIZE,) = unpack('>I', NONCE_BYTES_HEADER_SIZE_DATA)
-            NONCE_BYTES_HEADER = bytearray(FILE.read(NONCE_BYTES_HEADER_SIZE))
+            NONCE_BYTES_HEADER = FILE.read(NONCE_BYTES_HEADER_SIZE)
             if NONCE_BYTES_HEADER_SIZE != len(NONCE_BYTES_HEADER) or len(NONCE_BYTES_HEADER) != 12: return [None, 'NONCE_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + NONCE_BYTES_HEADER_SIZE
             TAG_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(TAG_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'TAG_BYTES_HEADER_SIZE_TRUNCATED']
             (TAG_BYTES_HEADER_SIZE,) = unpack('>I', TAG_BYTES_HEADER_SIZE_DATA)
-            TAG_BYTES_HEADER = bytearray(FILE.read(TAG_BYTES_HEADER_SIZE))
+            TAG_BYTES_HEADER = FILE.read(TAG_BYTES_HEADER_SIZE)
             if TAG_BYTES_HEADER_SIZE != len(TAG_BYTES_HEADER) or len(TAG_BYTES_HEADER) != 16: return [None, 'TAG_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + TAG_BYTES_HEADER_SIZE
             SALT_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(SALT_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'SALT_BYTES_HEADER_SIZE_TRUNCATED']
             (SALT_BYTES_HEADER_SIZE,) = unpack('>I', SALT_BYTES_HEADER_SIZE_DATA)
-            SALT_BYTES_HEADER = bytearray(FILE.read(SALT_BYTES_HEADER_SIZE))
+            SALT_BYTES_HEADER = FILE.read(SALT_BYTES_HEADER_SIZE)
             if len(SALT_BYTES_HEADER) != 16: return [None, 'SALT_BYTES_HEADER_CORRUPTED']
             TOTAL_HEADERS_SIZE += 4 + SALT_BYTES_HEADER_SIZE
             if TOTAL_HEADERS_SIZE != 74: return [None, 'UNEXPECTED_TOTAL_HEADERS_SIZE']
