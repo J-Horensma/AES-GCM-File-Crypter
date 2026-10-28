@@ -4,9 +4,10 @@ Custom License With Redistribution Limitations
 
 "AES-GCM File-Crypter" Copyright © 2026 Joel Horensma
 
-"Commercial" means use with product(s) and/or service(s) intended for financial gain.
+For clarity:
+"Software" means the source code in this file.
 "Personal" means any use not intended for financial gain.
-"Software" means the source code, in this file.
+"Commercial" means use with product(s) and/or service(s) intended for financial gain.
 
 Personal use is permitted.
 
@@ -14,7 +15,7 @@ Redistribution, sale, or relicensing of the unmodified Software, or a
 substantially unchanged copy of the Software, is prohibited without prior
 written permission from the copyright holder.
 
-This copyright notice and license must be retained, precisely as-is, in all copies of the Software.
+This copyright notice and license must be retained, precisely as-is in all copies of the Software.
 '''
 
 from threading import Thread
