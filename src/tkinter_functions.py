@@ -409,7 +409,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         PROMPT_TITLE = 'Enter The Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
-            #DELETE THE PASSWORD ENTRY, FROM THE RAM
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         def process_password():
@@ -417,7 +417,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
             #SET THE PASSWORD VALUE TO A BYTEARRAY, 
             #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
-            #DELETE THE PASSWORD ENTRY, FROM THE RAM
+            #DELETE THE PASSWORD ENTRY FROM THE RAM
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
@@ -438,7 +438,6 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         PASSWORD_VISIBILITY_BUTTON.pack(side='left')
         ROW_3_FRAME = Frame(ENTER_PASSWORD_WINDOW)
         ROW_3_FRAME.pack(padx=10, pady=(0, 10))
-        #SET A PASSWORD CHECK STATUS LABEL
         STATUS_LABEL = Label(ROW_3_FRAME, font=('Times New Roman', 14, 'bold'), fg='grey', wraplength=400)
         STATUS_LABEL.pack()
         ROW_4_FRAME = Frame(ENTER_PASSWORD_WINDOW)
@@ -447,9 +446,8 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         CANCEL_BUTTON.pack(side='left')
         CONFIRM_BUTTON = Button(ROW_4_FRAME, text='Confirm', state='disabled', command=process_password, font=('Times New Roman', 18, 'bold'))
         CONFIRM_BUTTON.pack(side='right')
-        #UPDATE THE PASSWORD CHECK STATUS LABEL, ON KEY-UP
         PASSWORD_ENTRY.bind('<KeyRelease>', lambda ON_KEY_UP: update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUTTON))
-        #ALLOW THE CONFIRM BUTTON TO BE CLICKED, ON ENTER-KEY PRESS
+        #ALLOW THE CONFIRM BUTTON TO BE CLICKED ON ENTER-KEY PRESS
         ENTER_PASSWORD_WINDOW.bind('<Return>', lambda ON_ENTER: CONFIRM_BUTTON.invoke())
         ENTER_PASSWORD_WINDOW.wait_window()
         return PASSWORD_VALUE
@@ -483,11 +481,14 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
             PATH = None
         return PATH
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "folder_path_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "folder_path_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) OPTIONALLY ACCEPTS:
-    #A.) PROMPT TITLE AND/OR PROMPT PATH STRING(S)
+    #A.) PROMPT TITLE AND/OR PROMPT PATH STRING/S
     #B.) A FILE TYPES LIST
     #FORMAT: [('Text Files', '*.txt'), ('Python Files', '*.py')]
 #2.) PROMPTS THE USER TO CHOOSE A FILE PATH
@@ -514,7 +515,10 @@ def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
             PATH = None
         return PATH
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "file_path_prompt()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "file_path_prompt()"\n{ERROR_MESSAGE}')
 
 #THIS FUNCTION:
 #1.) REQUIRES A "tkinter.Tk()" CLASS
@@ -547,4 +551,7 @@ def progressbar_window(ROOT_WINDOW):
         PROGRESSBAR_PERCENTAGE.pack(side='left')
         return PROGRESSBAR_WINDOW, PROGRESSBAR_MESSAGE, PROGRESSBAR, PROGRESSBAR_PERCENTAGE
     except Exception as ERROR:
-        raise type(ERROR)(f'[{type(ERROR)}]\nFunction: "progressbar_window()"\n{ERROR if ERROR is not None and str(ERROR).strip() else 'An unknown error occurred!'}')
+        EXCEPTION_CLASS = ERROR.__class__
+        EXCEPTION_NAME = ERROR.__class__.__name__
+        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
+        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "progressbar_window()"\n{ERROR_MESSAGE}')
