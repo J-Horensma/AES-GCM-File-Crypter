@@ -519,7 +519,7 @@ def check_aes_gcm_headers(FILE_PATH):
             KEY_SIZE_HEADER_SIZE_DATA = FILE.read(4)
             if len(KEY_SIZE_HEADER_SIZE_DATA) != 4: return [None, 'KEY_SIZE_HEADER_SIZE_TRUNCATED']
             (KEY_SIZE_HEADER_SIZE,) = unpack('>I', KEY_SIZE_HEADER_SIZE_DATA)
-            KEY_SIZE_HEADER = int(FILE.read(KEY_SIZE_HEADER_SIZE))
+            KEY_SIZE_HEADER = FILE.read(KEY_SIZE_HEADER_SIZE)
             TOTAL_HEADERS_SIZE += 4 + KEY_SIZE_HEADER_SIZE
             NONCE_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(NONCE_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'NONCE_BYTES_HEADER_SIZE_TRUNCATED']
