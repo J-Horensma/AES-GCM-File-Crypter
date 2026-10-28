@@ -170,17 +170,17 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     #A.) A KEY SIZE INTEGER
     #B.) A PASSWORD BYTEARRAY
 #2.) OPTIONALLY ACCEPTS:
-    #A.) A 16 BYTE SALT BYTES
+    #A.) A 16 BYTE SALT BYTEARRAY
     #B.) KDF ITERATIONS INTEGER (DEFAULT IS 600, 000 ITERATIONS AT A 2GHZ CPU SPEED AND IS SCALED ACCORDINGLY WITH THE CPU SPEED)
 #3.) IF A 16 BYTE SALT IS NOT SUPPLIED, ONE IS GENERATED
 #4.) IF A KDF ITERATIONS INTEGER IS NOT SUPPLIED, 
 #THE MOST SPEED EFFICIENT AND SECURITY BALANCED ONE IS SET IN ACCORDANCE WITH THE CPU SPEED
-#5.) A KDF-KEY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
+#5.) A KDF-KEY BYTEARRAY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
 #6.) RETURNS A LIST CONTAINING:
-    #A.) KEY BYTES
-    #B.) SALT BYTES
-#7.) CAN BE CALLED WITH THE SAME PASSWORD PREVIOUSLY USED AND THIS FUNCTION'S PREVIOUSLY RETURNED SALT BYTES, 
-#TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTES FOR PASSWORD MATCHING
+    #A.) A KEY BYTEARRAY
+    #B.) A SALT BYTEARRAY
+#7.) CAN BE CALLED WITH THE SAME PASSWORD PREVIOUSLY USED AND THIS FUNCTION'S PREVIOUSLY RETURNED SALT BYTEARRAY, 
+#TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTEARRAY FOR PASSWORD MATCHING
 def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=None):
     KEY_SIZE_LIST = [128, 192, 256]
     MAX_KDF_ITERATIONS = max(1, round(600_000 * ((cpu_freq().max or 2000) / 2000)))
@@ -188,14 +188,14 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
         raise TypeError('[TypeError]\nFunction: "get_aes_key_and_salt()"\nThe password parameter must be a bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key size parameter must be an integer value of 128, 192, or 256.')
-    elif SALT_BYTES is not None and not all([isinstance(SALT_BYTES, bytes), len(SALT_BYTES) != 16]):
-        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytes type that is 16 bytes long.')
+    elif SALT_BYTES is not None and not all([isinstance(SALT_BYTES, bytearray), len(SALT_BYTES) == 16]):
+        raise ValueError('[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe salt bytes parameter must be a bytearray type that is 16 bytes long.')
     elif KDF_ITERATIONS is not None and not all([isinstance(KDF_ITERATIONS, int), 1 <= KDF_ITERATIONS <= MAX_KDF_ITERATIONS]):
         raise ValueError(f'[ValueError]\nFunction: "get_aes_key_and_salt()"\nThe key derivation function iterations parameter must be an integer between 1 and {MAX_KDF_ITERATIONS}.')
     else:
         try:
             KDF_ITERATIONS = MAX_KDF_ITERATIONS if KDF_ITERATIONS is None else KDF_ITERATIONS
-            SALT_BYTES = token_bytes(16) if SALT_BYTES is None else SALT_BYTES
+            SALT_BYTES = bytearray(token_bytes(16)) if SALT_BYTES is None else SALT_BYTES
             #CREATE A KEY (1 BYTE = 8 BITS):
             #16 BYTES = 128 BIT, KEY LENGTH (AES-128)
             #24 BYTES = 192 BIT, KEY LENGTH (AES-192)
@@ -211,7 +211,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             ENCODED_PASSWORD = PASSWORD
             #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION STORES THE RETURNED KEY-BYTES OBJECT VALUE 
             #IN C-SIDE BUFFERS, NOT IN THE RAM (MORE DIFFICULT TO INSPECT)
-            KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
+            KEY_BYTES = bytearray(KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD))
             #THE PASSWORD VARIABLE'S RAM BUFFER IS THE RAM BUFFER FOR THE PASSWORD VARIABLE OF THE CALLER THAT PASSED IT,
             #SO WIPING IT FROM HERE WILL WIPE IT FROM THE CALLER TOO.
             #ONLY THE ENCODED PASSWORD VARIABLE IS WIPED BY THIS FUNCTION, SO SUBSEQUENT CALLS, SUCH AS IN "aes_gcm_encrypt_folder()", 
@@ -509,7 +509,7 @@ def check_aes_gcm_headers(FILE_PATH):
             #CONVERT THE HEADER SIZE DATA FROM BIG-ENDIAN BINARY ENCODED BYTES, TO AN INTEGER REPRESENTING THE BYTES LENGTH OF THE HEADER
             (ALGORITHM_AND_MODE_HEADER_SIZE,) = unpack('>I', ALGORITHM_AND_MODE_HEADER_SIZE_DATA)
             #READ THE BYTES LENGTH OF THE HEADER
-            ALGORITHM_AND_MODE_HEADER = bytearray(FILE.read(ALGORITHM_AND_MODE_HEADER_SIZE))
+            ALGORITHM_AND_MODE_HEADER = FILE.read(ALGORITHM_AND_MODE_HEADER_SIZE)
             #CHECK IF THE FILE IS AES-GCM ENCRYPTED
             if ALGORITHM_AND_MODE_HEADER != str('AES-GCM').encode(): return [None, 'NOT_AES-GCM_ENCRYPTED']
             #CHECK IF THE HEADER IS CORRUPTED
@@ -519,7 +519,7 @@ def check_aes_gcm_headers(FILE_PATH):
             KEY_SIZE_HEADER_SIZE_DATA = FILE.read(4)
             if len(KEY_SIZE_HEADER_SIZE_DATA) != 4: return [None, 'KEY_SIZE_HEADER_SIZE_TRUNCATED']
             (KEY_SIZE_HEADER_SIZE,) = unpack('>I', KEY_SIZE_HEADER_SIZE_DATA)
-            KEY_SIZE_HEADER = bytearray(FILE.read(KEY_SIZE_HEADER_SIZE))
+            KEY_SIZE_HEADER = int(FILE.read(KEY_SIZE_HEADER_SIZE))
             TOTAL_HEADERS_SIZE += 4 + KEY_SIZE_HEADER_SIZE
             NONCE_BYTES_HEADER_SIZE_DATA = FILE.read(4)
             if len(NONCE_BYTES_HEADER_SIZE_DATA) != 4: return [None, 'NONCE_BYTES_HEADER_SIZE_TRUNCATED']
@@ -1037,35 +1037,35 @@ def aes_gcm_decrypt_file(
     #B.) A KEY SIZE INTEGER
     #C.) A PASSWORD BYTEARRAY
 #2.) CREATES A 16 BYTE SALT, 12 BYTE NONCE, AND 16 BYTE TAG
-#3.) AES-GCM ENCRYPTS THE VARIABLE
+#3.) AES-GCM ENCRYPTS THE SUPPLIED VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR)
     #IF SUCCESS:
         #B.) ENCRYPTED BYTES
-        #C.) SALT BYTES 
-        #D.) NONCE BYTES
-        #E.) TAG BYTES
+        #C.) A SALT BYTEARRAY 
+        #D.) A NONCE BYTEARRAY
+        #E.) A TAG BYTEARRAY
 def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(PLAINTEXT_VARIABLE, (str, bytes)):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe plaintext variable parameter must be a string or bytes type.')
     elif not isinstance(PASSWORD, bytearray):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a string, bytes, or bytearray type.')
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_encrypt_variable()"\nThe password parameter must be a bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_encrypt_variable()"\nThe key size parameter must be an integer value of 128, 192, or 256.')
     else:
         try:
             PLAINTEXT = PLAINTEXT_VARIABLE.encode() if isinstance(PLAINTEXT_VARIABLE, str) else PLAINTEXT_VARIABLE
-            KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
+            KEY, SALT = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
             #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
             #BY THE "get_aes_key_and_salt()" FUNCTION
             variable_ram_buffer_wipe(PASSWORD)
-            NONCE_BYTES = token_bytes(12)
-            CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
+            NONCE = token_bytes(12)
+            CIPHER = Cipher(algorithms.AES(KEY), modes.GCM(NONCE))
             ENCRYPTOR = CIPHER.encryptor()
             ENCRYPTED_VARIABLE_BYTES = ENCRYPTOR.update(PLAINTEXT) + ENCRYPTOR.finalize()
-            TAG_BYTES = ENCRYPTOR.tag
-            return [True, ENCRYPTED_VARIABLE_BYTES, SALT_BYTES, NONCE_BYTES, TAG_BYTES]
+            TAG = ENCRYPTOR.tag
+            return [True, ENCRYPTED_VARIABLE_BYTES, SALT, NONCE, TAG]
         except Exception as ERROR:
             EXCEPTION_NAME = ERROR.__class__.__name__
             ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
@@ -1076,43 +1076,43 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
     #A.) AN ENCRYPTED BYTES VARIABLE
     #B.) A KEY SIZE INTEGER
     #C.) A PASSWORD BYTEARRAY
-    #D.) A SALT BYTES
-    #E.) A NONCE BYTES
-    #F.) A TAG BYTES
-#2.) VALIDATES THE PASSWORD USING THE SALT BYTES IN COMBINATION WITH THE PASSWORD, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
+    #D.) A SALT BYTEARRAY
+    #E.) A NONCE BYTEARRAY
+    #F.) A TAG BYTEARRAY
+#2.) VALIDATES THE PASSWORD USING THE SALT BYTEARRAY IN COMBINATION WITH THE PASSWORD, TO CREATE A MATCHING KEY TO THE ORIGINAL ENCRYPTION KEY, 
 #USING THE "get_aes_key_and_salt()" FUNCTION
 #3.) DECRYPTS THE SUPPLIED ENCRYPTED VARIABLE
 #4.) RETURNS:
     #A.) "True" (SUCCESS) or "False" (ERROR) 
     #IF SUCCESS:
         #B.) A DECRYPTED PLAINTEXT STRING
-def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NONCE_BYTES, TAG_BYTES):
+def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT, NONCE, TAG):
     KEY_SIZE_LIST = [128, 192, 256]
     if not isinstance(ENCRYPTED_BYTES, bytes):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe encrypted bytes parameter must be a bytes type.')
     elif not isinstance(PASSWORD, bytearray):
         raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe password parameter must be a bytearray type.')
-    elif not isinstance(SALT_BYTES, bytes):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter must be a bytes type.')
-    elif not isinstance(NONCE_BYTES, bytes):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter must be a bytes type.')
-    elif not isinstance(TAG_BYTES, bytes):
-        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter must be a bytes type.')
+    elif not isinstance(SALT, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt parameter must be a bytearray type.')
+    elif not isinstance(NONCE, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce parameter must be a bytearray type.')
+    elif not isinstance(TAG_BYTES, bytearray):
+        raise TypeError('[TypeError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag parameter must be a bytearray type.')
     elif KEY_SIZE not in KEY_SIZE_LIST:
         raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe key size parameter must be an integer value of 128, 192, or 256.')
     elif len(SALT_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt bytes parameter must be 16 bytes long.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe salt parameter must be 16 bytes long.')
     elif len(NONCE_BYTES) != 12:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce bytes parameter must be 12 bytes long.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe nonce parameter must be 12 bytes long.')
     elif len(TAG_BYTES) != 16:
-        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag bytes parameter must be 16 bytes long.')
+        raise ValueError('[ValueError]\nFunction: "aes_gcm_decrypt_variable()"\nThe tag parameter must be 16 bytes long.')
     else:
         try:
-            KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES)[0]
+            KEY = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT)[0]
             #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
             #BY THE "get_aes_key_and_salt()" FUNCTION
             variable_ram_buffer_wipe(PASSWORD)
-            CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
+            CIPHER = Cipher(algorithms.AES(KEY), modes.GCM(NONCE, TAG))
             DECRYPTOR = CIPHER.decryptor()
             PLAINTEXT = DECRYPTOR.update(ENCRYPTED_BYTES) + DECRYPTOR.finalize()
             return [True, PLAINTEXT]
