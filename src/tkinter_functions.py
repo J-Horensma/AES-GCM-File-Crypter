@@ -217,10 +217,10 @@ def toggle_input_visibility(ENTRY_WIDGET, VISIBILITY_BUTTON):
 
 #THIS FUNCTION:
 #1.) CAN BE TRIGGERED ON-KEY RELEASE WITH: 
-"Entry().bind(
-'<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(
-STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH)
-)"
+#"Entry().bind(
+#'<KeyRelease>', lambda ON_KEY_UP: update_create_password_input_status(
+#STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PASSWORD_ENTRY, CONFIRM_BUTTON, MINIMUM_PASSWORD_LENGTH)
+#)"
 #2.) REQUIRES:
     #A.) A "tkinter.Label()" CLASS
     #B.) 2x "tkinter.Entry()" CLASSES
