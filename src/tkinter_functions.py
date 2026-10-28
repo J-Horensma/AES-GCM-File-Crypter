@@ -95,7 +95,7 @@ def get_device_screen_size(ROOT_WINDOW):
 #THIS FUNCTION:
 #1.) REQUIRES:
     #A.) A "tkinter.Tk()" OR "tkinter.Toplevel()" CLASS
-#2.) CLEARS ALL WIDGETS, IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
+#2.) CLEARS ALL WIDGETS IN THE WINDOW, WHILE KEEPING THE WINDOW OPEN
 def clear_window(WINDOW):
     if not isinstance(WINDOW, (Tk, Toplevel)):
         raise TypeError('[TypeError]\nFunction: "clear_window()"\nThe window parameter must be a "tkinter.Tk()" or "tkinter.Toplevel()" type.')
