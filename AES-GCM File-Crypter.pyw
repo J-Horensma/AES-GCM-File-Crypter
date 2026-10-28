@@ -9,11 +9,11 @@ For clarity:
 "Personal" means any use not intended for financial gain.
 "Commercial" means use with product(s) and/or service(s) intended for financial gain.
 
-This Software may be used, modified, and/or incorporated into projects for personal use.
+Personal use is permitted.
 
-Commercial use of this Software is allowed when:
-1.) Substantial modifications and/or additions have first been incorporated into the Software (More than minor cosmetic and/or structural changes).
-2.) The Software changes must be reasonably demonstratable, in the behavior, functionality, and/or structure of the running Software(s) and/or service(s).
+Redistribution, sale, or relicensing of the unmodified Software, or a
+substantially unchanged copy of the Software, is prohibited without prior
+written permission from the copyright holder.
 
 Redistribution of the unmodified Software or a substantially unchanged copy of it, with Commercial intent and without prior written permission, is prohibited.
 
