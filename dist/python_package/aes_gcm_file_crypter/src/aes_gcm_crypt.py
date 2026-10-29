@@ -1071,6 +1071,8 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
             variable_ram_buffer_wipe(PASSWORD)
             NONCE_BYTES = token_bytes(12)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
+            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+            variable_ram_buffer_wipe(KEY_BYTES)
             ENCRYPTOR = CIPHER.encryptor()
             ENCRYPTED_VARIABLE_BYTES = ENCRYPTOR.update(PLAINTEXT) + ENCRYPTOR.finalize()
             TAG_BYTES = ENCRYPTOR.tag
@@ -1122,6 +1124,8 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             #BY THE "get_aes_key_and_salt()" FUNCTION
             variable_ram_buffer_wipe(PASSWORD)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
+            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+            variable_ram_buffer_wipe(KEY_BYTES)
             DECRYPTOR = CIPHER.decryptor()
             PLAINTEXT = DECRYPTOR.update(ENCRYPTED_BYTES) + DECRYPTOR.finalize()
             return [True, PLAINTEXT]
