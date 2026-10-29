@@ -58,7 +58,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             WINDOW.iconphoto(True, ICON_IMAGE)
             try:
                 WINDOW.iconbitmap(ICON_ICO_FILE_PATH)
-            except:
+            except Exception:
                 pass
         elif system() == 'Darwin':
             ICON_IMAGE = PhotoImage(file=ICON_ICO_FILE_PATH)
@@ -249,7 +249,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         if IS_PASSWORD_EMPTY and IS_CONFIRM_PASSWORD_EMPTY:
             STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and paste a password.', fg='#F44336')
         elif not MINIMUM_LENGTH_CHECK:
             STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} required characters', fg='#2196F3')
         elif any([PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]) and any([IS_PASSWORD_EMPTY, IS_CONFIRM_PASSWORD_EMPTY]):
@@ -282,18 +282,18 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
 def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
-    elif MINIMUM_PASSWORD_LENGTH and not isinstance(MINIMUM_PASSWORD_LENGTH, int):
+    elif MINIMUM_PASSWORD_LENGTH is not None and not isinstance(MINIMUM_PASSWORD_LENGTH, int):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe minimum password length parameter must be an integer type.')
-    elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe prompt title parameter must be a string type.')
     try:
         MINIMUM_PASSWORD_LENGTH = 16 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
-            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
-            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
+            #DELETE THE CONFIRM PASSWORD ENTRY WIDGET AND IT'S CONTENT
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         def process_password():
@@ -301,9 +301,9 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
             #SET THE PASSWORD VALUE TO A BYTEARRAY, 
             #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
-            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
-            #DELETE THE CONFIRM PASSWORD ENTRY FROM THE RAM
+            #DELETE THE CONFIRM PASSWORD ENTRY WIDGET AND IT'S CONTENT
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
@@ -382,10 +382,10 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
             STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and paste a password.', fg='#F44336')
         else:
             STATUS_LABEL.config(text='')
-        if not PASSWORD_VALUE and ASCII_CHECK:
-            CONFIRM_BUTTON.config(state='disabled')
-        else:
+        if PASSWORD_VALUE and ASCII_CHECK:
             CONFIRM_BUTTON.config(state='normal')
+        else:
+            CONFIRM_BUTTON.config(state='disabled')
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -401,13 +401,13 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
 def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
-    elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe prompt title parameter must be a string type.')
     try:
         PROMPT_TITLE = 'Enter The Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
-            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         def process_password():
@@ -415,7 +415,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
             #SET THE PASSWORD VALUE TO A BYTEARRAY, 
             #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
-            #DELETE THE PASSWORD ENTRY FROM THE RAM
+            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
@@ -462,11 +462,11 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
 #3.) RETURNS THE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
-    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter must be a string type.')
-    elif PROMPT_PATH and not isabs(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isabs(PROMPT_PATH):
         raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be an absolute path.')
-    elif PROMPT_PATH and not isdir(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be a path to an existing folder.')
     try:
         PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
@@ -492,13 +492,13 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
 #2.) PROMPTS THE USER TO CHOOSE A FILE PATH
 #3.) RETURNS THE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
-    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter must be a string type.')
-    elif FILE_TYPES and not isinstance(FILE_TYPES, list):
+    elif FILE_TYPES is not None and not isinstance(FILE_TYPES, list):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe file types parameter must be a list type.')
-    elif PROMPT_PATH and not isabs(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isabs(PROMPT_PATH):
         raise ValueError('[ValueError]\nFunction: "file_path_prompt()"\nThe prompt path parameter must be an absolute path.')
-    elif PROMPT_PATH and not isdir(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "file_path_prompt()"\nThe prompt path parameter must be a path to an existing folder.')
     try:
         PROMPT_TITLE = 'Choose A File' if PROMPT_TITLE is None else PROMPT_TITLE
@@ -553,46 +553,3 @@ def progressbar_window(ROOT_WINDOW):
         EXCEPTION_NAME = ERROR.__class__.__name__
         ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
         raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "progressbar_window()"\n{ERROR_MESSAGE}')
-
-#THIS FUNCTION:
-#1.) REQUIRES:
-    #A.) A TOTAL INTEGER
-    #B.) A START TIME FLOAT
-    #C.) A PROCESSED INTEGER
-    #D.) A "tkinter.Toplevel()" CLASS (FOR A GUI PROGRESSBAR WINDOW)
-    #E.) A "tkinter.Label()" CLASS (FOR ETA IN THE GUI PROGRESSBAR WINDOW)
-    #F.) A "ttk.Progressbar()" CLASS (FOR THE PROGRESSBAR WINDOW'S, PROGRESSBAR)
-    #G.) A "tkinter.Label()" CLASS (FOR PERCENTAGE IN THE GUI PROGRESSBAR WINDOW)
-#2.) UPDATES THE SUPPLIED TKINTER PROGRESSBAR WINDOW
-def update_tkinter_progressbar(
-        TOTAL, START_TIME, PROCESSED, TKINTER_PROGRESSBAR_WINDOW, 
-        TKINTER_PROGRESSBAR_MESSAGE, TKINTER_PROGRESSBAR, TKINTER_PROGRESSBAR_PERCENTAGE
-    ):
-    if not isinstance(TOTAL, int):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe total parameter must be an integer type.')
-    elif not isinstance(START_TIME, float):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe start time parameter must be a float type.')
-    elif not isinstance(PROCESSED, int):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe processed parameter must be an integer type.')
-    elif not isinstance(TKINTER_PROGRESSBAR_WINDOW, Toplevel):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar window parameter must be a "tkinter.Toplevel()" type.')
-    elif not isinstance(TKINTER_PROGRESSBAR_MESSAGE, Label):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar message parameter must be a "tkinter.Label()" type.')
-    elif not isinstance(TKINTER_PROGRESSBAR, ttk.Progressbar):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar parameter must be a "ttk.Progressbar()" type.')
-    elif not isinstance(TKINTER_PROGRESSBAR_PERCENTAGE, Label):
-        raise TypeError('[TypeError]\nFunction: "update_tkinter_progressbar()"\nThe tkinter progressbar percentage parameter must be a "tkinter.Label()" type.')
-    try:
-        PERCENT_COMPLETE = (PROCESSED / TOTAL) * 100
-        ELAPSED_SECONDS = max(time() - START_TIME, 0.001)
-        PROCESSED_PER_SECOND = PROCESSED / ELAPSED_SECONDS
-        REMAINING = TOTAL - PROCESSED
-        ETA_SECONDS = REMAINING / PROCESSED_PER_SECOND
-        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'Estimated time left: {convert_seconds(ETA_SECONDS)}': TKINTER_PROGRESSBAR_MESSAGE.config(text=t))
-        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda v=PERCENT_COMPLETE: TKINTER_PROGRESSBAR.config(value=v))
-        TKINTER_PROGRESSBAR_WINDOW.after(0, lambda t=f'{round(PERCENT_COMPLETE)}%': TKINTER_PROGRESSBAR_PERCENTAGE.config(text=t))
-    except Exception as ERROR:
-        EXCEPTION_CLASS = ERROR.__class__
-        EXCEPTION_NAME = ERROR.__class__.__name__
-        ERROR_MESSAGE = str(ERROR).strip() or 'An unknown error occurred!'
-        raise EXCEPTION_CLASS(f'[{EXCEPTION_NAME}]\nFunction: "update_tkinter_progressbar()"\n{ERROR_MESSAGE}')
