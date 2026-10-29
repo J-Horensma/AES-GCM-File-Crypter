@@ -282,9 +282,9 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
 def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
-    elif MINIMUM_PASSWORD_LENGTH and not isinstance(MINIMUM_PASSWORD_LENGTH, int):
+    elif MINIMUM_PASSWORD_LENGTH is not None and not isinstance(MINIMUM_PASSWORD_LENGTH, int):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe minimum password length parameter must be an integer type.')
-    elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "create_password_prompt()"\nThe prompt title parameter must be a string type.')
     try:
         MINIMUM_PASSWORD_LENGTH = 16 if MINIMUM_PASSWORD_LENGTH is None else MINIMUM_PASSWORD_LENGTH
@@ -401,7 +401,7 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
 def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
     if not isinstance(ROOT_WINDOW, Tk):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe root window parameter must be a "tkinter.Tk()" type.')
-    elif PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    elif PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "enter_password_prompt()"\nThe prompt title parameter must be a string type.')
     try:
         PROMPT_TITLE = 'Enter The Password' if PROMPT_TITLE is None else PROMPT_TITLE
@@ -462,11 +462,11 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
 #2.) PROMPTS THE USER TO CHOOSE A FOLDER PATH
 #3.) RETURNS THE FOLDER PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
-    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "folder_path_prompt()"\nThe prompt title parameter must be a string type.')
-    elif PROMPT_PATH and not isabs(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isabs(PROMPT_PATH):
         raise ValueError('[ValueError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be an absolute path.')
-    elif PROMPT_PATH and not isdir(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "folder_path_prompt()"\nThe prompt path parameter must be a path to an existing folder.')
     try:
         PROMPT_TITLE = 'Choose A Folder' if PROMPT_TITLE is None else PROMPT_TITLE
@@ -492,13 +492,13 @@ def folder_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None):
 #2.) PROMPTS THE USER TO CHOOSE A FILE PATH
 #3.) RETURNS THE FILE PATH THAT WAS CHOSEN AS A STRING OR "None" IF THE WINDOW IS CLOSED OR CANCELLED
 def file_path_prompt(PROMPT_TITLE=None, PROMPT_PATH=None, FILE_TYPES=None):
-    if PROMPT_TITLE and not isinstance(PROMPT_TITLE, str):
+    if PROMPT_TITLE is not None and not isinstance(PROMPT_TITLE, str):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe prompt title parameter must be a string type.')
-    elif FILE_TYPES and not isinstance(FILE_TYPES, list):
+    elif FILE_TYPES is not None and not isinstance(FILE_TYPES, list):
         raise TypeError('[TypeError]\nFunction: "file_path_prompt()"\nThe file types parameter must be a list type.')
-    elif PROMPT_PATH and not isabs(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isabs(PROMPT_PATH):
         raise ValueError('[ValueError]\nFunction: "file_path_prompt()"\nThe prompt path parameter must be an absolute path.')
-    elif PROMPT_PATH and not isdir(PROMPT_PATH):
+    elif PROMPT_PATH is not None and not isdir(PROMPT_PATH):
         raise NotADirectoryError('[NotADirectoryError]\nFunction: "file_path_prompt()"\nThe prompt path parameter must be a path to an existing folder.')
     try:
         PROMPT_TITLE = 'Choose A File' if PROMPT_TITLE is None else PROMPT_TITLE
