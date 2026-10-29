@@ -249,7 +249,7 @@ def update_create_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_PA
         if IS_PASSWORD_EMPTY and IS_CONFIRM_PASSWORD_EMPTY:
             STATUS_LABEL.config(text='The password cannot be empty!', fg='#F44336')
         elif not ASCII_CHECK:
-            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and past a password.', fg='#F44336')
+            STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and paste a password.', fg='#F44336')
         elif not MINIMUM_LENGTH_CHECK:
             STATUS_LABEL.config(text=f'{len(PASSWORD_VALUE) if PASSWORD_VALUE else len(CONFIRM_PASSWORD_VALUE)}/{MINIMUM_PASSWORD_LENGTH} required characters', fg='#2196F3')
         elif any([PASSWORD_VALUE, CONFIRM_PASSWORD_VALUE]) and any([IS_PASSWORD_EMPTY, IS_CONFIRM_PASSWORD_EMPTY]):
@@ -382,10 +382,10 @@ def update_enter_password_input_status(STATUS_LABEL, PASSWORD_ENTRY, CONFIRM_BUT
             STATUS_LABEL.config(text='The entered password contains invalid characters! For your security, do not copy and paste a password.', fg='#F44336')
         else:
             STATUS_LABEL.config(text='')
-        if not PASSWORD_VALUE and ASCII_CHECK:
-            CONFIRM_BUTTON.config(state='disabled')
-        else:
+        if PASSWORD_VALUE and ASCII_CHECK:
             CONFIRM_BUTTON.config(state='normal')
+        else:
+            CONFIRM_BUTTON.config(state='disabled')
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
