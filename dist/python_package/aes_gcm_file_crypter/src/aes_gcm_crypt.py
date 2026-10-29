@@ -126,7 +126,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
     if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute path string to an existing file.')
-    elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= BLOCK_SIZE]):
+    elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
         raise ValueError(f'[ValueError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
     try:
         FILE_PATH = abspath(FILE_PATH)
