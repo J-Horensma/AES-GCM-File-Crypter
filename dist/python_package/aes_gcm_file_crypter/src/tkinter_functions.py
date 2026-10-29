@@ -58,7 +58,7 @@ def set_window_icon(WINDOW, ICON_ICO_FILE_PATH=None, ICON_PNG_FILE_PATH=None):
             WINDOW.iconphoto(True, ICON_IMAGE)
             try:
                 WINDOW.iconbitmap(ICON_ICO_FILE_PATH)
-            except:
+            except Exception:
                 pass
         elif system() == 'Darwin':
             ICON_IMAGE = PhotoImage(file=ICON_ICO_FILE_PATH)
