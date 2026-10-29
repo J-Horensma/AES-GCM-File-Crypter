@@ -103,7 +103,7 @@ def variable_ram_buffer_wipe(VARIABLES):
                 #IF THE VARIABLE VALUE IS A BYTEARRAY TYPE, OVERWRITE IT'S RAM BUFFER CONTENTS DYNAMICALLY
                 #TO NULL-BYTES, TO PREVENT THE VARIABLE VALUE FROM REMAINING IN THE RAM
                 VALUE[:] = b'\x00' * len(VALUE)
-            elif isinstance(VARIABLES, (str, bytes)):
+            elif isinstance(VALUE, (str, bytes)):
                 #PYTHON VARIABLES THAT ARE NOT BYTEARRAY TYPES ARE IMMUTABLE AND
                 #CANNOT HAVE THEIR RAM BUFFER VALUES CHANGED DYNAMICALLY, HOWEVER, 
                 #THE VARIABLE VALUE CAN BE OVERWRITTEN AND UPDATED, IN THE RAM, AS SOON AS POSSIBLE (NOT AS SECURE AS USING A BYTEARRAY)
@@ -126,7 +126,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
     MAX_BLOCK_SIZE = max(1, min(16 * 1024 * 1024, virtual_memory().available // 4))
     if not all([isinstance(FILE_PATH, str), isabs(FILE_PATH), isfile(FILE_PATH)]):
         raise FileNotFoundError('[FileNotFoundError]\nFunction: "file_contents_disk_wipe()"\nThe file path parameter must be an absolute path string to an existing file.')
-    elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= BLOCK_SIZE]):
+    elif BLOCK_SIZE is not None and not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
         raise ValueError(f'[ValueError]\nFunction: "file_contents_disk_wipe()"\nThe block size parameter must be an integer between 1 and {BLOCK_SIZE}.')
     try:
         FILE_PATH = abspath(FILE_PATH)
@@ -178,7 +178,7 @@ def file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE=None):
 #THE MOST SPEED EFFICIENT AND SECURITY BALANCED ONE IS SET IN ACCORDANCE WITH THE CPU SPEED
 #5.) A KDF-KEY IS GENERATED AS A KEY FOR AES CRYPTOGRAPHY
 #6.) RETURNS A LIST CONTAINING:
-    #A.) KEY BYTES
+    #A.) KEY BYTEARRAY
     #B.) SALT BYTES
 #7.) CAN BE CALLED WITH THE SAME PASSWORD PREVIOUSLY USED AND THIS FUNCTION'S PREVIOUSLY RETURNED SALT BYTES, 
 #TO GENERATE A MATCHING KEY, TO THE PREVIOUSLY RETURNED KEY BYTES FOR PASSWORD MATCHING
@@ -210,12 +210,12 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
             )
             #THE PASSWORD MUST BE ENCODED, HOWEVER, A BYTEARRAY IS ALREADY ENCODED ("bytearray(b'PASSWORD_HERE')")
             ENCODED_PASSWORD = PASSWORD
-            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION STORES THE RETURNED KEY-BYTES OBJECT VALUE 
+            #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION (AT THE TIME OF WRITING THIS COMMENT) STORES THE RETURNED KEY BYTES OBJECT VALUE 
             #IN C-SIDE BUFFERS, NOT IN THE RAM (MORE DIFFICULT TO INSPECT)
-            KEY_BYTES = KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD)
+            KEY_BYTES = bytearray(KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD))
             #THE PASSWORD VARIABLE'S RAM BUFFER IS THE RAM BUFFER FOR THE PASSWORD VARIABLE OF THE CALLER THAT PASSED IT,
             #SO WIPING IT FROM HERE WILL WIPE IT FROM THE CALLER TOO.
-            #ONLY THE ENCODED PASSWORD VARIABLE IS WIPED BY THIS FUNCTION, SO SUBSEQUENT CALLS, SUCH AS IN "aes_gcm_encrypt_folder()", 
+            #ONLY THE ENCODED PASSWORD VARIABLE (SET BY THIS FUNCTION) IS WIPED BY THIS FUNCTION, SO SUBSEQUENT CALLS, SUCH AS IN "aes_gcm_encrypt_folder()", 
             #"aes_gcm_decrypt_folder()", "aes_gcm_encrypt_file()", OR "aes_gcm_decrypt_file()", DO NOT HAVE THEIR PASSWORD VARIABLE WIPED FROM THEM BEFORE THEY FINISH 
             variable_ram_buffer_wipe(ENCODED_PASSWORD)
             return [KEY_BYTES, SALT_BYTES]
@@ -318,13 +318,14 @@ def has_permissions(PATH, PERMISSIONS):
 #2.) RECURSIVELY SCANS THE PATH
 #3.) RETURNS A LIST CONTAINING:
     #A.) A FILE PATHS LIST WITH TUPLE VALUES CONTAINING: 
-            #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
-            #ii.) A FILE PATH STRING
+        #i.) A "True" OR "False" BOOLEAN REPRESENTING THE FILE PATH ACCESSABILITY STATUS
+        #ii.) A FILE PATH STRING
     #B.) AN ACCESSABLE FILES TOTAL INTEGER
     #C.) AN ACCESSABLE FILES, FOLDER BYTES TOTAL INTEGER
 def recursive_files_and_bytes_total(FOLDER_PATH):
     if not all([isinstance(FOLDER_PATH, str), isabs(FOLDER_PATH), isdir(FOLDER_PATH)]):
-        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path string to an existing folder.')
+        raise NotADirectoryError('[NotADirectoryError]\nFunction: "recursive_files_and_bytes_total()"\nThe folder path parameter must be an absolute path string to an existing folder.'
+        )
     try:
         FOLDER_PATH = abspath(FOLDER_PATH)
         ALL_FILE_PATHS = []
@@ -333,17 +334,20 @@ def recursive_files_and_bytes_total(FOLDER_PATH):
         for ROOT, FOLDER_NAMES, FILE_NAMES in walk(FOLDER_PATH):
             FILE_PATHS = [
                 (
-                True if all([is_normal(join(ROOT, FILE_NAME)), has_permissions(join(ROOT, FILE_NAME), 'RW')]) else False,
-                join(ROOT, FILE_NAME)
-                ) 
+                    all([
+                        is_normal(join(ROOT, FILE_NAME)),
+                        has_permissions(join(ROOT, FILE_NAME), 'RW')
+                    ]),
+                    join(ROOT, FILE_NAME)
+                )
                 for FILE_NAME in FILE_NAMES
             ]
             ALL_FILE_PATHS.extend(FILE_PATHS)
-            for FILE_PATH in FILE_PATHS:
-                if FILE_PATH[0]:
+            for FILE_ACCESSIBLE, FILE_PATH in FILE_PATHS:
+                if FILE_ACCESSIBLE:
                     FILES_TOTAL += 1
-                    FOLDER_BYTES_TOTAL += getsize(FILE_PATH[1])
-        return FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL
+                    FOLDER_BYTES_TOTAL += getsize(FILE_PATH)
+        return ALL_FILE_PATHS, FILES_TOTAL, FOLDER_BYTES_TOTAL
     except Exception as ERROR:
         EXCEPTION_CLASS = ERROR.__class__
         EXCEPTION_NAME = ERROR.__class__.__name__
@@ -793,13 +797,15 @@ def aes_gcm_encrypt_file(
         elif not all([isinstance(BLOCK_SIZE, int), 1 <= BLOCK_SIZE <= MAX_BLOCK_SIZE]):
             return [False, f'INVALID_BLOCK_SIZE!\nThe block size parameter must be an integer between 1 and {MAX_BLOCK_SIZE}.', PROCESSED_FOLDER_BYTES_TOTAL]
         FILE_PATH = abspath(FILE_PATH)
-        #CREATE A 16-32 BYTE KEY (DEPENDENT ON THE SUPPLIED KEY SIZE) AND A 16-BYTE SALT, 
+        #CREATE A 16-32 BYTE KEY BYTES BYTEARRAY (DEPENDENT ON THE SUPPLIED KEY SIZE) AND A 16-BYTE SALT, 
         #USING THE "get_aes_key_and_salt()" FUNCTION AND THE USER-ENTERED PASSWORD BYTEARRAY
         KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, None, KDF_ITERATIONS)
         #CREATE A 12-BYTE NONCE
         NONCE_BYTES = token_bytes(12)
         #USE THE KEY AND NONCE BYTES TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
         CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
+        #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+        variable_ram_buffer_wipe(KEY_BYTES)
         ENCRYPTOR = CIPHER.encryptor()
         #GET THE STATE VARIABLE FROM THE WRAPPER AND SET THE "active()" STATE TO "True" IF THE PYTHON PROGRESSBAR IS SET
         if stdout and PYTHON_PROGRESSBAR is True:
@@ -964,6 +970,8 @@ def aes_gcm_decrypt_file(
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES, KDF_ITERATIONS)[0]
             #USE THE KEY, NONCE, AND TAG BYTES TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
+            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+            variable_ram_buffer_wipe(KEY_BYTES)
             variable_ram_buffer_wipe([NONCE_BYTES, TAG_BYTES, SALT_BYTES])
             DECRYPTOR = CIPHER.decryptor()
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK AFTER THE FILE'S HEADERS
@@ -1063,6 +1071,8 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
             variable_ram_buffer_wipe(PASSWORD)
             NONCE_BYTES = token_bytes(12)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
+            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+            variable_ram_buffer_wipe(KEY_BYTES)
             ENCRYPTOR = CIPHER.encryptor()
             ENCRYPTED_VARIABLE_BYTES = ENCRYPTOR.update(PLAINTEXT) + ENCRYPTOR.finalize()
             TAG_BYTES = ENCRYPTOR.tag
@@ -1114,6 +1124,8 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
             #BY THE "get_aes_key_and_salt()" FUNCTION
             variable_ram_buffer_wipe(PASSWORD)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
+            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+            variable_ram_buffer_wipe(KEY_BYTES)
             DECRYPTOR = CIPHER.decryptor()
             PLAINTEXT = DECRYPTOR.update(ENCRYPTED_BYTES) + DECRYPTOR.finalize()
             return [True, PLAINTEXT]
