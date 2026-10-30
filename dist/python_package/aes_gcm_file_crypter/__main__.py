@@ -27,60 +27,60 @@ def cli():
     )
     KEY_SIZE_LIST = [128, 192, 256]
     ENCRYPT_FOLDER.add_argument('folder_path', help='The folder path to encrypt.')
-    ENCRYPT_FOLDER.add_argument('key_size', help='An integer representing the bit size of the random key created with the user-chosen password, the options are 128 (Least drive-space used), 192, or 256 (Most secure).', type=int, choices=KEY_SIZE_LIST)
-    ENCRYPT_FOLDER.add_argument('password', help='A user-chosen password for encryption.')
+    ENCRYPT_FOLDER.add_argument('key_size', help='An integer representing the bit size of the random key created with the user-entered password. The options are 128 (Least drive-space used), 192, or 256 (Most secure).', type=int, choices=KEY_SIZE_LIST)
+    ENCRYPT_FOLDER.add_argument('password', help='A user-entered password for encryption.')
     ENCRYPT_FOLDER.add_argument('kdf_iterations', help='An optional KDF iterations integer representing the amount of times the KDF hashes the password while creating a key.', type=int, default=None, nargs='?')
-    ENCRYPT_FOLDER.add_argument('block_size', help='An optional block size integer representing the amount of bytes for each file chunk to be read (Higher is faster, but requires more RAM).', type=int, default=None, nargs='?')
+    ENCRYPT_FOLDER.add_argument('block_size', help='An optional block size integer representing the amount of bytes to be read for each file chunk (Higher is faster but requires more RAM).', type=int, default=None, nargs='?')
     DECRYPT_FOLDER = SUB_PARSER.add_parser(
         'decrypt_folder', 
         help='Decrypt a folder',
         epilog=f'Example: python -m aes_gcm_file_crypter decrypt_folder {abspath('/path/to/folder')} Password'
     )
     DECRYPT_FOLDER.add_argument('folder_path', help='The folder path to decrypt.')
-    DECRYPT_FOLDER.add_argument('password', help='The same password used to encrypt the folder.')
+    DECRYPT_FOLDER.add_argument('password', help='The same user-entered password used to encrypt the folder.')
     DECRYPT_FOLDER.add_argument('kdf_iterations', help='An optional KDF iterations integer representing the amount of times the KDF hashes the password while creating a key.', type=int, default=None, nargs='?')
-    DECRYPT_FOLDER.add_argument('block_size', help='An optional block size integer representing the amount of bytes for each file chunk to be read (Higher is faster, but requires more RAM).', type=int, default=None, nargs='?')
+    DECRYPT_FOLDER.add_argument('block_size', help='An optional block size integer representing the amount of bytes to be read for each file chunk (Higher is faster but requires more RAM).', type=int, default=None, nargs='?')
     ENCRYPT_FILE = SUB_PARSER.add_parser(
         'encrypt_file', 
         help='Encrypt a file',
         epilog=f'Example: python -m aes_gcm_file_crypter encrypt_file {abspath('/path/to/file.ext')} 256 Password'
     )
     ENCRYPT_FILE.add_argument('file_path', help='The file path to encrypt.')
-    ENCRYPT_FILE.add_argument('key_size', help='An integer representing the bit size of the random key created with the user-chosen password, the options are 128 (Least drive-space used), 192, or 256 (Most secure).', type=int, choices=KEY_SIZE_LIST)
+    ENCRYPT_FILE.add_argument('key_size', help='An integer representing the bit size of the random key created with the user-entered password, the options are 128 (Least drive-space used), 192, or 256 (Most secure).', type=int, choices=KEY_SIZE_LIST)
     ENCRYPT_FILE.add_argument('password', help='A user-chosen password for encryption.')
     ENCRYPT_FILE.add_argument('kdf_iterations', help='An optional KDF iterations integer representing the amount of times the KDF hashes the password while creating a key.', type=int, default=None, nargs='?')
-    ENCRYPT_FILE.add_argument('block_size', help='An optional block size integer representing the amount of bytes for each file chunk to be read (Higher is faster, but requires more RAM).', type=int, default=None, nargs='?')
+    ENCRYPT_FILE.add_argument('block_size', help='An optional block size integer representing the amount of bytes to be read for each file chunk (Higher is faster but requires more RAM).', type=int, default=None, nargs='?')
     DECRYPT_FILE = SUB_PARSER.add_parser(
         'decrypt_file',
         help='Decrypt a file',
         epilog=f'Example: python -m aes_gcm_file_crypter decrypt_file {abspath('/path/to/file.ext')} Password'
     )
     DECRYPT_FILE.add_argument('file_path', help='The file path to decrypt.')
-    DECRYPT_FILE.add_argument('password', help='The same password used to encrypt the file.')
+    DECRYPT_FILE.add_argument('password', help='The same user-entered password used to encrypt the file.')
     DECRYPT_FILE.add_argument('kdf_iterations', help='An optional KDF iterations integer representing the amount of times the KDF hashes the password while creating a key.', type=int, default=None, nargs='?')
-    DECRYPT_FILE.add_argument('block_size', help='An optional block size integer representing the amount of bytes for each file chunk to be read (Higher is faster, but requires more RAM).', type=int, default=None, nargs='?')
+    DECRYPT_FILE.add_argument('block_size', help='An optional block size integer representing the amount of bytes to be read for each file chunk (Higher is faster but requires more RAM).', type=int, default=None, nargs='?')
     ARGUMENTS = PARSER.parse_args()
     try:
         if ARGUMENTS.COMMAND == 'encrypt_folder':
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_encrypt_folder
             CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(ARGUMENTS.folder_path)[2])
-            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
+            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {CONVERTED_BYTES_TOTAL} in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_folder':
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_decrypt_folder
             CONVERTED_BYTES_TOTAL = convert_bytes(recursive_files_and_bytes_total(ARGUMENTS.folder_path)[2])
-            print(f'AES-GCM decrypting a total of {CONVERTED_BYTES_TOTAL}, in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
+            print(f'AES-GCM decrypting a total of {CONVERTED_BYTES_TOTAL} in the folder: "{ARGUMENTS.folder_path}"\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return DECRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'encrypt_file':
             from .src.aes_gcm_crypt import convert_bytes, aes_gcm_encrypt_file
-            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
+            print(f'AES-GCM-{ARGUMENTS.key_size} encrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))} of data in the file: "{ARGUMENTS.file_path}"\nplease wait...')
             ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_file':
             from .src.aes_gcm_crypt import convert_bytes, aes_gcm_decrypt_file
-            print(f'AES-GCM decrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))}, in the file: "{ARGUMENTS.file_path}"\nplease wait...')
+            print(f'AES-GCM decrypting a total of {convert_bytes(getsize(ARGUMENTS.file_path))} of data in the file: "{ARGUMENTS.file_path}"\nplease wait...')
             DECRYPT_RESULT = aes_gcm_decrypt_file(ARGUMENTS.file_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return DECRYPT_RESULT[1].strip()
     except KeyboardInterrupt:
