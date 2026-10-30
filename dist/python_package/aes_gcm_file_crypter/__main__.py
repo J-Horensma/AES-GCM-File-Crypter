@@ -1,5 +1,5 @@
 from sys import exit
-from os.path import abspath, isabs, isdir, isfile, getsize
+from os.path import abspath, isdir, isfile, getsize
 from platform import system
 import argparse
 from . import __version__
@@ -62,6 +62,7 @@ def cli():
     ARGUMENTS = PARSER.parse_args()
     try:
         if ARGUMENTS.COMMAND == 'encrypt_folder':
+            from os.path import isabs
             if not all([isinstance(ARGUMENTS.folder_path, str), isabs(ARGUMENTS.folder_path), isdir(ARGUMENTS.folder_path)]):
                 return [f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder.\nFolder path: {ARGUMENTS.folder_path}']
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_encrypt_folder
@@ -70,6 +71,7 @@ def cli():
             ENCRYPT_RESULT = aes_gcm_encrypt_folder(ARGUMENTS.folder_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_folder':
+            from os.path import isabs
             if not all([isinstance(ARGUMENTS.folder_path, str), isabs(ARGUMENTS.folder_path), isdir(ARGUMENTS.folder_path)]):
                 return [f'FOLDER_PATH_DOES_NOT_EXIST!\nThe folder path parameter must be an absolute folder path string to an existing folder.\nFolder path: {ARGUMENTS.folder_path}']
             from .src.aes_gcm_crypt import recursive_files_and_bytes_total, convert_bytes, aes_gcm_decrypt_folder
@@ -78,6 +80,7 @@ def cli():
             DECRYPT_RESULT = aes_gcm_decrypt_folder(ARGUMENTS.folder_path, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size, True)
             return DECRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'encrypt_file':
+            from os.path import isabs
             if not all([isinstance(ARGUMENTS.file_path, str), isabs(ARGUMENTS.file_path), isfile(ARGUMENTS.file_path)]):
                 return [f'FOLDER_PATH_DOES_NOT_EXIST!\nThe file path parameter must be an absolute file path string to an existing file.\nFile path: {ARGUMENTS.file_path}']
             from .src.aes_gcm_crypt import convert_bytes, aes_gcm_encrypt_file
@@ -85,6 +88,7 @@ def cli():
             ENCRYPT_RESULT = aes_gcm_encrypt_file(ARGUMENTS.file_path, ARGUMENTS.key_size, bytearray(ARGUMENTS.password, 'ascii'), ARGUMENTS.kdf_iterations, ARGUMENTS.block_size)
             return ENCRYPT_RESULT[1].strip()
         elif ARGUMENTS.COMMAND == 'decrypt_file':
+            from os.path import isabs
             if not all([isinstance(ARGUMENTS.file_path, str), isabs(ARGUMENTS.file_path), isfile(ARGUMENTS.file_path)]):
                 return [f'FOLDER_PATH_DOES_NOT_EXIST!\nThe file path parameter must be an absolute file path string to an existing file.\nFile path: {ARGUMENTS.file_path}']
             from .src.aes_gcm_crypt import convert_bytes, aes_gcm_decrypt_file
