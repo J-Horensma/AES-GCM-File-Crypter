@@ -1,5 +1,5 @@
 from sys import exit
-from os.path import abspath, isdir, isfile, getsize
+from os.path import abspath, isabs, isdir, isfile, getsize
 from platform import system
 import argparse
 from . import __version__
