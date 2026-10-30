@@ -291,9 +291,9 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
         PROMPT_TITLE = 'Create A Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
-            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
+            #DELETE THE PASSWORD ENTRY WIDGET AND ITS CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
-            #DELETE THE CONFIRM PASSWORD ENTRY WIDGET AND IT'S CONTENT
+            #DELETE THE CONFIRM PASSWORD ENTRY WIDGET AND ITS CONTENT
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         def process_password():
@@ -301,9 +301,9 @@ def create_password_prompt(ROOT_WINDOW, MINIMUM_PASSWORD_LENGTH=None, PROMPT_TIT
             #SET THE PASSWORD VALUE TO A BYTEARRAY, 
             #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
-            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
+            #DELETE THE PASSWORD ENTRY WIDGET AND ITS CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
-            #DELETE THE CONFIRM PASSWORD ENTRY WIDGET AND IT'S CONTENT
+            #DELETE THE CONFIRM PASSWORD ENTRY WIDGET AND ITS CONTENT
             CONFIRM_PASSWORD_ENTRY.delete(0, 'end')
             CREATE_PASSWORD_WINDOW.destroy()
         CREATE_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
@@ -407,7 +407,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
         PROMPT_TITLE = 'Enter The Password' if PROMPT_TITLE is None else PROMPT_TITLE
         PASSWORD_VALUE = None
         def close_window():
-            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
+            #DELETE THE PASSWORD ENTRY WIDGET AND ITS CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         def process_password():
@@ -415,7 +415,7 @@ def enter_password_prompt(ROOT_WINDOW, PROMPT_TITLE=None):
             #SET THE PASSWORD VALUE TO A BYTEARRAY, 
             #ALLOWING A DYNAMIC OVERWRITE, WHEN FINISHED WITH THE VALUE
             PASSWORD_VALUE = bytearray(PASSWORD_ENTRY.get(), 'ascii')
-            #DELETE THE PASSWORD ENTRY WIDGET AND IT'S CONTENT
+            #DELETE THE PASSWORD ENTRY WIDGET AND ITS CONTENT
             PASSWORD_ENTRY.delete(0, 'end')
             ENTER_PASSWORD_WINDOW.destroy()
         ENTER_PASSWORD_WINDOW = Toplevel(ROOT_WINDOW)
