@@ -1,6 +1,6 @@
 ![Preview](assets/icon/ico/256x256.ico)
 
-# AES-GCM File-Crypter (Doing A Key Bug Fix And Final Touches)
+# AES-GCM File-Crypter
 <br></br>
 
 ## About
