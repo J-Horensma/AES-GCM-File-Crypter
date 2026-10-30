@@ -100,7 +100,7 @@ def variable_ram_buffer_wipe(VARIABLES):
             VARIABLES = [VARIABLES]
         for VALUE in VARIABLES:
             if isinstance(VALUE, bytearray):
-                #IF THE VARIABLE VALUE IS A BYTEARRAY TYPE, OVERWRITE IT'S RAM BUFFER CONTENTS DYNAMICALLY
+                #IF THE VARIABLE VALUE IS A BYTEARRAY TYPE, OVERWRITE ITS RAM BUFFER CONTENTS DYNAMICALLY
                 #TO NULL-BYTES, TO PREVENT THE VARIABLE VALUE FROM REMAINING IN THE RAM
                 VALUE[:] = b'\x00' * len(VALUE)
             elif isinstance(VALUE, (str, bytes)):
@@ -209,7 +209,7 @@ def get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES=None, KDF_ITERATIONS=Non
                 iterations=KDF_ITERATIONS
             )
             #THE PASSWORD MUST BE ENCODED, HOWEVER, A BYTEARRAY IS ALREADY ENCODED ("bytearray(b'PASSWORD_HERE')")
-            ENCODED_PASSWORD = PASSWORD
+            ENCODED_PASSWORD = bytearray(PASSWORD)
             #THE "cryptography.hazmat.primitives.kdf.pbkdf2.PBKDF2HMAC.derive()" FUNCTION (AT THE TIME OF WRITING THIS COMMENT) STORES THE RETURNED KEY BYTES OBJECT VALUE 
             #IN C-SIDE BUFFERS, NOT IN THE RAM (MORE DIFFICULT TO INSPECT)
             KEY_BYTES = bytearray(KEY_DERIVATION_FUNCTION.derive(ENCODED_PASSWORD))
@@ -804,9 +804,9 @@ def aes_gcm_encrypt_file(
         NONCE_BYTES = token_bytes(12)
         #USE THE KEY AND NONCE BYTES TO CREATE A CIPHER FOR THE AES-GCM ENCRYPTION
         CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES))
+        ENCRYPTOR = CIPHER.encryptor()
         #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
         variable_ram_buffer_wipe(KEY_BYTES)
-        ENCRYPTOR = CIPHER.encryptor()
         #GET THE STATE VARIABLE FROM THE WRAPPER AND SET THE "active()" STATE TO "True" IF THE PYTHON PROGRESSBAR IS SET
         if stdout and PYTHON_PROGRESSBAR is True:
             global _PYTHON_PROGRESSBAR_STATE
@@ -872,7 +872,7 @@ def aes_gcm_encrypt_file(
                 variable_ram_buffer_wipe([HEADERS_LIST, NONCE_BYTES, TAG_BYTES, SALT_BYTES])
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
             #IF THIS FUNCTION IS NOT CALLED BY THE "aes_gcm_encrypt_folder()" FUNCTION,
-            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER THE FUNCTION COMPLETES
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND ITS REFERENCE FROM THE RAM AFTER THE FUNCTION COMPLETES
             variable_ram_buffer_wipe(PASSWORD)
         file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
@@ -970,10 +970,10 @@ def aes_gcm_decrypt_file(
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES, KDF_ITERATIONS)[0]
             #USE THE KEY, NONCE, AND TAG BYTES TO CREATE A CIPHER FOR THE AES-GCM DECRYPTION
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
-            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
-            variable_ram_buffer_wipe(KEY_BYTES)
             variable_ram_buffer_wipe([NONCE_BYTES, TAG_BYTES, SALT_BYTES])
             DECRYPTOR = CIPHER.decryptor()
+            #WIPE THE KEY BYTES FROM THE RAM AFTER A CIPHER IS GENERATED
+            variable_ram_buffer_wipe(KEY_BYTES)
             #SET THE FILE POINTER TO THE FIRST ENCRYPTED FILE CHUNK AFTER THE FILE'S HEADERS
             INFILE.seek(TOTAL_HEADERS_SIZE)
             with open(FILE_PATH + '.tmp', 'wb') as OUTFILE:
@@ -1019,7 +1019,7 @@ def aes_gcm_decrypt_file(
                 DECRYPTOR.finalize()
         if PROCESSED_FOLDER_BYTES_TOTAL is None:
             #IF THIS FUNCTION IS NOT CALLED BY THE "aes_gcm_decrypt_folder()" FUNCTION,
-            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER THE FUNCTION COMPLETES
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND ITS REFERENCE FROM THE RAM AFTER THE FUNCTION COMPLETES
             variable_ram_buffer_wipe(PASSWORD)
         file_contents_disk_wipe(FILE_PATH, BLOCK_SIZE)
         #DELETE THE ORIGINAL FILE AND RENAME THE ".tmp" FILE TO THE ORIGINAL FILE NAME AND EXTENSION
@@ -1066,7 +1066,7 @@ def aes_gcm_encrypt_variable(PLAINTEXT_VARIABLE, KEY_SIZE, PASSWORD):
         try:
             PLAINTEXT = PLAINTEXT_VARIABLE.encode() if isinstance(PLAINTEXT_VARIABLE, str) else PLAINTEXT_VARIABLE
             KEY_BYTES, SALT_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD)
-            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND ITS REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
             #BY THE "get_aes_key_and_salt()" FUNCTION
             variable_ram_buffer_wipe(PASSWORD)
             NONCE_BYTES = token_bytes(12)
@@ -1120,7 +1120,7 @@ def aes_gcm_decrypt_variable(ENCRYPTED_BYTES, KEY_SIZE, PASSWORD, SALT_BYTES, NO
     else:
         try:
             KEY_BYTES = get_aes_key_and_salt(KEY_SIZE, PASSWORD, SALT_BYTES)[0]
-            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND IT'S REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
+            #WIPE THE PASSWORD VARIABLE'S RAM BUFFER VALUE AND ITS REFERENCE FROM THE RAM AFTER A KEY IS GENERATED
             #BY THE "get_aes_key_and_salt()" FUNCTION
             variable_ram_buffer_wipe(PASSWORD)
             CIPHER = Cipher(algorithms.AES(KEY_BYTES), modes.GCM(NONCE_BYTES, TAG_BYTES))
