@@ -2,7 +2,7 @@ from sys import exit
 from os.path import abspath, isdir, isfile, getsize
 from platform import system
 import argparse
-from . import __version__
+from . import __edition__, __version__
 
 def cli():
     if system() != 'Windows':
@@ -14,16 +14,11 @@ def cli():
     PARSER = argparse.ArgumentParser(
         prog='aes_gcm_file_crypter'
     )
-    PARSER.add_argument(
-        '-e', '--edition',
-        action='edition',
-        version=f'AES-GCM File-Crypter {__edition__}'
-    )
     SUB_PARSER = PARSER.add_subparsers(dest='COMMAND')
     PARSER.add_argument(
         '-v', '--version',
         action='version',
-        version=f'AES-GCM File-Crypter {__version__}'
+        version=f'AES-GCM File-Crypter ({__edition__}) {__version__}'
     )
     ENCRYPT_FOLDER = SUB_PARSER.add_parser(
         'encrypt_folder', 
