@@ -114,21 +114,21 @@ This application is untested on Mac but may work, if so, look up how to compile 
 <br></br>
 
 ## CLI Install (Local):
-1.) Ensure the latest Python is installed \
-2.) Open a terminal in the "python_package" directory and use the following command. \
-3.) ```pip install .```
+### 1.) Ensure the latest Python is installed \
+### 2.) Open a terminal in the "python_package" directory and use the following command. \
+### 3.) ```pip install .```
 <br></br>
 
 ## CLI Install (Python):
-1.) Ensure the latest Python is installed \
-2.) Open a terminal and use the following command.
+### 1.) Ensure the latest Python is installed \
+### 2.) Open a terminal and use the following command.
 * ```pip install aes-gcm-file-crypter==1.0.0```
 <br></br>
 
 ## CLI Usage (Python):
-1.) For general CLI instructions use the following command.
+### 1.) For general CLI instructions use the following command.
 * ```python -m aes_gcm_file_crypter --help```
-2.) For detailed instructions of each function use the following:
+### 2.) For detailed instructions of each function use the following:
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
