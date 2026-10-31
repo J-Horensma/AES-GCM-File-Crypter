@@ -71,7 +71,7 @@ This feature is designed to prevent recovery of the original file’s contents f
 
 <br></br>
 
-## Compile, Yourself (Optional):  
+## Compile From Source (Optional):  
 
 ### Windows:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
