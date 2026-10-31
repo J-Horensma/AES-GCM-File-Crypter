@@ -7,7 +7,7 @@
 This application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders with AES-GCM cryptography and forensic recovery-prevention features. \
 </br>
 
-## Why AES-GCM Cryptography?
+## Why Choose AES-GCM Cryptography?
 AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits). \
 </br>
 
