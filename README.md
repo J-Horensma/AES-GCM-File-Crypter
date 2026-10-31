@@ -4,7 +4,7 @@
 <br></br>
 
 ## About
-The Standard edition of this application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders with AES-GCM cryptography and forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary. \
+The Standard edition of this application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders with AES-GCM cryptography and forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary.
 </br>
 
 Please note:
@@ -101,15 +101,15 @@ While untested, this application has been developed with all OS', for PC, in min
 ## Compile From Source (Optional):  
 
 ### Windows:
-1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
+1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed.
 
-2.) Open a terminal, navigate to this file’s directory, and run: \
+2.) Open a terminal, navigate to this file’s directory, and run:
 ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
 
 ### Linux:
-1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
+1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed.
 
-2.) Open a terminal, navigate to this file’s directory, and run: \
+2.) Open a terminal, navigate to this file’s directory, and run:
 * ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
 
 ### Mac:
@@ -121,10 +121,10 @@ This application is untested on Mac but may work, if so, look up how to compile 
 <br></br>
 
 ## CLI Usage:
-1.) For CLI instructions: \
+1.) For CLI instructions:
 * ```python -m aes_gcm_file_crypter --help```
 
-2.) For further instructions: \
+2.) For further instructions:
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
