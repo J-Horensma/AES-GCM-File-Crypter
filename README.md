@@ -39,7 +39,7 @@ This feature is designed to prevent recovery of the original file’s contents f
 ![Preview](assets/previews/windows_create_password.png)
 ![Preview](assets/previews/windows_enter_password.png)  
 
-### 3.) Choose a key-size
+### 3.) Choose a key-size (If encrypting)
 
 ![Preview](assets/previews/windows_choose_key_size.png)
 
@@ -49,19 +49,26 @@ This feature is designed to prevent recovery of the original file’s contents f
 
 <br></br>
 
-## Usage (Linux):
+## GUI Usage (Linux):
 
-### 1.) Select encryption or decryption options  
+### 1.) Select a folder or file to encrypt or decrypt
 
-![Preview](assets/previews/linux_preview_1.png)
-![Preview](assets/previews/linux_preview_2.png)
-![Preview](assets/previews/linux_preview_3.png)  
+![Preview](assets/previews/linux_home_screen.png)
+![Preview](assets/previews/linux_choose_path.png)
 
-### 2.) Enter the password  
+### 2.) Create or enter the password  
 
-![Preview](assets/previews/linux_preview_4.png)  
+![Preview](assets/previews/linux_create_password.png)  
+![Preview](assets/previews/linux_enter_password.png)
 
-### 3.) Encrypt or decrypt a file or an entire folder  
+### 3.) Choose a key-size (If encrypting)
+
+![Preview](assets/previews/linux_choose_key_size.png)
+
+### 4.) Wait for the progressbar to finish and that's it!
+
+![Preview](assets/previews/linux_gui_progressbar.png)
+
 <br></br>
 
 ## Compile, Yourself (Optional):  
