@@ -27,7 +27,7 @@ After encryption or decryption:
 This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
 <br></br>
 
-## CLI Usage (Python):
+## CLI Usage:
 1.) For CLI instructions:
 * ```python -m aes_gcm_file_crypter --help```
 
