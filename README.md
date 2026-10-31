@@ -43,22 +43,22 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 
 ### 1.) Select a folder or file to encrypt or decrypt
 
-![Preview](assets/previews/windows/windows_home_screen.png)
-![Preview](assets/previews/windows/windows_choose_path.png)
+![Preview](assets/previews/windows/home_screen.png)
+![Preview](assets/previews/windows/choose_path.png)
 
 ### 2.) Create or enter the password  
 
-![Preview](assets/previews/windows/windows_create_password.png)
-![Preview](assets/previews/windows/windows_enter_password.png)  
+![Preview](assets/previews/windows/create_password.png)
+![Preview](assets/previews/windows/enter_password.png)  
 
 ### 3.) Choose a key-size (If encrypting)
 
-![Preview](assets/previews/windows/windows_choose_key_size.png)
+![Preview](assets/previews/windows/choose_key_size.png)
 
 ### 4.) Wait for the progressbar to finish and that's it!
 
-![Preview](assets/previews/windows/windows_gui_progressbar.png)
-![Preview](assets/previews/windows/windows_finished_process.png)
+![Preview](assets/previews/windows/gui_progressbar.png)
+![Preview](assets/previews/windows/finished_process.png)
 
 <br></br>
 
