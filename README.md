@@ -120,7 +120,7 @@ This application is untested on Mac.
 ## CLI Install For All OS':
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following command.
-* ```pip install aes-gcm-file-crypter==1.0.0```
+* ```pip install aes-gcm-file-crypter==1.0.1```
 <br></br>
 
 ## CLI Usage For All OS':
