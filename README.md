@@ -101,12 +101,12 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### Windows:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
 2.) Open a terminal, navigate to this file’s directory, and use the following command. \
-```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
+*  ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
 
 ### Linux:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
-2.) Open a terminal, navigate to this file’s directory, and use the following command. \
-```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
+2.) Open a terminal, navigate to this file’s directory, and use the following command.
+*  ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
 
 ### Mac:
 This application is untested on Mac.
@@ -115,20 +115,20 @@ This application is untested on Mac.
 ## CLI Install For All OS' (Local):
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal in the "python_package" directory and use the following command.
-```pip install .```
+*  ```pip install .```
 <br></br>
 
 ## CLI Install For All OS':
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following command.
-```pip install aes-gcm-file-crypter==1.0.1```
+* ```pip install aes-gcm-file-crypter==1.0.1```
 ### 3.) For more information visit the following link.
-[PyPi Repository](https://pypi.org/project/aes-gcm-file-crypter/)
+* [PyPi Repository](https://pypi.org/project/aes-gcm-file-crypter/)
 <br></br>
 
 ## CLI Usage For All OS':
 ### 1.) For general CLI instructions use the following command.
-```python -m aes_gcm_file_crypter --help```
+* ```python -m aes_gcm_file_crypter --help```
 ### 2.) For detailed instructions of each function use the following:
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
