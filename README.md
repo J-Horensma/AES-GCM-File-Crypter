@@ -8,14 +8,14 @@ The Standard edition of this application has a GUI and a CLI for securely encryp
 </br>
 
 Please note:
-* A Forensic edition GUI will be released soon that includes a KDF iterations dropdown option and an OS-specific metadata wipe screen to wipe all traces of the original file's content before encryption from the device being used, at a price of $20 CAD/copy.
+* A Forensic edition GUI will be released soon that includes a KDF iterations drop-down option and an OS-specific metadata wipe screen to wipe all traces of the original file's content before encryption from the device being used, at a price of $20 CAD/copy.
 * A Pro edition including the Forensic edition GUI and an upgraded CLI with the OS-specific metadata wipe option will be released, at a price of $50 CAD/copy.
 * A Pro+ edition may later be released as well that will wipe metadata from a disk or USB and reformat it so no data is left before copying encrypted files to it, at a price of $100/copy. 
-</br>
+<br></br>
 
 ## Why Choose AES-GCM Cryptography?
 AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits).
-</br>
+<br></br>
 
 ## Forensic Recovery-Prevention Features:
 
