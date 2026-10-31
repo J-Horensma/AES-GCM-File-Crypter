@@ -94,7 +94,7 @@ The CLI for Linux that includes a GUI can be downloaded via pip (See the CLI sec
 <br></br>
 
 ## GUI Usage (Mac):
-While untested, this application has been developed with all OS', for PC, in mind and might work for Mac. If this application does work on Mac, while the look might be different, the usage instructions are the same across all OS', so look at the instructions for Windows or Linux above.
+```NOT YET AVAILABLE```
 <br></br>
 
 ## Compile From Source (Optional):  
@@ -110,22 +110,22 @@ While untested, this application has been developed with all OS', for PC, in min
 * ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
 
 ### Mac:
-This application is untested on Mac but may work, if so, look up how to compile a python application with pyinstaller on Mac and compile this project into a ".dmg" file.
+This application is untested on Mac but may work.
 <br></br>
 
-## CLI Install (Local):
-### 1.) Ensure the latest Python is installed \
-### 2.) Open a terminal in the "python_package" directory and use the following command. \
-### 3.) ```pip install .```
+## CLI Install For All OS' (Local):
+### 1.) Ensure the latest Python is installed.
+### 2.) Open a terminal in the "python_package" directory and use the following command.
+* ```pip install .```
 <br></br>
 
-## CLI Install (Python):
+## CLI Install For All OS':
 ### 1.) Ensure the latest Python is installed \
 ### 2.) Open a terminal and use the following command.
 * ```pip install aes-gcm-file-crypter==1.0.0```
 <br></br>
 
-## CLI Usage (Python):
+## CLI Usage For All OS':
 ### 1.) For general CLI instructions use the following command.
 * ```python -m aes_gcm_file_crypter --help```
 ### 2.) For detailed instructions of each function use the following:
