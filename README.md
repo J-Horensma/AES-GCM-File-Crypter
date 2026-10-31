@@ -62,12 +62,10 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 <br></br>
 
 ## GUI Install (Linux)
-```NOT YET AVAILABLE``` \
 The CLI that includes a GUI can be downloaded via Python's pip (See the CLI section).
 <br></br>
 
 ## GUI Usage (Linux):
-The CLI for Linux that includes a GUI can be downloaded via pip (See the CLI section).
 <br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
@@ -91,11 +89,11 @@ The CLI for Linux that includes a GUI can be downloaded via pip (See the CLI sec
 <br></br>
 
 ## GUI Install (Mac)
-```NOT YET AVAILABLE```
+```UNTESTED```
 <br></br>
 
 ## GUI Usage (Mac):
-```NOT YET AVAILABLE```
+```UNTESTED```
 <br></br>
 
 ## Compile From Source (Optional):  
@@ -111,7 +109,7 @@ The CLI for Linux that includes a GUI can be downloaded via pip (See the CLI sec
 * ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
 
 ### Mac:
-This application is untested on Mac but may work.
+This application is untested on Mac.
 <br></br>
 
 ## CLI Install For All OS' (Local):
