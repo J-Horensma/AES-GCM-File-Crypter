@@ -34,11 +34,11 @@ This feature is designed to prevent recovery of the original file’s contents f
 <br></br>
 
 ## GUI Install (Windows)
-```NOT YET AVAILABLE```
+The GUI for Windows will be coming soon to the Microsoft store.
+The CLI that includes a GUI can be downloaded via Python's pip (See the CLI section).
 <br></br>
 
 ## GUI Usage (Windows):
-The GUI for Windows will be coming soon to the Microsoft store.
 <br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
@@ -63,6 +63,7 @@ The GUI for Windows will be coming soon to the Microsoft store.
 
 ## GUI Install (Linux)
 ```NOT YET AVAILABLE```
+The CLI that includes a GUI can be downloaded via Python's pip (See the CLI section).
 <br></br>
 
 ## GUI Usage (Linux):
