@@ -33,6 +33,10 @@ After encryption or decryption:
 This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
 <br></br>
 
+## GUI Install (Windows)
+```NOT YET AVAILABLE```
+<br></br>
+
 ## GUI Usage (Windows):
 The GUI for Windows will be coming soon to the Microsoft store.
 The CLI for Windows will be coming soon to pip that includes a GUI.
@@ -58,6 +62,10 @@ The CLI for Windows will be coming soon to pip that includes a GUI.
 
 <br></br>
 
+## GUI Install (Linux)
+```NOT YET AVAILABLE```
+<br></br>
+
 ## GUI Usage (Linux):
 The CLI for Linux will be coming soon to pip that includes a GUI.
 <br></br>
@@ -80,6 +88,10 @@ The CLI for Linux will be coming soon to pip that includes a GUI.
 
 ![Preview](assets/previews/linux_gui_progressbar.png)
 
+<br></br>
+
+## GUI Install (Mac)
+```NOT YET AVAILABLE```
 <br></br>
 
 ## GUI Usage (Mac):
