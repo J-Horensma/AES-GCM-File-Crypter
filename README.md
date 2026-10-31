@@ -1,16 +1,16 @@
 ![Preview](assets/icon/ico/256x256.ico)
 
-# AES-GCM File-Crypter 1.0.0 (Standard)
+# AES-GCM File-Crypter (Standard) 1.0.1
 <br></br>
 
 ## About
-The Standard edition of this application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary.
+This application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary.
 </br>
 
 Please note:
-* A Forensic edition GUI will be released soon that includes a KDF iterations drop-down option and an OS-specific metadata wipe screen to wipe all traces of the original file's content before encryption from the device being used, at a price of $20 CAD/copy.
+* A Forensic edition GUI will be released soon that includes a KDF iterations drop-down option and an OS-specific metadata wipe screen to wipe all traces of the original file's content during encryption from the device being used, at a price of $20 CAD/copy.
 * A Pro edition including the Forensic edition GUI and an upgraded CLI with the OS-specific metadata wipe option will be released, at a price of $50 CAD/copy.
-* A Pro+ edition may later be released as well that will wipe metadata from a disk or USB and reformat it so no data is left before copying encrypted files to it, at a price of $100/copy. 
+* A Pro+ edition may later be released that will include all the features of the Forensic edition plus an option to forensically wipe metadata from a disk or USB and reformat it so no data is left recoverable, before copying encrypted files to it, at a price of $100/copy. 
 <br></br>
 
 ## Why Choose AES-GCM Cryptography?
@@ -34,7 +34,7 @@ This feature is designed to prevent recovery of the original file’s contents f
 <br></br>
 
 ## GUI Install (Windows)
-The GUI for Windows will be coming soon to the Microsoft store. \
+The GUI for Windows will be coming soon to the Microsoft Store. \
 The CLI that includes a GUI can be downloaded via Python's pip (See the CLI section).
 <br></br>
 
