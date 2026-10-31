@@ -102,3 +102,14 @@ While untested, this application has been developed with all OS', for PC, in min
 
 ### Mac:
 This application is untested on Mac but may work, if so, look up how to compile a python application with pyinstaller on Mac and compile this project into a ".dmg" file.
+
+## CLI (Coming to pip)
+1.) For CLI instructions:
+```python -m aes_gcm_file_crypter --help``` \
+
+2.) For further information:
+* ```python -m aes_gcm_file_crypter encrypt_folder --help```
+* ```python -m aes_gcm_file_crypter decrypt_folder --help```
+* ```python -m aes_gcm_file_crypter encrypt_file --help```
+* ```python -m aes_gcm_file_crypter decrypt_file --help```
+<br></br>
