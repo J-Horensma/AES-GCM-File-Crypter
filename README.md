@@ -83,7 +83,7 @@ The CLI for Linux will be coming soon to pip.
 <br></br>
 
 ## GUI Usage (Mac):
-While untested, this application has been developed with all OS' for PC in mind and might work for Mac.
+While untested, this application has been developed with all OS', for PC, in mind and might work for Mac. If this application does work on Mac, while the look might be different, the usage instructions are the same across all OS', so look at the instructions for Windows or Linux above.
 <br></br>
 
 ## Compile From Source (Optional):  
