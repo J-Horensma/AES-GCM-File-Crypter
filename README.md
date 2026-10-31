@@ -62,7 +62,7 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 <br></br>
 
 ## GUI Install (Linux)
-```NOT YET AVAILABLE```
+```NOT YET AVAILABLE``` \
 The CLI that includes a GUI can be downloaded via Python's pip (See the CLI section).
 <br></br>
 
