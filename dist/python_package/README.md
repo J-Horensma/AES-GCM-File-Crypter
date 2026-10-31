@@ -1,10 +1,11 @@
 ![Preview](assets/icon/ico/256x256.ico)
 
 # AES-GCM File-Crypter (Standard) 1.0.1
+<br></br>
 
 ## About
 A CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features.
-</br>
+<br></br>
 
 ## Why Choose AES-GCM Cryptography?
 AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits).
