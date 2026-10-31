@@ -33,6 +33,7 @@ This feature is designed to prevent recovery of the original file’s contents f
 
 ## GUI Usage (Windows):
 The GUI for Windows will be coming soon to the Microsoft store.
+The CLI for Windows will be coming soon to pip.
 <br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
@@ -56,6 +57,8 @@ The GUI for Windows will be coming soon to the Microsoft store.
 <br></br>
 
 ## GUI Usage (Linux):
+The CLI for Linux will be coming soon to pip.
+<br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
 
