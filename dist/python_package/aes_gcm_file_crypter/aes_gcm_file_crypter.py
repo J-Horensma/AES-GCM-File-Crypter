@@ -2,7 +2,7 @@
 Custom License With Redistribution Limitations
 ----------------------------------------------
 
-"AES-GCM File-Crypter" Copyright © 2026 Joel Horensma
+"AES-GCM File-Crypter" (Standard) Copyright © 2026 Joel Horensma
 
 For clarity:
 "Software" means the source code in this file.
@@ -17,6 +17,10 @@ written permission from the copyright holder.
 
 This copyright notice and license must be retained, precisely as-is in all copies of the Software.
 '''
+
+#SET THE EDITION AND VERSION
+_EDITION = 'Standard'
+_VERSION = '1.0.1'
 
 from threading import Thread
 from os.path import abspath, join, dirname, getsize
@@ -43,9 +47,6 @@ except ImportError:
 
 def main():
     try:
-        #SET THE VERSION AND EDITION
-        _VERSION = '1.0.0'
-        _EDITION = 'Standard'
         if system() != 'Windows':
             from signal import signal, SIGTSTP
             def handle_ctrl_z(signum, frame):
@@ -197,7 +198,7 @@ def main():
         WINDOW_WIDTH = 900
         WINDOW_HEIGHT = 500
         center_window(ROOT_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT)
-        ROOT_WINDOW.title(f'AES-GCM File-Crypter {_VERSION} (Standard)')
+        ROOT_WINDOW.title(f'AES-GCM File-Crypter (_EDITION) {_VERSION}')
         MENU_BAR = Menu(ROOT_WINDOW)
         HELP_MENU = Menu(MENU_BAR, tearoff=0)
         HELP_MENU.add_command(
