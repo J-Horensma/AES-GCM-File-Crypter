@@ -4,8 +4,7 @@
 <br></br>
 
 ## About
-This application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders with AES-GCM cryptography and forensic recovery-prevention features. \
-The Standard edition GUI and CLI will continue to remain free and maintained with updates when necessary. A Forensic edition GUI will be released soon that includes a KDF iterations dropdown option and an OS-specific metadata wipe screen to wipe all traces of the original file's content before encryption from the device being used for encryption, at a price of $20 CAD/copy, a Pro edition including a CLI with the OS-specific metadata wipe option will be released, at a price of $50 CAD/copy, and a Pro+ edition may later be released as well. 
+The Standard edition of this application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders with AES-GCM cryptography and forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary. A Forensic edition GUI will be released soon that includes a KDF iterations dropdown option and an OS-specific metadata wipe screen to wipe all traces of the original file's content before encryption from the device being used, at a price of $20 CAD/copy, a Pro edition including the Forensic edition GUI and an upgraded CLI with the OS-specific metadata wipe option will be released, at a price of $50 CAD/copy, and a Pro+ edition may later be released as well that will wipe metadata from a disk or USB and reformat it. 
 </br>
 
 ## Why Choose AES-GCM Cryptography?
