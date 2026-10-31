@@ -198,14 +198,14 @@ def main():
         WINDOW_WIDTH = 900
         WINDOW_HEIGHT = 500
         center_window(ROOT_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT)
-        ROOT_WINDOW.title(f'AES-GCM File-Crypter (_EDITION) {_VERSION}')
+        ROOT_WINDOW.title(f'AES-GCM File-Crypter ({_EDITION}) {_VERSION}')
         MENU_BAR = Menu(ROOT_WINDOW)
         HELP_MENU = Menu(MENU_BAR, tearoff=0)
         HELP_MENU.add_command(
             label=f'About',
             command=lambda: messagebox.showinfo(
                 'About',
-                f'AES-GCM File-Crypter ({_EDITION})\nVersion {_VERSION}'
+                f'AES-GCM File-Crypter ({_EDITION}) {_VERSION}'
             )
         )
         MENU_BAR.add_cascade(label='Help', menu=HELP_MENU)
