@@ -46,14 +46,14 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ![Preview](assets/previews/windows/home_screen.png)
 ![Preview](assets/previews/windows/choose_path.png)
 
-### 2.) Create or enter the password  
-
-![Preview](assets/previews/windows/create_password.png)
-![Preview](assets/previews/windows/enter_password.png)  
-
-### 3.) Choose a key-size (If encrypting)
+### 2.) Choose a key-size (If encrypting)
 
 ![Preview](assets/previews/windows/choose_key_size.png)
+
+### 3.) Create or enter the password  
+
+![Preview](assets/previews/windows/create_password.png)
+![Preview](assets/previews/windows/enter_password.png)
 
 ### 4.) Wait for the progressbar to finish and that's it!
 
@@ -74,14 +74,14 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ![Preview](assets/previews/linux_home_screen.png)
 ![Preview](assets/previews/linux_choose_path.png)
 
-### 2.) Create or enter the password  
+### 2.) Choose a key-size (If encrypting)
+
+![Preview](assets/previews/linux_choose_key_size.png)
+
+### 3.) Create or enter the password  
 
 ![Preview](assets/previews/linux_create_password.png)  
 ![Preview](assets/previews/linux_enter_password.png)
-
-### 3.) Choose a key-size (If encrypting)
-
-![Preview](assets/previews/linux_choose_key_size.png)
 
 ### 4.) Wait for the progressbar to finish and that's it!
 
