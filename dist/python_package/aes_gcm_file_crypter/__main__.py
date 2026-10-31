@@ -14,6 +14,11 @@ def cli():
     PARSER = argparse.ArgumentParser(
         prog='aes_gcm_file_crypter'
     )
+    PARSER.add_argument(
+        '-e', '--edition',
+        action='edition',
+        version=f'AES-GCM File-Crypter {__edition__}'
+    )
     SUB_PARSER = PARSER.add_subparsers(dest='COMMAND')
     PARSER.add_argument(
         '-v', '--version',
