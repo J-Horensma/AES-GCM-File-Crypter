@@ -1,7 +1,6 @@
 ![Preview](assets/icon/ico/256x256.ico)
 
-# AES-GCM File-Crypter 1.0.0 (Standard)
-<br></br>
+# AES-GCM File-Crypter (Standard) 1.0.1
 
 ## About
 A CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features.
@@ -37,5 +36,5 @@ This feature is designed to prevent recovery of the original file’s contents f
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
 * ```python -m aes_gcm_file_crypter decrypt_file --help```
 
-## Project Page
+## Github Project Page
 [https://github.com/J-Horensma/AES-GCM-File-Crypter](https://github.com/J-Horensma/AES-GCM-File-Crypter)
