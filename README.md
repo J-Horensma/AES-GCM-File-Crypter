@@ -27,19 +27,26 @@ After encryption or decryption:
 This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
 <br></br>
 
-## Usage (Windows): 
+## GUI Usage (Windows): 
 
-### 1.) Select encryption or decryption options  
+### 1.) Select a folder or file to encrypt or decrypt
 
-![Preview](assets/previews/windows_preview_1.png)
-![Preview](assets/previews/windows_preview_2.png)
-![Preview](assets/previews/windows_preview_3.png)  
+![Preview](assets/previews/windows_home_screen.png)
+![Preview](assets/previews/windows_choose_path.png)
 
-### 2.) Enter the password  
+### 2.) Create or enter the password  
 
-![Preview](assets/previews/windows_preview_4.png)  
+![Preview](assets/previews/windows_create_password.png)
+![Preview](assets/previews/windows_enter_password.png)  
 
-### 3.) Encrypt or decrypt a file or an entire folder  
+### 3.) Choose a key-size
+
+![Preview](assets/previews/windows_choose_key_size.png)
+
+### 4.) Wait for the progressbar to finish and that's it!
+
+![Preview](assets/previews/windows_gui_progressbar.png)
+
 <br></br>
 
 ## Usage (Linux):
