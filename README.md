@@ -39,7 +39,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 <br></br>
 
 ## GUI Usage (Windows):
-<br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
 
@@ -67,7 +66,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 <br></br>
 
 ## GUI Usage (Linux):
-<br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
 
