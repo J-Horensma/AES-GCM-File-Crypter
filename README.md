@@ -1,14 +1,15 @@
 ![Preview](assets/icon/ico/256x256.ico)
 
-# AES-GCM File-Crypter
+# AES-GCM File-Crypter 1.0.0 (Standard)
 <br></br>
 
 ## About
 This application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders with AES-GCM cryptography and forensic recovery-prevention features. \
+The Standard edition GUI and CLI will continue to remain free and maintained with updates when necessary. A Forensic edition GUI will be released soon that includes a KDF iterations dropdown option and an OS-specific metadata wipe screen to wipe all traces of the original file's content before encryption from the device being used for encryption, at a price of $20 CAD/copy, a Pro edition including a CLI with the OS-specific metadata wipe option will be released, at a price of $50 CAD/copy, and a Pro+ edition may later be released as well. 
 </br>
 
 ## Why Choose AES-GCM Cryptography?
-AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits). \
+AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits).
 </br>
 
 ## Forensic Recovery-Prevention Features:
@@ -71,6 +72,10 @@ The GUI for Windows will be coming soon to the Microsoft store.
 
 ![Preview](assets/previews/linux_gui_progressbar.png)
 
+<br></br>
+
+## GUI Usage (Mac):
+While untested, this application has been developed with all OS' for PC in mind and might work for Mac.
 <br></br>
 
 ## Compile From Source (Optional):  
