@@ -116,11 +116,11 @@ While untested, this application has been developed with all OS', for PC, in min
 This application is untested on Mac but may work, if so, look up how to compile a python application with pyinstaller on Mac and compile this project into a ".dmg" file.
 <br></br>
 
-## CLI INSTALL:
+## CLI Install (Python):
 ```NOT YET AVAILABLE```
 <br></br>
 
-## CLI Usage:
+## CLI Usage (Python):
 1.) For CLI instructions:
 * ```python -m aes_gcm_file_crypter --help```
 
