@@ -27,7 +27,8 @@ After encryption or decryption:
 This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
 <br></br>
 
-## GUI Usage (Windows): 
+## GUI Usage (Windows):
+The GUI for Windows will be coming soon to the Microsoft store.
 
 ### 1.) Select a folder or file to encrypt or decrypt
 
