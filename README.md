@@ -71,7 +71,8 @@ The CLI for Linux that includes a GUI can be downloaded via pip (See the CLI sec
 
 ### 1.) Select a folder or file to encrypt or decrypt
 
-![Preview](assets/previews/linux_home_screen.png)![Preview](assets/previews/linux_choose_path.png)
+![Preview](assets/previews/linux_home_screen.png)
+![Preview](assets/previews/linux_choose_path.png)
 
 ### 2.) Create or enter the password  
 
