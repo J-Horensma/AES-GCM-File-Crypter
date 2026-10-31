@@ -100,9 +100,9 @@ While untested, this application has been developed with all OS', for PC, in min
 ## Compile From Source (Optional):  
 
 ### Windows:
-1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed.
-2.) Open a terminal, navigate to this file’s directory, and run:
-```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
+1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
+2.) Open a terminal, navigate to this file’s directory, and use the following command.
+* ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
 
 ### Linux:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
@@ -122,12 +122,12 @@ This application is untested on Mac but may work, if so, look up how to compile 
 ## CLI Install (Python):
 1.) Ensure the latest Python is installed \
 2.) Open a terminal and use the following command \
-```pip install aes-gcm-file-crypter==1.0.0```
+* ```pip install aes-gcm-file-crypter==1.0.0```
 <br></br>
 
 ## CLI Usage (Python):
 1.) For general CLI instructions use the following command \
-```python -m aes_gcm_file_crypter --help``` \
+* ```python -m aes_gcm_file_crypter --help``` \
 2.) For detailed instructions of each function:
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
