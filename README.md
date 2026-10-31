@@ -99,3 +99,6 @@ While untested, this application has been developed with all OS' for PC in mind 
 
 2.) Open a terminal, navigate to this file’s directory, and run: \
 ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
+
+### Mac:
+This application is untested on Mac but may work, if so, look up how to compile a python application with pyinstaller on Mac and compile this project into a ".dmg" file.
