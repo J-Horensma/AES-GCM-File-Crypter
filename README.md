@@ -34,7 +34,7 @@ This feature is designed to prevent recovery of the original file’s contents f
 <br></br>
 
 ## GUI Install (Windows)
-The GUI for Windows will be coming soon to the Microsoft store.
+The GUI for Windows will be coming soon to the Microsoft store. \
 The CLI that includes a GUI can be downloaded via Python's pip (See the CLI section).
 <br></br>
 
