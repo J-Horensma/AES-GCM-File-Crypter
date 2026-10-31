@@ -100,7 +100,7 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 
 ### Windows:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
-2.) Open a terminal, navigate to this file’s directory, and use the following command. \
+2.) Open a terminal, navigate to this file’s directory, and use the following command.
 *  ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
 
 ### Linux:
