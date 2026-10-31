@@ -102,14 +102,12 @@ While untested, this application has been developed with all OS', for PC, in min
 
 ### Windows:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed.
-
 2.) Open a terminal, navigate to this file’s directory, and run:
 ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
 
 ### Linux:
-1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed.
-
-2.) Open a terminal, navigate to this file’s directory, and run:
+1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
+2.) Open a terminal, navigate to this file’s directory, and use the following command. \
 * ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
 
 ### Mac:
@@ -118,7 +116,7 @@ This application is untested on Mac but may work, if so, look up how to compile 
 
 ## CLI Install (Local):
 1.) Ensure the latest Python is installed \
-2.) Open a terminal in the "python_package" directory and use the following command \
+2.) Open a terminal in the "python_package" directory and use the following command. \
 3.) ```pip install .```
 <br></br>
 
