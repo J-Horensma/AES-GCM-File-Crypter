@@ -116,14 +116,19 @@ While untested, this application has been developed with all OS', for PC, in min
 This application is untested on Mac but may work, if so, look up how to compile a python application with pyinstaller on Mac and compile this project into a ".dmg" file.
 <br></br>
 
+## CLI Install (Local):
+1.) Ensure Python is installed
+2.) Open a terminal in the "python_package" directory and use the following command
+3.) ```pip install .```
+<br></br>
+
 ## CLI Install (Python):
 ```NOT YET AVAILABLE```
 <br></br>
 
 ## CLI Usage (Python):
-1.) For CLI instructions:
-* ```python -m aes_gcm_file_crypter --help```
-
+1.) For general CLI instructions use the following command
+```python -m aes_gcm_file_crypter --help```
 2.) For detailed instructions of each function:
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
