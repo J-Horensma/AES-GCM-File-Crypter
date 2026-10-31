@@ -44,7 +44,7 @@ except ImportError:
 def main():
     try:
         #SET THE VERSION AND EDITION
-        _VERSION = '1.0.0'
+        _VERSION = '1.0.1'
         _EDITION = 'Standard'
         if system() != 'Windows':
             from signal import signal, SIGTSTP
@@ -197,7 +197,7 @@ def main():
         WINDOW_WIDTH = 900
         WINDOW_HEIGHT = 500
         center_window(ROOT_WINDOW, WINDOW_WIDTH, WINDOW_HEIGHT)
-        ROOT_WINDOW.title(f'AES-GCM File-Crypter {_VERSION} (Standard)')
+        ROOT_WINDOW.title(f'AES-GCM File-Crypter (Standard) {_VERSION}')
         MENU_BAR = Menu(ROOT_WINDOW)
         HELP_MENU = Menu(MENU_BAR, tearoff=0)
         HELP_MENU.add_command(
