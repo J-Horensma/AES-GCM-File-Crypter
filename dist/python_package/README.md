@@ -37,5 +37,5 @@ This feature is designed to prevent recovery of the original file’s contents f
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
 * ```python -m aes_gcm_file_crypter decrypt_file --help```
 
-## Github Project Page
+## Visit The Github Repository For This GUI And CLI
 [https://github.com/J-Horensma/AES-GCM-File-Crypter](https://github.com/J-Horensma/AES-GCM-File-Crypter)
