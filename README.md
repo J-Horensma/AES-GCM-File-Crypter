@@ -126,9 +126,9 @@ This application is untested on Mac but may work, if so, look up how to compile 
 <br></br>
 
 ## CLI Usage (Python):
-1.) For general CLI instructions use the following command
-```python -m aes_gcm_file_crypter --help```
-2.) For detailed instructions of each function:
+1.) For general CLI instructions use the following command \
+```python -m aes_gcm_file_crypter --help``` \
+2.) For detailed instructions of each function: \
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
