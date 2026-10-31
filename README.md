@@ -66,7 +66,7 @@ The GUI for Windows will be coming soon to the Microsoft store.
 <br></br>
 
 ## GUI Usage (Linux):
-The CLI for Linux will be coming soon to pip that includes a GUI.
+The CLI for Linux that includes a GUI can be downloaded via pip (See the CLI section).
 <br></br>
 
 ### 1.) Select a folder or file to encrypt or decrypt
@@ -106,7 +106,7 @@ While untested, this application has been developed with all OS', for PC, in min
 
 ### Linux:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
-2.) Open a terminal, navigate to this file’s directory, and use the following command. \
+2.) Open a terminal, navigate to this file’s directory, and use the following command.
 * ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
 
 ### Mac:
@@ -121,14 +121,14 @@ This application is untested on Mac but may work, if so, look up how to compile 
 
 ## CLI Install (Python):
 1.) Ensure the latest Python is installed \
-2.) Open a terminal and use the following command \
+2.) Open a terminal and use the following command.
 * ```pip install aes-gcm-file-crypter==1.0.0```
 <br></br>
 
 ## CLI Usage (Python):
-1.) For general CLI instructions use the following command \
+1.) For general CLI instructions use the following command.
 * ```python -m aes_gcm_file_crypter --help```
-2.) For detailed instructions of each function:
+2.) For detailed instructions of each function use the following:
 * ```python -m aes_gcm_file_crypter encrypt_folder --help```
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
