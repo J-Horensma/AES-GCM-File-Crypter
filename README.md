@@ -143,7 +143,9 @@ python -m pip install -e .
 
 ## CLI Usage For All OS':
 ### 1.) For general CLI instructions use the following command.
-* ```python -m aes_gcm_file_crypter --help```
+```
+python -m aes_gcm_file_crypter --help
+```
 ### 2.) For detailed instructions of each function use the following:
 ```
 python -m aes_gcm_file_crypter encrypt_folder --help
