@@ -103,12 +103,16 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### Windows:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
 2.) Open a terminal, navigate to this file’s directory, and use the following command.
-*  ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"```  
+```
+python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"
+```  
 
 ### Linux:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
 2.) Open a terminal, navigate to this file’s directory, and use the following command.
-*  ```python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"```
+```
+python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/icon/ico/icon.ico" --add-data "assets:assets" --hidden-import=_cffi_backend --collect-binaries cffi --collect-data cffi "AES-GCM File-Crypter.pyw"
+```
 
 ### Mac:
 ```UNTESTED```
@@ -117,7 +121,9 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ## CLI Install For All OS':
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following command.
-* ```pip install aes-gcm-file-crypter==1.0.1```
+```
+pip install aes-gcm-file-crypter==1.0.1
+```
 
 ## Examine The Package Source In "/dist/python_package" And Locally Install The CLI In A Virtual Environment:
 ### 1.) Ensure the latest Python is installed.
@@ -139,12 +145,22 @@ python -m pip install -e .
 ### 1.) For general CLI instructions use the following command.
 * ```python -m aes_gcm_file_crypter --help```
 ### 2.) For detailed instructions of each function use the following:
-* ```python -m aes_gcm_file_crypter encrypt_folder --help```
-* ```python -m aes_gcm_file_crypter decrypt_folder --help```
-* ```python -m aes_gcm_file_crypter encrypt_file --help```
-* ```python -m aes_gcm_file_crypter decrypt_file --help```
+```
+python -m aes_gcm_file_crypter encrypt_folder --help
+```
+```
+python -m aes_gcm_file_crypter decrypt_folder --help
+```
+```
+python -m aes_gcm_file_crypter encrypt_file --help
+```
+```
+python -m aes_gcm_file_crypter decrypt_file --help
+```
 ### 3.) To start the GUI from the CLI, use the following command.
-* ```python -m aes_gcm_file_crypter```
+```
+python -m aes_gcm_file_crypter
+```
 <br></br>
 
 ## Please Note:
