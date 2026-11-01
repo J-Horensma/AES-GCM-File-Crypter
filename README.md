@@ -11,13 +11,12 @@ This application has a GUI and a CLI for securely encrypting or decrypting files
 
 ## Features:
 * Cross-platform support
-* AES-GCM authenticated encryption
 * GUI and CLI interfaces
+* AES-GCM authenticated encryption
+* Forensic recovery-prevention
 * Entire folder or single file processing
-* Real-time progress reporting with ETA
 * Multi-threaded processing
-* RAM data wiping
-* Disk data wiping
+* Real-time progress reporting with percentage and ETA
 <br></br>
 
 ## Forensic Recovery-Prevention Features:
