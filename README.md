@@ -80,7 +80,7 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 
 ### 3.) Create or enter the password  
 
-![Preview](assets/previews/linux/create_password.png)  
+![Preview](assets/previews/linux/create_password.png)
 ![Preview](assets/previews/linux/enter_password.png)
 
 ### 4.) Wait for the progressbar to finish and that's it!
