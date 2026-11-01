@@ -56,7 +56,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### 4.) Wait for the progressbar to finish and that's it!
 ![Preview](assets/previews/windows/gui_progressbar.png)
 ![Preview](assets/previews/windows/finished_process.png)
-
 <br></br>
 
 ## GUI Install (Linux)
@@ -79,7 +78,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### 4.) Wait for the progressbar to finish and that's it!
 ![Preview](assets/previews/linux/gui_progressbar.png)
 ![Preview](assets/previews/linux/finished_process.png)
-
 <br></br>
 
 ## GUI Install (Mac)
