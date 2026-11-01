@@ -43,21 +43,17 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ## GUI Usage (Windows):
 
 ### 1.) Select a folder or file to encrypt or decrypt
-
 ![Preview](assets/previews/windows/home_screen.png)
 ![Preview](assets/previews/windows/choose_path.png)
 
 ### 2.) Choose a key-size (If encrypting)
-
 ![Preview](assets/previews/windows/choose_key_size.png)
 
-### 3.) Create or enter the password  
-
+### 3.) Create or enter the password
 ![Preview](assets/previews/windows/create_password.png)
 ![Preview](assets/previews/windows/enter_password.png)
 
 ### 4.) Wait for the progressbar to finish and that's it!
-
 ![Preview](assets/previews/windows/gui_progressbar.png)
 ![Preview](assets/previews/windows/finished_process.png)
 
@@ -70,21 +66,17 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ## GUI Usage (Linux):
 
 ### 1.) Select a folder or file to encrypt or decrypt
-
 ![Preview](assets/previews/linux/home_screen.png)
 ![Preview](assets/previews/linux/choose_path.png)
 
 ### 2.) Choose a key-size (If encrypting)
-
 ![Preview](assets/previews/linux/choose_key_size.png)
 
-### 3.) Create or enter the password  
-
+### 3.) Create or enter the password
 ![Preview](assets/previews/linux/create_password.png)
 ![Preview](assets/previews/linux/enter_password.png)
 
 ### 4.) Wait for the progressbar to finish and that's it!
-
 ![Preview](assets/previews/linux/gui_progressbar.png)
 ![Preview](assets/previews/linux/finished_process.png)
 
