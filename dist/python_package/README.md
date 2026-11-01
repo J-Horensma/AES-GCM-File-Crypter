@@ -28,11 +28,11 @@ After encryption or decryption:
 * The original file is overwritten with random bytes and then deleted.
 * The temporary file is renamed to the original file’s name.
   
-This feature is designed to prevent recovery of the original file’s contents from the device’s disk.
+This feature is designed to reduce the likelihood of recovering the original file contents from the device's disk.
 <br></br>
 
 ## CLI Usage:
-1.) For CLI instructions:
+1.) For CLI instructions, use the following command.
 * ```python -m aes_gcm_file_crypter --help```
 
 2.) For detailed instructions of each function:
@@ -40,6 +40,9 @@ This feature is designed to prevent recovery of the original file’s contents f
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
 * ```python -m aes_gcm_file_crypter decrypt_file --help```
+
+3.) To start the GUI from the CLI, use the following command.
+* ```python -m aes_gcm_file_crypter```
 
 ## Visit The Github Repository For This GUI And CLI
 [https://github.com/J-Horensma/AES-GCM-File-Crypter](https://github.com/J-Horensma/AES-GCM-File-Crypter)
