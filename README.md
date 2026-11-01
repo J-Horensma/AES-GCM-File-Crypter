@@ -140,6 +140,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 <br></br>
 
 ## Please Note:
-* A Forensic edition GUI will be released soon that includes a KDF iterations drop-down option and an OS-specific metadata wipe window to wipe all traces of the original file's content during encryption from the device being used, at a price of $20 CAD/copy.
-* A Pro edition including the Forensic edition GUI and an upgraded CLI with the OS-specific metadata wipe option will be released, at a price of $50 CAD/copy.
-* A Pro+ edition may later be released that will include all the features of the Pro edition plus an option to forensically wipe metadata from a disk or USB and reformat it so no data is left recoverable, before copying encrypted files to it, at a price of $100/copy.
+* A Forensic edition GUI will be released soon that includes a KDF iterations drop-down option and OS-specific metadata-removal features designed to reduce recoverable metadata traces of the original file, at a price of $20 CAD/copy.
+* A Pro edition including the Forensic edition GUI and an upgraded CLI with the new features added will be released, at a price of $50 CAD/copy.
+* A Pro+ edition may later be released that will include all the features of the Pro edition plus an option to securely erase supported metadata from a storage device before re-formatting the device and copying encrypted files to it, at a price of $100/copy.
