@@ -9,7 +9,7 @@ A CLI for securely encrypting or decrypting files and/or entire folders using AE
 * Cross-platform support
 * GUI and CLI interfaces
 * AES-GCM authenticated encryption
-* Forensic recovery-prevention
+* RAM and disk file-data forensic recovery-prevention
 * Entire folder or single file processing
 * Multi-threaded processing
 * Real-time progress reporting with percentage and ETA
