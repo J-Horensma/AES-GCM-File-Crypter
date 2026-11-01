@@ -119,6 +119,18 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### 2.) Open a terminal and use the following command.
 * ```pip install aes-gcm-file-crypter==1.0.1```
 
+## Examine The Package Source In "/dist/python_package" And Locally Install The CLI In A Virtual Environment:
+### 1.) Ensure the latest Python is installed.
+### 2.) Open a terminal and use the following commands:
+```
+cd /path/to/AES-GCM-File-Crypter/python_package
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .
+```
+<br></br>
+
 ## Visit The PyPi Repository For This CLI
 * [https://pypi.org/project/aes-gcm-file-crypter/](https://pypi.org/project/aes-gcm-file-crypter/)
 <br></br>
