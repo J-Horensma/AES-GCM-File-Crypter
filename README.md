@@ -6,7 +6,7 @@
 <br></br>
 
 ## About
-This application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary.
+This application has a GUI and a CLI for securely encrypting or decrypting entire folder/s or a single file using AES-GCM cryptography with basic forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary.
 <br></br>
 
 ## Features:
