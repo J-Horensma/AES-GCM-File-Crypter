@@ -2,7 +2,7 @@
 <br></br>
 
 ## About
-A CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features.
+A CLI for securely encrypting or decrypting entire folder/s or a single file using AES-GCM cryptography with basic forensic recovery-prevention features.
 <br></br>
 
 ## Features:
