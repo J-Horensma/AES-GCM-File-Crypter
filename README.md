@@ -137,7 +137,7 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
 * ```python -m aes_gcm_file_crypter decrypt_file --help```
-3.) To start the GUI from the CLI, use the following command.
+### 3.) To start the GUI from the CLI, use the following command.
 * ```python -m aes_gcm_file_crypter```
 <br></br>
 
