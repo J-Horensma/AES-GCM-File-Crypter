@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "aes_gcm_file_crypter"
 dynamic = ["version"]
-description = "A CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features."
+description = "A CLI for securely encrypting or decrypting entire folder/s or a single file using AES-GCM cryptography with basic forensic recovery-prevention features."
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
