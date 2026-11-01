@@ -1,4 +1,4 @@
-# AES-GCM File-Crypter (Standard) 1.0.1
+# AES-GCM File-Crypter CLI (Standard) 1.0.1
 <br></br>
 
 ## About
