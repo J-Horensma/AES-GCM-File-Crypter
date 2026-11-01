@@ -5,6 +5,16 @@
 A CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features.
 <br></br>
 
+## Features:
+* Cross-platform support
+* GUI and CLI interfaces
+* AES-GCM authenticated encryption
+* Forensic recovery-prevention
+* Entire folder or single file processing
+* Multi-threaded processing
+* Real-time progress reporting with percentage and ETA
+<br></br>
+
 ## Forensic Recovery-Prevention Features:
 
 ### 1.) RAM Data-Recovery Prevention
