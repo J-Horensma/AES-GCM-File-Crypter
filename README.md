@@ -31,7 +31,7 @@ After encryption or decryption:
 * A temporary file is created to hold the processed data.
 * The original file is overwritten with random bytes and then deleted.
 * The temporary file is renamed to the original file’s name.
-  
+
 This feature is designed to reduce the likelihood of recovering the original file contents from the device's disk.
 <br></br>
 
@@ -137,6 +137,8 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 * ```python -m aes_gcm_file_crypter decrypt_folder --help```
 * ```python -m aes_gcm_file_crypter encrypt_file --help```
 * ```python -m aes_gcm_file_crypter decrypt_file --help```
+3.) To start the GUI from the CLI, use the following command.
+* ```python -m aes_gcm_file_crypter```
 <br></br>
 
 ## Please Note:
