@@ -1,4 +1,4 @@
-![Preview](https://github.com/J-Horensma/AES-GCM-File-Crypter/dist/python_package/assets/icon/ico/256x256.ico)
+![Preview](assets/icon/ico/256x256.ico)
 
 # AES-GCM File-Crypter (Standard) 1.0.1
 <br></br>
