@@ -114,12 +114,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ```UNTESTED```
 <br></br>
 
-## CLI Install For All OS' (Local):
-### 1.) Ensure the latest Python is installed.
-### 2.) Open a terminal in the "python_package" directory and use the following command.
-*  ```pip install .```
-<br></br>
-
 ## CLI Install For All OS':
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following command.
