@@ -18,10 +18,6 @@ This application has a GUI and a CLI for securely encrypting or decrypting files
 * Disk data wiping
 <br></br>
 
-## Why Choose AES-GCM Cryptography?
-AES-GCM is a modern authenticated encryption standard that provides both confidentiality and integrity protection. AES-GCM File-Crypter supports AES-128, AES-192, and AES-256 encryption.
-<br></br>
-
 ## Forensic Recovery-Prevention Features:
 
 ### 1.) RAM Data-Recovery Prevention
