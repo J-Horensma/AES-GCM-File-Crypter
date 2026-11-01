@@ -66,7 +66,6 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ## GUI Usage (Linux):
 
 ### 1.) Select a folder or file to encrypt or decrypt
-
 ![Preview](assets/previews/linux/home_screen.png)
 ![Preview](assets/previews/linux/choose_path.png)
 
