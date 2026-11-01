@@ -20,7 +20,7 @@ A CLI for securely encrypting or decrypting files and/or entire folders using AE
 ### 1.) RAM Data-Recovery Prevention
 During encryption or decryption, any sensitive data, that would normally remain in the device's RAM until the application closes, is immediately cleared once the operation finishes.
 
-This feature is designed to prevent recovery of processed data from the device’s RAM.
+This feature is designed to reduce the likelihood of recovering sensitive data from system RAM after processing.
 
 ### 2.) Disk Data-Recovery Prevention
 After encryption or decryption:
