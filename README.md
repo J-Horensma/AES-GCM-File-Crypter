@@ -11,6 +11,17 @@ This application has a GUI and a CLI for securely encrypting or decrypting files
 AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits).
 <br></br>
 
+## Features:
+* Cross-platform support
+* AES-GCM authenticated encryption
+* GUI and CLI interfaces
+* Entire folder or single file processing
+* Real-time progress reporting with ETA
+* Multi-threaded processing
+* RAM data wiping
+* Disk data wiping
+<br></br>
+
 ## Forensic Recovery-Prevention Features:
 
 ### 1.) RAM Data-Recovery Prevention
