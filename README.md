@@ -7,10 +7,6 @@
 This application has a GUI and a CLI for securely encrypting or decrypting files and/or entire folders using AES-GCM cryptography with basic forensic recovery-prevention features. The Standard edition GUI and CLI will continue to remain free, source-available, and maintained with updates when necessary.
 <br></br>
 
-## Why Choose AES-GCM Cryptography?
-AES-GCM Cryptography is one of the most secure and modern approaches for encryption and decryption. It supports three key sizes (128, 192, and 256 bits).
-<br></br>
-
 ## Features:
 * Cross-platform support
 * AES-GCM authenticated encryption
@@ -20,6 +16,10 @@ AES-GCM Cryptography is one of the most secure and modern approaches for encrypt
 * Multi-threaded processing
 * RAM data wiping
 * Disk data wiping
+<br></br>
+
+## Why Choose AES-GCM Cryptography?
+AES-GCM is a modern authenticated encryption standard that provides both confidentiality and integrity protection. AES-GCM File-Crypter supports AES-128, AES-192, and AES-256 encryption.
 <br></br>
 
 ## Forensic Recovery-Prevention Features:
