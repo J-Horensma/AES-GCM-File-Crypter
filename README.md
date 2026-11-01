@@ -129,7 +129,7 @@ pip install aes-gcm-file-crypter==1.0.1
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following commands:
 ```
-cd /path/to/AES-GCM-File-Crypter/python_package
+cd /path/to/dist/python_package
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
