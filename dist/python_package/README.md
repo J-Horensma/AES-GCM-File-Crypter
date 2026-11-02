@@ -1,8 +1,6 @@
 ![Preview](https://github.com/J-Horensma/AES-GCM-File-Crypter/blob/main/assets/icon/ico/256x256.ico)
 
 # AES-GCM File-Crypter CLI (Standard) 1.0.1
-
-![Preview](assets/previews/windows/gui_progressbar.png)
 <br></br>
 
 ## About
