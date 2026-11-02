@@ -144,7 +144,7 @@ hint: See PEP 668 for the detailed specification.
 ```
 <br></br>
 
-## Visit The PyPi Repository For This CLI
+## Visit The PyPi Repository For This Application's CLI
 [https://pypi.org/project/aes-gcm-file-crypter/](https://pypi.org/project/aes-gcm-file-crypter/)
 <br></br>
 
