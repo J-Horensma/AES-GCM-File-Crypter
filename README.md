@@ -128,10 +128,14 @@ python -m pip install aes_gcm_file_crypter --break-system-packages
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal in the "/dist/python_package" directory and use the following commands to start the CLI in a virtual environment:
 ```
+#TO ACTIVATE A PYTHON VIRTUAL ENVELOPE
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
+
+#TO DEACTIVATE THE PYTHON VIRTUAL ENVELOPE USE THE FOLLOWING
+deactivate
 ```
 ### 3.) This will work when Linux distros like Parrot return:
 ```
