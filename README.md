@@ -128,7 +128,7 @@ python -m pip install -e .
 <br></br>
 
 ## Visit The PyPi Repository For This CLI
-* [https://pypi.org/project/aes-gcm-file-crypter/](https://pypi.org/project/aes-gcm-file-crypter/)
+[https://pypi.org/project/aes-gcm-file-crypter/](https://pypi.org/project/aes-gcm-file-crypter/)
 <br></br>
 
 ## CLI Usage For All OS':
