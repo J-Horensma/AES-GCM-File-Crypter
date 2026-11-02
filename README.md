@@ -108,7 +108,7 @@ python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/ic
 ```UNTESTED```
 <br></br>
 
-## CLI Global Install For All OS' From PyPi ("pip"):
+## CLI Install For All OS' From PyPi ("pip"):
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following command.
 ```
@@ -124,6 +124,23 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e .
+```
+### 3.) This will work when Linux distros like Parrot return:
+```
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install python3-xyz,
+    where xyz is the package you are trying to install.
+
+...
+note: If you believe this is a mistake, please contact your Python
+installation or OS distribution provider.
+
+You can override this, at the risk of breaking your Python installation
+or OS, by passing --break-system-packages.
+
+hint: See PEP 668 for the detailed specification.
 ```
 <br></br>
 
