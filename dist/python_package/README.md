@@ -1,3 +1,5 @@
+![Preview](https://github.com/J-Horensma/AES-GCM-File-Crypter/blob/main/assets/icon/ico/256x256.ico)
+
 # AES-GCM File-Crypter CLI (Standard) 1.0.1
 <br></br>
 
