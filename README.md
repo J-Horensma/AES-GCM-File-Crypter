@@ -1,7 +1,9 @@
 ![Preview](assets/icon/ico/256x256.ico)
+<br></br>
 
 # AES-GCM File-Crypter (Standard) 1.0.1
 <br></br>
+
 ![Preview](assets/previews/windows/gui_progressbar.png)
 <br></br>
 
