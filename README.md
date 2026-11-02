@@ -142,7 +142,9 @@ or OS, by passing --break-system-packages.
 
 hint: See PEP 668 for the detailed specification.
 ```
-## As stated above, using "--break-system-packages" will bypass the Linux security mechanism, that in some distros prevents global "pip" installs (Without a virtual environment).
+<br></br>
+
+## CLI Install For All OS' (Without a virtual environment, when the OS blocks "pip" installs).
 ### 1.) To install without a virtual environment use the following command.
 ```
 python -m pip install aes_gcm_file_crypter --break-system-packages
