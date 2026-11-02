@@ -126,9 +126,8 @@ python -m pip install aes_gcm_file_crypter --break-system-packages
 
 ## CLI Local Install Package For All OS' In The "/dist/python_package" Directory:
 ### 1.) Ensure the latest Python is installed.
-### 2.) Open a terminal and use the following commands to start the CLI in a virtual environment:
+### 2.) Open a terminal in the "/dist/python_package" directory and use the following commands to start the CLI in a virtual environment:
 ```
-cd /path/to/dist/python_package
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
