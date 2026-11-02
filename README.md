@@ -114,6 +114,15 @@ python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/ic
 ```
 pip install aes-gcm-file-crypter==1.0.1
 ```
+<br></br>
+
+## CLI Install For All OS' From PyPi (Without a virtual environment, when the OS blocks "pip" installs):
+### 1.) To install without a virtual environment use the following command.
+```
+python -m pip install aes_gcm_file_crypter --break-system-packages
+```
+### 2.) To use the temporary virtual environment method, see below (Sections 2-3).
+<br></br>
 
 ## CLI Local Install Package For All OS' In The "/dist/python_package" Directory:
 ### 1.) Ensure the latest Python is installed.
@@ -141,13 +150,6 @@ You can override this, at the risk of breaking your Python installation
 or OS, by passing --break-system-packages.
 
 hint: See PEP 668 for the detailed specification.
-```
-<br></br>
-
-## CLI Install For All OS' (Without a virtual environment, when the OS blocks "pip" installs).
-### 1.) To install without a virtual environment use the following command.
-```
-python -m pip install aes_gcm_file_crypter --break-system-packages
 ```
 <br></br>
 
