@@ -116,12 +116,12 @@ pip install aes-gcm-file-crypter==1.0.1
 ```
 <br></br>
 
-## CLI Install For All OS' From PyPi (Without a virtual environment, when the OS blocks "pip" installs):
+## Global CLI Install For All OS' From PyPi (Without A Virtual Environment, When The OS Block "pip" Installs From PyPi):
 ### 1.) To install without a virtual environment use the following command.
 ```
 python -m pip install aes_gcm_file_crypter --break-system-packages
 ```
-### 2.) To use the temporary virtual environment method, see below (Sections 2-3).
+### 2.) To use the virtual environment method, see below (Sections 2-3).
 <br></br>
 
 ## CLI Local Install Package For All OS' In The "/dist/python_package" Directory:
