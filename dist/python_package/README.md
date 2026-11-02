@@ -9,7 +9,7 @@ A CLI for securely encrypting or decrypting entire folder/s or a single file usi
 * Cross-platform support
 * GUI and CLI interfaces
 * AES-GCM authenticated encryption
-* RAM and disk file-data forensic recovery-prevention
+* RAM and disk authentication-data and file-data forensic recovery-prevention
 * Entire folder or single file processing
 * Multi-threaded processing
 * Real-time progress reporting with percentage and ETA
