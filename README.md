@@ -108,16 +108,16 @@ python -m PyInstaller --clean --noconfirm --onefile --windowed --icon="assets/ic
 ```UNTESTED```
 <br></br>
 
-## CLI Install For All OS':
+## CLI Global Install For All OS' From PyPi ("pip"):
 ### 1.) Ensure the latest Python is installed.
 ### 2.) Open a terminal and use the following command.
 ```
 pip install aes-gcm-file-crypter==1.0.1
 ```
 
-## Examine The Package Source In "/dist/python_package" And Locally Install The CLI In A Virtual Environment:
+## CLI Local Install Package For All OS' In The "/dist/python_package" Directory:
 ### 1.) Ensure the latest Python is installed.
-### 2.) Open a terminal and use the following commands:
+### 2.) Open a terminal and use the following commands to start the CLI in a virtual environment:
 ```
 cd /path/to/dist/python_package
 python3 -m venv .venv
