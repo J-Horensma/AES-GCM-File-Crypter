@@ -47,13 +47,16 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### 1.) Select a folder or file to encrypt or decrypt
 ![Preview](assets/previews/windows/home_screen.png)
 ![Preview](assets/previews/windows/choose_path.png)
+<br></br>
 
 ### 2.) Choose a key-size (If encrypting)
 ![Preview](assets/previews/windows/choose_key_size.png)
+<br></br>
 
 ### 3.) Create or enter the password
 ![Preview](assets/previews/windows/create_password.png)
 ![Preview](assets/previews/windows/enter_password.png)
+<br></br>
 
 ### 4.) Wait for the progressbar to finish and that's it!
 ![Preview](assets/previews/windows/gui_progressbar.png)
@@ -69,13 +72,16 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 ### 1.) Select a folder or file to encrypt or decrypt
 ![Preview](assets/previews/linux/home_screen.png)
 ![Preview](assets/previews/linux/choose_path.png)
+<br></br>
 
 ### 2.) Choose a key-size (If encrypting)
 ![Preview](assets/previews/linux/choose_key_size.png)
+<br></br>
 
 ### 3.) Create or enter the password
 ![Preview](assets/previews/linux/create_password.png)
 ![Preview](assets/previews/linux/enter_password.png)
+<br></br>
 
 ### 4.) Wait for the progressbar to finish and that's it!
 ![Preview](assets/previews/linux/gui_progressbar.png)
@@ -97,7 +103,7 @@ The CLI that includes a GUI can be downloaded via Python's pip (See the CLI sect
 2.) Open a terminal, navigate to this file’s directory, and use the following command.
 ```
 python -m PyInstaller --clean --noconfirm --onefile --windowed --icon=assets/icon/ico/icon.ico --add-data "assets;assets" "AES-GCM File-Crypter.pyw"
-```  
+```
 
 ### Linux:
 1.) Ensure the latest Python, PyInstaller, and any required dependencies are installed. \
